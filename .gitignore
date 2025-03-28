@@ -1,0 +1,76 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Dependencies
+node_modules
+dist
+dist-ssr
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Environment & Secrets
+*.env
+*.env.*
+.env.local
+.env.development
+.env.test
+.env.production
+.env.staging
+
+# API Keys & Credentials
+**/credentials.*
+**/credential.*
+**/secrets.*
+**/secret.*
+*.pem
+*.key
+*.cert
+*.p12
+*.pfx
+*.password
+*.keystore
+
+# Config files with sensitive data
+config.json
+settings.json
+**/config/production.*
+**/config/staging.*
+
+# Database files
+*.sql
+*.sqlite
+*.db
+
+# Token files
+.token
+token.*
+*.token
+**/tokens/
+
+# Personal IDE config
+.idea/
+*.iml
+.vscode/settings.json
+
+# Sensitive Documentation
+**/private/
+**/confidential/
+**/*secret*
+**/*sensitive*
+*.txt
