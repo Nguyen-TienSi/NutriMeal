@@ -1,0 +1,1 @@
+const appTheme = 'beautiful theme';
