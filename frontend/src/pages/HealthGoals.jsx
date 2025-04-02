@@ -148,6 +148,7 @@ const renderStep = () => {
               type="number"
               name="currentWeight"
               value={goals.currentWeight}
+              min="1"
               onChange={handleChange}
               placeholder="Enter your current weight in kg"
               className={`input input-bordered w-full ${errors.currentWeight ? 'input-error' : ''}`}
@@ -174,6 +175,7 @@ const renderStep = () => {
               name="targetWeight"
               value={goals.targetWeight}
               onChange={handleChange}
+              min="1"
               placeholder="Enter your target weight in kg"
               className={`input input-bordered w-full ${errors.targetWeight ? 'input-error' : ''}`}
             />
