@@ -74,3 +74,4 @@ token.*
 **/*secret*
 **/*sensitive*
 *.txt
+database_structure.json
