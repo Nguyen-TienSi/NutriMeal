@@ -3,11 +3,12 @@ import 'package:flutter/material.dart';
 class NutritionInfo extends StatelessWidget {
   final int carbs, protein, fat;
 
-  const NutritionInfo(
-      {super.key,
-      required this.carbs,
-      required this.protein,
-      required this.fat});
+  const NutritionInfo({
+    super.key,
+    required this.carbs,
+    required this.protein,
+    required this.fat,
+  });
 
   @override
   Widget build(BuildContext context) {

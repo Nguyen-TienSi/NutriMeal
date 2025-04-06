@@ -1,5 +1,5 @@
-import 'package:flutter/cupertino.dart';
-import 'package:nutriai_app/presentation/widgets/suggestion_button.dart';
+import 'package:flutter/material.dart';
+import 'package:nutriai_app/presentation/views/ask-ai/suggestion_button.dart';
 
 /// **Widget hiển thị danh sách câu hỏi gợi ý**
 class QuestionSuggestions extends StatelessWidget {

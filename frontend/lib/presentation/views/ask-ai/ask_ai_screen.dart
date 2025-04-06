@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import '../../widgets/chat_bubble.dart';
-import '../../widgets/chat_input_field.dart';
-import '../../widgets/question_suggestion.dart';
+import 'chat_bubble.dart';
+import 'chat_input_field.dart';
+import 'question_suggestion.dart';
 
 class AskAIScreen extends StatelessWidget {
   const AskAIScreen({super.key});

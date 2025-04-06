@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-import '../../widgets/calories_chart.dart';
-import '../../widgets/date_selector.dart';
-import '../../widgets/meal_card.dart';
-import '../../widgets/nutrition_info.dart';
+import 'calories_chart.dart';
+import 'date_selector.dart';
+import 'meal_card.dart';
+import 'nutrition_info.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
