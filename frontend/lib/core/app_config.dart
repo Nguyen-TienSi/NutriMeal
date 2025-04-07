@@ -1,1 +1,1 @@
-const domainApi = "localhost:8080";
+const appName = "NutriAI";

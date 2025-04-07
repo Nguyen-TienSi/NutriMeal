@@ -32,7 +32,6 @@ class HomeScreen extends StatelessWidget {
               const NutritionInfo(carbs: 241, protein: 250, fat: 50),
               const SizedBox(height: 40),
 
-              // Danh sách bữa ăn
               IntrinsicHeight(
                 child: Column(
                   children: [
@@ -40,25 +39,25 @@ class HomeScreen extends StatelessWidget {
                       mealName: "Breakfast",
                       kcalRange: "401 - 601",
                       imagePath: "assets/images/breakfast.jpg",
-                      onTap: () => print("Add Breakfast"),
+                      onTap: () {},
                     ),
                     MealCard(
                       mealName: "Lunch",
                       kcalRange: "601 - 801",
                       imagePath: "assets/images/lunch.jpg",
-                      onTap: () => print("Add Lunch"),
+                      onTap: () {},
                     ),
                     MealCard(
                       mealName: "Dinner",
                       kcalRange: "601 - 801",
                       imagePath: "assets/images/dinner.jpg",
-                      onTap: () => print("Add Dinner"),
+                      onTap: () {},
                     ),
                     MealCard(
                       mealName: "Snacks",
                       kcalRange: "100 - 200",
                       imagePath: "assets/images/snacks.jpg",
-                      onTap: () => print("Add Snacks"),
+                      onTap: () {},
                     ),
                   ],
                 ),

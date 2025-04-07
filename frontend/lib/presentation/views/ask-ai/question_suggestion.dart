@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:nutriai_app/presentation/views/ask-ai/suggestion_button.dart';
 
-/// **Widget hiển thị danh sách câu hỏi gợi ý**
+import 'suggestion_button.dart';
+
 class QuestionSuggestions extends StatelessWidget {
   const QuestionSuggestions({super.key});
 

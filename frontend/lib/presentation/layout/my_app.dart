@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:nutriai_app/presentation/views/onboarding/setup_gender_screen.dart';
-import 'package:nutriai_app/presentation/views/onboarding/setup_weight_screen.dart';
 
-import '../../utils/constants.dart';
-import 'main_screen.dart';
+import '../views/onboarding/onboarding_welcome_screen.dart';
+import '../../core/app_config.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -16,7 +14,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.green,
       ),
-      home: const OnboardingWeightScreen(),
+      home: const OnboardingWelcomeScreen(),
     );
   }
 }

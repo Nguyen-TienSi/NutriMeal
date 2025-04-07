@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-/// **Widget hiển thị hộp thoại chat với AI**
 class ChatBubble extends StatelessWidget {
   final String message;
   final bool isAI;
@@ -16,7 +15,7 @@ class ChatBubble extends StatelessWidget {
         padding: const EdgeInsets.all(12),
         constraints: BoxConstraints(
           maxWidth:
-              MediaQuery.of(context).size.width * 0.75, // Giới hạn chiều rộng
+              MediaQuery.of(context).size.width * 0.75,
         ),
         decoration: BoxDecoration(
           color: isAI ? Colors.blue[600] : Colors.green[600],

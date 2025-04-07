@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-/// **Widget của từng nút gợi ý câu hỏi**
 class SuggestionButton extends StatelessWidget {
   final String text;
 

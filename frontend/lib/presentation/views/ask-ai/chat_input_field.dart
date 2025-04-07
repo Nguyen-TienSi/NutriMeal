@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-/// **Widget của thanh nhập câu hỏi**
 class ChatInputField extends StatelessWidget {
   const ChatInputField({super.key});
 

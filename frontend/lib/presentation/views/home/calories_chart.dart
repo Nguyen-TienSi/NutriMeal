@@ -8,7 +8,7 @@ class CaloriesChart extends StatelessWidget {
   const CaloriesChart({
     super.key,
     required this.calories,
-    this.goalCalories = 2000, // Mặc định mục tiêu là 2000 Kcal
+    this.goalCalories = 2000,
   });
 
   @override

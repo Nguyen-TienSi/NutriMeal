@@ -1,0 +1,1 @@
+const domainApi = "localhost:8080";

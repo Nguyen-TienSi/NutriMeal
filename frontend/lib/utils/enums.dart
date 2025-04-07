@@ -1,5 +1,5 @@
-enum ActivityLevel { Unactive, Normal, Active }
+enum ActivityLevel { unActive, normal, active }
 
-enum MealPlanStatus { Pending, Active, Completed, Canceled }
+enum MealPlanStatus { pending, active, completed, canceled }
 
-enum Goal { WeightLoss, WeightGain, Maintain }
+enum Goal { weightLoss, weightGain, maintain }

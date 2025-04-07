@@ -8,7 +8,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:nutriai_app/main.dart';
 import 'package:nutriai_app/presentation/layout/my_app.dart';
 
 void main() {
