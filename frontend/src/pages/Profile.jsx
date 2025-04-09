@@ -12,14 +12,17 @@ const Profile = () => {
   const [error, setError] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [profile, setProfile] = useState({
-    name: '',
+    id: currentUser?._id || '', // Use _id for MongoDB
     email: '',
-    weight: '70',
-    height: '170',
-    birthDate: '1990-01-01',
-    activityLevel: 'moderate',
-    dietaryPreferences: ['vegetarian'],
-    allergies: ['nuts']
+    name: '',
+    picture: '',
+    weight: 0,
+    height: 0,
+    target_weight: 0,
+    activity_level: '',
+    // birthDate: '',
+    dietary_preferences: [''],
+    // allergies: ['nuts']
   });
   const [healthGoals, setHealthGoals] = useState(null);
 
@@ -51,12 +54,12 @@ const Profile = () => {
         setProfile({
           name: userData.name || '',
           email: userData.email || '',
-          weight: userData.weight || '70',
-          height: userData.height || '170',
-          birthDate: userData.birthDate || '1990-01-01',
-          activityLevel: userData.activityLevel || 'moderate',
-          dietaryPreferences: userData.dietaryPreferences || ['vegetarian'],
-          allergies: userData.allergies || ['nuts']
+          weight: userData.weight || 70,
+          height: userData.height || 170,
+          // birthDate: userData.birthDate || '1990-01-01',
+          activity_level: userData.activity_level || 'moderate',
+          dietary_preferences: userData.dietary_preferences || ['vegetarian'],
+          // allergies: userData.allergies || ['nuts']
         });
 
         // Fetch health goals
@@ -81,7 +84,9 @@ const Profile = () => {
     const { name, value } = e.target;
     setProfile(prev => ({
       ...prev,
-      [name]: value
+      [name]: ['weight', 'height'].includes(name) 
+        ? Number(value) || 0 // Convert to number, fallback to 0 if invalid
+        : value
     }));
   };
 

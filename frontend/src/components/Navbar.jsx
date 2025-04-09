@@ -1,14 +1,26 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useUser } from "../contexts/UserContext";
-import { 
-  Menu, Search, Sun, Moon, Heart, 
-  LogOut, User, Home, Utensils, 
-  Target, Activity, Settings 
+import {
+  Menu,
+  Search,
+  Sun,
+  Moon,
+  Heart,
+  LogOut,
+  User,
+  Home,
+  Utensils,
+  Target,
+  Activity,
+  Settings,
+  Users,
 } from "lucide-react";
 
 const Navbar = () => {
-  const [theme, setTheme] = useState(localStorage.getItem("theme") || "lemonade");
+  const [theme, setTheme] = useState(
+    localStorage.getItem("theme") || "lemonade"
+  );
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const { user, signOut } = useUser();
   const navigate = useNavigate();
@@ -19,6 +31,7 @@ const Navbar = () => {
     { path: "/meal-suggestion", label: "Meal Suggestions", icon: Utensils },
     { path: "/health-goals", label: "Health Goals", icon: Target },
     { path: "/health-progress", label: "Progress Tracking", icon: Activity },
+    { path: "/community", label: "Community", icon: Users },
   ];
 
   useEffect(() => {
@@ -31,9 +44,13 @@ const Navbar = () => {
     setTheme(newTheme);
   };
 
-  const handleSignOut = () => {
-    signOut();
-    navigate("/");
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+      navigate("/");
+    } catch (error) {
+      console.error("Error signing out:", error);
+    }
   };
 
   return (
@@ -45,10 +62,13 @@ const Navbar = () => {
             <label tabIndex={0} className="btn btn-ghost btn-circle lg:hidden">
               <Menu size={20} />
             </label>
-            <ul tabIndex={0} className="menu menu-lg dropdown-content bg-base-200 rounded-box z-10 w-56 shadow-lg mt-2">
+            <ul
+              tabIndex={0}
+              className="menu menu-lg dropdown-content bg-base-200 rounded-box z-10 w-56 shadow-lg mt-2"
+            >
               {menuItems.map((item) => (
                 <li key={item.path}>
-                  <Link 
+                  <Link
                     to={item.path}
                     className={`flex items-center gap-2 ${
                       location.pathname === item.path ? "active" : ""
@@ -88,19 +108,8 @@ const Navbar = () => {
 
         {/* Navbar End */}
         <div className="navbar-end gap-2">
-          {/* Search Bar */}
-          <div className={`search-container ${isSearchOpen ? 'flex' : 'hidden'} md:flex items-center`}>
-            <div className="form-control">
-              <input
-                type="text"
-                placeholder="Search..."
-                className="input input-bordered w-full md:w-auto"
-              />
-            </div>
-          </div>
-
           {/* Search Toggle (Mobile) */}
-          <button 
+          <button
             className="btn btn-ghost btn-circle md:hidden"
             onClick={() => setIsSearchOpen(!isSearchOpen)}
           >
@@ -123,7 +132,10 @@ const Navbar = () => {
                   <img src={user.picture} alt="profile" />
                 </div>
               </label>
-              <ul tabIndex={0} className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-200 rounded-box w-52">
+              <ul
+                tabIndex={0}
+                className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-200 rounded-box w-52"
+              >
                 <li>
                   <Link to="/profile" className="flex items-center gap-2">
                     <User size={18} />
@@ -138,7 +150,7 @@ const Navbar = () => {
                 </li>
                 <div className="divider my-0"></div>
                 <li>
-                  <button 
+                  <button
                     onClick={handleSignOut}
                     className="flex items-center gap-2 bg-error/10 hover:bg-error/20 text-red-500 rounded-lg"
                   >

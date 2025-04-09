@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { apiRequest } from '../utils/api';
 
 const UserContext = createContext();
 
@@ -20,7 +21,7 @@ export const UserProvider = ({ children }) => {
   }, [user]);
 
   const signIn = (userData) => {
-    if (!userData._id) { // Check for _id instead of id
+    if (!userData._id) {
       console.error('User data missing _id:', userData);
       return;
     }
@@ -28,9 +29,17 @@ export const UserProvider = ({ children }) => {
     localStorage.setItem('user', JSON.stringify(userData));
   };
 
-  const signOut = () => {
-    setUser(null);
-    localStorage.removeItem('user');
+  const signOut = async () => {
+    try {
+      await apiRequest('/auth/signout', 'POST');
+      setUser(null);
+      localStorage.removeItem('user');
+    } catch (error) {
+      console.error('Failed to sign out:', error);
+      // Still clear local state even if API call fails
+      setUser(null);
+      localStorage.removeItem('user');
+    }
   };
 
   return (

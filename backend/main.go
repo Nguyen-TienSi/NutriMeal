@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"nitri-meal-backend/config"
 	"nitri-meal-backend/database"
 	"nitri-meal-backend/routes"
 	"os"
@@ -18,7 +19,12 @@ func main() {
 		log.Println("No .env file found")
 	}
 
+	// Initialize database
 	database.Connect()
+	defer database.Close()
+
+	//  session store
+	config.InitSession()
 
 	// create  app
 	app := fiber.New(fiber.Config{

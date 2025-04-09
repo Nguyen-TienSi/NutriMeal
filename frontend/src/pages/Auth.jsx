@@ -3,14 +3,62 @@ import { GoogleLogin } from "@react-oauth/google";
 import * as jwtDecode from "jwt-decode";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../contexts/UserContext";
-import { apiRequest } from "../utils/api"; 
+import { apiRequest } from "../utils/api";
+import { AlertCircle } from "lucide-react";
 
 const Auth = () => {
+  const [activeTab, setActiveTab] = useState("signin");
   const [error, setError] = useState(null);
   const navigate = useNavigate();
   const { signIn } = useUser();
 
-  const handleSuccess = async (credentialResponse) => {
+  const handleGoogleSignIn = async (userData) => {
+    try {
+      const response = await apiRequest('/auth/signin', 'POST', {
+        email: userData.email
+      });
+      
+      signIn({
+        _id: response._id,
+        email: response.email,
+        name: response.name,
+        picture: response.picture,
+      });
+
+      navigate("/");
+    } catch (err) {
+      if (err.message === 'User not found') {
+        setError("Account not found. Please sign up first.");
+        setActiveTab("signup");
+      } else {
+        throw err;
+      }
+    }
+  };
+
+  const handleGoogleSignUp = async (userData) => {
+    try {
+      const response = await apiRequest('/auth/signup', 'POST', userData);
+      
+      signIn({
+        _id: response._id,
+        email: response.email,
+        name: response.name,
+        picture: response.picture,
+      });
+
+      navigate("/");
+    } catch (err) {
+      if (err.message === 'Email already exists') {
+        setError("Account already exists. Please sign in.");
+        setActiveTab("signin");
+      } else {
+        throw err;
+      }
+    }
+  };
+
+  const handleGoogleSuccess = async (credentialResponse) => {
     try {
       const details = jwtDecode.jwtDecode(credentialResponse.credential);
       
@@ -20,70 +68,76 @@ const Auth = () => {
         picture: details.picture || details.picture_url,
       };
 
-      try {
-        console.log('Attempting to fetch user:', userData.email);
-        const existingUser = await apiRequest(`/users/email?email=${encodeURIComponent(userData.email)}`);
-        console.log('Existing user found:', existingUser);
-        
-        signIn({
-          _id: existingUser._id, // Change from id to _id
-          email: existingUser.email,
-          name: existingUser.name,
-          picture: existingUser.picture,
-        });
-        
-      } catch (err) {
-        console.error('Error fetching user:', err);
-        if (err.message === 'User not found') {
-          console.log('Creating new user:', userData);
-          const newUser = await apiRequest('/users', 'POST', userData);
-          console.log('New user created:', newUser);
-          
-          signIn({
-            _id: newUser._id, // Change from id to _id
-            email: newUser.email,
-            name: newUser.name,
-            picture: newUser.picture,
-          });
-        } else {
-          throw err;
-        }
+      if (activeTab === "signin") {
+        await handleGoogleSignIn(userData);
+      } else {
+        await handleGoogleSignUp(userData);
       }
-
-      navigate("/");
     } catch (err) {
       console.error('Authentication failed:', err);
       setError(err.message || "Failed to authenticate. Please try again.");
     }
   };
 
-  const handleError = () => {
+  const handleGoogleError = () => {
     setError("Login Failed");
     console.error("Login Failed");
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="bg-white p-8 rounded-lg shadow-md w-96">
-        <h1 className="text-2xl font-bold text-center mb-6">
-          Welcome to Nutri Meal
-        </h1>
-        <p className="text-gray-600 text-center mb-8">
-          Sign in to access personalized meal recommendations
-        </p>
+    <div className="min-h-screen flex items-center justify-center bg-base-200">
+      <div className="card bg-base-100 shadow-xl w-96">
+        <div className="card-body">
+          <h1 className="card-title text-2xl font-bold text-center justify-center mb-2">
+            Welcome to Nutri Meal
+          </h1>
 
-        <div className="flex flex-col items-center gap-4">
-          {error && <div className="text-red-500 text-sm mb-4">{error}</div>}
-          <GoogleLogin
-            onSuccess={handleSuccess}
-            onError={handleError}
-            useOneTap
-            scope="email profile"
-            cookiePolicy={"single_host_origin"}
-          />
+          {/* Tabs */}
+          <div className="tabs tabs-boxed mb-6">
+            <button
+              className={`tab flex-1 ${activeTab === "signin" ? "tab-active" : ""}`}
+              onClick={() => setActiveTab("signin")}
+            >
+              Sign In
+            </button>
+            <button
+              className={`tab flex-1 ${activeTab === "signup" ? "tab-active" : ""}`}
+              onClick={() => setActiveTab("signup")}
+            >
+              Sign Up
+            </button>
+          </div>
 
-          <p className="text-sm text-gray-500 text-center mt-4">
-            By signing in, you agree to our Terms of Service and Privacy Policy
+          <p className="text-center text-base-content/70 mb-6">
+            {activeTab === "signin" 
+              ? "Sign in with your account" 
+              : "Create a new account"}
+          </p>
+
+          {/* Error Message */}
+          {error && (
+            <div className="alert alert-error mb-4">
+              <AlertCircle size={16} />
+              <span>{error}</span>
+            </div>
+          )}
+
+          {/* Google Login */}
+          <div className="flex justify-center">
+            <GoogleLogin
+              onSuccess={handleGoogleSuccess}
+              onError={handleGoogleError}
+              useOneTap
+              scope="email profile"
+              cookiePolicy={"single_host_origin"}
+            />
+          </div>
+
+          {/* Terms */}
+          <p className="text-xs text-center text-base-content/70 mt-4">
+            By continuing, you agree to our{" "}
+            <a href="/terms" className="link">Terms of Service</a> and{" "}
+            <a href="/privacy" className="link">Privacy Policy</a>
           </p>
         </div>
       </div>

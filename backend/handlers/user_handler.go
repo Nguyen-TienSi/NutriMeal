@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"context"
+	"fmt"
 	"nitri-meal-backend/database"
 	"nitri-meal-backend/models"
 	"time"
@@ -109,6 +110,8 @@ func UpdateUser(c *fiber.Ctx) error {
 
 	id := c.Params("id")
 	objectId, err := primitive.ObjectIDFromHex(id)
+    
+    fmt.Println(objectId)
 	if err != nil {
 		return c.Status(400).JSON(fiber.Map{
 			"error": "Invalid ID format",

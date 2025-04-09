@@ -10,6 +10,12 @@ func SetupRoutes(app *fiber.App) {
 	// API group
 	api := app.Group("/api")
 
+	// Auth routes
+	auth := api.Group("/auth")
+	auth.Post("/signin", handlers.SignIn)
+	auth.Post("/signup", handlers.SignUp)
+	auth.Post("/signout", handlers.SignOut)
+
 	// User routes
 	users := api.Group("/users")
 	users.Get("/email", handlers.GetUserByEmail)
@@ -20,10 +26,7 @@ func SetupRoutes(app *fiber.App) {
 	// Health goal routes
 	healthGoals := api.Group("/health-goals")
 	healthGoals.Post("/", handlers.CreateHealthGoal)
+	healthGoals.Get("/user/:userId", handlers.GetHealthGoalsByUserId)
 	healthGoals.Get("/:user_id", handlers.GetHealthGoal)
 	healthGoals.Put("/:user_id", handlers.UpdateHealthGoal)
-
-	// Health Goals routes
-	app.Post("/api/health-goals", handlers.CreateHealthGoal)
-	app.Get("/api/health-goals/user/:userId", handlers.GetHealthGoalsByUserId)
 }
