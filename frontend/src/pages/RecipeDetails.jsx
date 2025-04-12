@@ -1,51 +1,30 @@
-import React, { useState } from "react";
-import {
-  Search,
-  Apple,
-  Leaf,
-  Weight,
-  Timer,
-  Soup,
-  ChefHat,
-  Info,
-} from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
+import { Search, Apple, Weight, Timer, Soup, ChefHat, Info, Loader2 } from "lucide-react";
+import { apiRequest } from '../utils/api';
 
 const RecipeDetails = () => {
-  const [searchTerm, setSearchTerm] = useState("");
+  const { id } = useParams();
+  const [recipe, setRecipe] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState("nutrition");
 
-  const foodData = [
-    {
-      id: 1,
-      name: "Grilled Chicken Breast",
-      category: "Protein",
-      image: "/chicken-breast.jpg",
-      nutrition: {
-        calories: 165,
-        protein: 31,
-        carbs: 0,
-        fat: 3.6,
-        serving: "100g",
-      },
-      ingredients: [
-        { name: "Chicken Breast", amount: "200g" },
-        { name: "Olive Oil", amount: "1 tbsp" },
-        { name: "Salt", amount: "1/2 tsp" },
-        { name: "Black Pepper", amount: "1/4 tsp" },
-      ],
-      instructions: [
-        "Preheat the grill to medium-high heat",
-        "Brush chicken with olive oil",
-        "Season with salt and pepper",
-        "Grill for 6-8 minutes per side",
-        "Let rest for 5 minutes before serving",
-      ],
-      tips: "Best grilled or baked",
-      preparationTime: "20-30 min",
-      difficulty: "Easy",
-      allergens: ["None"],
-    },
-  ];
+  useEffect(() => {
+    const fetchRecipe = async () => {
+      try {
+        setLoading(true);
+        const data = await apiRequest(`/recipes/${id}`);
+        setRecipe(data);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchRecipe();
+  }, [id]);
 
   const renderTabs = () => (
     <div className="tabs tabs-boxed mb-8">
@@ -66,133 +45,129 @@ const RecipeDetails = () => {
     </div>
   );
 
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="animate-spin h-8 w-8" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen p-10">
+        <div className="alert alert-error max-w-2xl mx-auto">
+          <Info className="w-6 h-6" />
+          <span>Failed to load recipe: {error}</span>
+        </div>
+      </div>
+    );
+  }
+
+  if (!recipe) {
+    return (
+      <div className="min-h-screen p-10">
+        <div className="alert alert-warning max-w-2xl mx-auto">
+          <Info className="w-6 h-6" />
+          <span>Recipe not found</span>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen p-10">
       <div className="max-w-6xl mx-auto">
-        <h1 className="text-3xl font-bold mb-8 flex items-center gap-2">
-          <Apple className="h-8 w-8" />
-          Food Information
-        </h1>
-        {/* Search Bar */}
-        <div className="form-control mb-8">
-          <label className="input input-bordered flex items-center gap-2">
-            <Search className="w-6 h-6" />
-            <input
-              type="text"
-              className="grow"
-              placeholder="Search recipes..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </label>
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold mb-2 flex items-center gap-2">
+            <Apple className="h-8 w-8" />
+            {recipe.name}
+          </h1>
+          <div className="flex items-center gap-4">
+            <span className="badge badge-primary">{recipe.category}</span>
+            <div className="flex items-center gap-2">
+              <Timer className="w-4 h-4" />
+              <span>{recipe.preparationTime}</span>
+            </div>
+            <span className="badge badge-outline">{recipe.difficulty}</span>
+          </div>
         </div>
 
         {renderTabs()}
 
-        {/* Food Cards */}
-        <div className="grid grid-cols-1 gap-6">
-          {foodData.map((food) => (
-            <div key={food.id} className="card bg-base-100 shadow-xl">
-              <div className="card-body">
-                <div className="flex justify-between items-start">
-                  <h2 className="card-title text-2xl">
-                    {food.name}
-                    <span className="badge badge-primary">{food.category}</span>
-                  </h2>
-                  <div className="flex items-center gap-2">
-                    <Timer className="w-4 h-4" />
-                    <span>{food.preparationTime}</span>
-                    <span className="badge badge-outline">
-                      {food.difficulty}
-                    </span>
+        <div className="card bg-base-100 shadow-xl">
+          <div className="card-body">
+            {activeTab === "nutrition" ? (
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 my-4">
+                <div className="stat bg-base-200 rounded-lg p-2">
+                  <div className="stat-title text-xs">Calories</div>
+                  <div className="stat-value text-lg">
+                    {recipe.nutrition_info.calories}
                   </div>
+                  <div className="stat-desc">per serving</div>
+                </div>
+                <div className="stat bg-base-200 rounded-lg p-2">
+                  <div className="stat-title text-xs">Protein</div>
+                  <div className="stat-value text-lg">
+                    {recipe.nutrition_info.protein}g
+                  </div>
+                  <div className="stat-desc">per serving</div>
+                </div>
+                <div className="stat bg-base-200 rounded-lg p-2">
+                  <div className="stat-title text-xs">Carbs</div>
+                  <div className="stat-value text-lg">
+                    {recipe.nutrition_info.carbs}g
+                  </div>
+                  <div className="stat-desc">per serving</div>
+                </div>
+                <div className="stat bg-base-200 rounded-lg p-2">
+                  <div className="stat-title text-xs">Fat</div>
+                  <div className="stat-value text-lg">
+                    {recipe.nutrition_info.fat}g
+                  </div>
+                  <div className="stat-desc">per serving</div>
+                </div>
+              </div>
+            ) : (
+              <div className="mt-4">
+                <div className="mb-6">
+                  <h3 className="text-lg font-semibold mb-2 flex items-center gap-2">
+                    <Soup className="w-4 h-4" />
+                    Ingredients
+                  </h3>
+                  <ul className="list-disc pl-5">
+                    {recipe.ingredients.map((ingredient, index) => (
+                      <li key={index} className="mb-1">
+                        {ingredient.name} - {ingredient.amount}
+                      </li>
+                    ))}
+                  </ul>
                 </div>
 
-                {activeTab === "nutrition" ? (
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 my-4">
-                    <div className="stat bg-base-200 rounded-lg p-2">
-                      <div className="stat-title text-xs">Calories</div>
-                      <div className="stat-value text-lg">
-                        {food.nutrition.calories}
-                      </div>
-                      <div className="stat-desc">
-                        per {food.nutrition.serving}
-                      </div>
-                    </div>
-                    <div className="stat bg-base-200 rounded-lg p-2">
-                      <div className="stat-title text-xs">Protein</div>
-                      <div className="stat-value text-lg">
-                        {food.nutrition.protein}g
-                      </div>
-                      <div className="stat-desc">
-                        per {food.nutrition.serving}
-                      </div>
-                    </div>
-                    <div className="stat bg-base-200 rounded-lg p-2">
-                      <div className="stat-title text-xs">Carbs</div>
-                      <div className="stat-value text-lg">
-                        {food.nutrition.carbs}g
-                      </div>
-                      <div className="stat-desc">
-                        per {food.nutrition.serving}
-                      </div>
-                    </div>
-                    <div className="stat bg-base-200 rounded-lg p-2">
-                      <div className="stat-title text-xs">Fat</div>
-                      <div className="stat-value text-lg">
-                        {food.nutrition.fat}g
-                      </div>
-                      <div className="stat-desc">
-                        per {food.nutrition.serving}
-                      </div>
-                    </div>
+                <div className="mb-6">
+                  <h3 className="text-lg font-semibold mb-2 flex items-center gap-2">
+                    <ChefHat className="w-4 h-4" />
+                    Cooking Instructions
+                  </h3>
+                  <p className="whitespace-pre-wrap">{recipe.instructions}</p>
+                </div>
+
+                {recipe.allergens?.length > 0 && (
+                  <div className="alert alert-warning">
+                    <Info className="w-4 h-4" />
+                    <span>Allergens: {recipe.allergens.join(", ")}</span>
                   </div>
-                ) : (
-                  <div className="mt-4">
-                    <div className="mb-6">
-                      <h3 className="text-lg font-semibold mb-2 flex items-center gap-2">
-                        <Soup className="w-4 h-4" />
-                        Ingredients
-                      </h3>
-                      <ul className="list-disc pl-5">
-                        {food.ingredients.map((ingredient, index) => (
-                          <li key={index} className="mb-1">
-                            {ingredient.name} - {ingredient.amount}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
+                )}
 
-                    <div className="mb-6">
-                      <h3 className="text-lg font-semibold mb-2 flex items-center gap-2">
-                        <ChefHat className="w-4 h-4" />
-                        Cooking Instructions
-                      </h3>
-                      <ol className="list-decimal pl-5">
-                        {food.instructions.map((step, index) => (
-                          <li key={index} className="mb-2">
-                            {step}
-                          </li>
-                        ))}
-                      </ol>
-                    </div>
-
-                    {food.allergens.length > 0 && (
-                      <div className="alert alert-warning">
-                        <Info className="w-4 h-4" />
-                        <span>Allergens: {food.allergens.join(", ")}</span>
-                      </div>
-                    )}
-
-                    <div className="mt-4 p-4 bg-base-200 rounded-lg">
-                      <h3 className="font-semibold mb-2">Chef's Tips</h3>
-                      <p>{food.tips}</p>
-                    </div>
+                {recipe.tips && (
+                  <div className="mt-4 p-4 bg-base-200 rounded-lg">
+                    <h3 className="font-semibold mb-2">Chef's Tips</h3>
+                    <p>{recipe.tips}</p>
                   </div>
                 )}
               </div>
-            </div>
-          ))}
+            )}
+          </div>
         </div>
       </div>
     </div>

@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useUser } from "../contexts/UserContext";
 import { generateDummyPosts } from "../utils/dummyData";
-import { Loader2 } from "lucide-react";
+import { Loader2, LogIn } from "lucide-react";
+import { Link } from "react-router-dom";
 import PostCard from "../components/PostCard";
 import CreatePost from "../components/CreatePost";
 
@@ -65,7 +66,6 @@ const Community = () => {
       await new Promise(resolve => setTimeout(resolve, 1000));
       const newPosts = generateDummyPosts(posts.length);
       setPosts(prev => [...prev, ...newPosts]);
-      setPage(prev => prev + 1);
     } catch (error) {
       console.error("Failed to load more posts:", error);
     } finally {
@@ -83,15 +83,30 @@ const Community = () => {
       <div className="max-w-2xl mx-auto">
         <h1 className="text-3xl font-bold mb-8">Community</h1>
 
-        <CreatePost
-          user={user}
-          newPost={newPost}
-          setNewPost={setNewPost}
-          image={image}
-          setImage={setImage}
-          isLoading={isLoading}
-          onSubmit={handleCreatePost}
-        />
+        {user ? (
+          <CreatePost
+            user={user}
+            newPost={newPost}
+            setNewPost={setNewPost}
+            image={image}
+            setImage={setImage}
+            isLoading={isLoading}
+            onSubmit={handleCreatePost}
+          />
+        ) : (
+          <div className="card bg-base-100 shadow-xl mb-8">
+            <div className="card-body items-center text-center">
+              <LogIn className="w-12 h-12 text-primary mb-2" />
+              <h3 className="card-title">Join the Community</h3>
+              <p className="text-base-content/70 mb-4">
+                Sign in to share your thoughts and interact with other members
+              </p>
+              <Link to="/auth" className="btn btn-primary">
+                Log In to Post
+              </Link>
+            </div>
+          </div>
+        )}
 
         <div className="space-y-6">
           {posts.map((post) => (
@@ -99,6 +114,7 @@ const Community = () => {
               key={post._id} 
               post={post} 
               onLike={handleLike}
+              requireAuth={!user}
             />
           ))}
 

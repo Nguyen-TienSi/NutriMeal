@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Target, Scale, Activity, Apple, ArrowRight, ArrowLeft } from 'lucide-react';
-import { apiRequest } from '../utils/api'; // Import apiRequest
-import { useUser } from '../contexts/UserContext'; // Import the user context
-import { useNavigate } from 'react-router-dom';
+import { Target, Scale, Activity, Apple, ArrowRight, ArrowLeft, LogIn } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { apiRequest } from '../utils/api';
+import { useUser } from '../contexts/UserContext';
 
 const HealthGoals = () => {
-  // Move all Hook declarations to the top
   const [isLoading, setIsLoading] = useState(true);
   const [currentStep, setCurrentStep] = useState(1);
   const [errors, setErrors] = useState({});
@@ -19,17 +18,26 @@ const HealthGoals = () => {
   });
 
   const { user } = useUser();
-  const navigate = useNavigate();
 
-  useEffect(() => {
-    if (!user) {
-      navigate('/auth');
-    } else {
-      setIsLoading(false);
-    }
-  }, [user, navigate]);
+  if (!user) {
+    return (
+      <div className="min-h-screen p-10 flex flex-col items-center justify-center">
+        <div className="card w-96 bg-base-100 shadow-xl text-center">
+          <div className="card-body">
+            <LogIn className="w-16 h-16 mx-auto text-primary" />
+            <h2 className="card-title justify-center text-2xl mt-4">Login Required</h2>
+            <p className="text-base-content/70 mb-4">
+              Please log in to set and manage your health goals
+            </p>
+            <Link to="/auth" className="btn btn-primary">
+              Log In Now
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
-  // Rest of your component logic
   const validateStep = (step) => {
     const newErrors = {};
     switch (step) {
@@ -58,7 +66,6 @@ const HealthGoals = () => {
       ...prev,
       [name]: value
     }));
-    // Clear error when user starts typing
     if (errors[name]) {
       setErrors(prev => ({ ...prev, [name]: '' }));
     }
@@ -87,7 +94,7 @@ const HealthGoals = () => {
     e.preventDefault();
     if (validateStep(currentStep)) {
         try {
-            if (!user || !user._id) { // check  _id
+            if (!user || !user._id) {
                 console.error('User context:', user);
                 throw new Error('User ID not found. Please log in.');
             }
@@ -98,7 +105,7 @@ const HealthGoals = () => {
                 activityLevel: goals.activityLevel,
                 dietaryPreferences: goals.dietaryPreferences || [],
                 weeklyGoal: goals.weeklyGoal || '',
-                user_id: user._id // Use _id
+                user_id: user._id
             };
 
             console.log('User ID:', user._id);
@@ -254,7 +261,6 @@ const renderStep = () => {
   }
 };
 
-  // Render loading state
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -263,7 +269,6 @@ const renderStep = () => {
     );
   }
 
-  // Render success state
   if (isSubmitted) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -271,7 +276,7 @@ const renderStep = () => {
           <h1 className="text-3xl font-bold mb-4">Health Goal Saved!</h1>
           <p className="text-gray-600 mb-8">Your health goals have been successfully saved.</p>
           <button
-            onClick={() => setIsSubmitted(false)} // Reset form or navigate elsewhere
+            onClick={() => setIsSubmitted(false)}
             className="btn btn-primary"
           >
             Set Another Goal
@@ -281,7 +286,6 @@ const renderStep = () => {
     );
   }
 
-  // Main render
   return (
     <div className="min-h-screen p-10">
       <div className="max-w-3xl mx-auto">

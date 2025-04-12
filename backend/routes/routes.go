@@ -29,4 +29,16 @@ func SetupRoutes(app *fiber.App) {
 	healthGoals.Get("/user/:userId", handlers.GetHealthGoalsByUserId)
 	healthGoals.Get("/:user_id", handlers.GetHealthGoal)
 	healthGoals.Put("/:user_id", handlers.UpdateHealthGoal)
+
+	// reciepe routes
+	recipes := api.Group("/recipes")
+	recipes.Get("/", handlers.GetAllRecipes)
+	recipes.Get("/:id", handlers.GetRecipeByID)
+	recipes.Get("/category", handlers.GetRecipesByCategory)
+	// recipes.Post("/", handlers.CreateRecipe) // later for nutritionist
+
+	// Meal plan routes
+	mealPlans := api.Group("/meal-plans")
+	mealPlans.Get("/user/:userId", handlers.GetMealPlansByUserID)
+	mealPlans.Post("/", handlers.CreateMealPlan)
 }

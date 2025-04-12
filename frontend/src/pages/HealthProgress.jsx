@@ -1,10 +1,32 @@
 import React, { useState } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
-import { Scale, Target, TrendingUp, Calendar } from 'lucide-react';
+import { Scale, Target, TrendingUp, Calendar, LogIn } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { useUser } from '../contexts/UserContext';
 
 const HealthProgress = () => {
+  const { user } = useUser();
   const [selectedMetric, setSelectedMetric] = useState('weight');
   
+  if (!user) {
+    return (
+      <div className="min-h-screen p-10 flex flex-col items-center justify-center">
+        <div className="card w-96 bg-base-100 shadow-xl text-center">
+          <div className="card-body">
+            <LogIn className="w-16 h-16 mx-auto text-primary" />
+            <h2 className="card-title justify-center text-2xl mt-4">Login Required</h2>
+            <p className="text-base-content/70 mb-4">
+              Please log in to view your health progress
+            </p>
+            <Link to="/auth" className="btn btn-primary">
+              Log In Now
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   // Mock data - replace with actual data from your backend
   const progressData = [
     { date: '2024-03-01', weight: 75, calories: 2100, steps: 8000 },

@@ -1,8 +1,17 @@
-import React, { useState } from "react";
-import { Search, Utensils, Target, ActivitySquare, ChefHat, X, Loader2 } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import {
+  Search,
+  Utensils,
+  Target,
+  ActivitySquare,
+  ChefHat,
+  X,
+  Loader2,
+} from "lucide-react";
 import RecipeCard from "../components/RecipeCard";
 import FunctionCard from "../components/FunctionCard";
-import TypewriterText from '../components/TypewriterText';
+import TypewriterText from "../components/TypewriterText";
+import { apiRequest } from "../utils/api";
 
 const FUNCTION_CARDS = [
   {
@@ -35,25 +44,6 @@ const FUNCTION_CARDS = [
   },
 ];
 
-const RECIPE_CARDS = [
-  {
-    recipeId: 1,
-    title: "Grilled Chicken",
-    description: "Healthy grilled chicken breast",
-    calories: "165",
-    image: "/2.jpg",
-    tags: ["Protein-rich", "Low-carb"],
-  },
-  {
-    recipeId: 2,
-    title: "Grilled Chicken Breast with Herbs",
-    description: "Grilled chicken with fresh herbs",
-    calories: "180",
-    image: "/3.jpg",
-    tags: ["Protein-rich", "Low-carb"],
-  },
-];
-
 const Home = () => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -68,38 +58,47 @@ const Home = () => {
     setAiResponse(null);
 
     try {
-      const response = await fetch('/api/ai/chat', {
-        method: 'POST',
+      const response = await fetch("/api/ai/chat", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ query: searchQuery }),
       });
 
       if (!response.ok) {
-        throw new Error('API not available');
+        throw new Error("API not available");
       }
 
       const data = await response.json();
       setAiResponse(data.response);
     } catch (error) {
-      console.error('AI API Error:', error);
-      setAiResponse("AI feature is still in development. Please try burger or pizza.");
+      console.error("AI API Error:", error);
+      setAiResponse(
+        "AI feature is still in development. Please try burger or pizza."
+      );
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen p-10 relative">
-      <QuickAccess />
-      <RecommendedRecipes />
-      <FloatingButton isOpen={isSearchOpen} setIsOpen={setIsSearchOpen} />
+    <>
+      {/* Main content */}
+      <div
+        className={`min-h-screen p-10 relative ${
+          isSearchOpen ? "blur-sm" : ""
+        }`}
+      >
+        <QuickAccess />
+        <RecommendedRecipes />
+        <FloatingButton isOpen={isSearchOpen} setIsOpen={setIsSearchOpen} />
+      </div>
 
-      {/* Quick Search Modal */}
+      {/* Quick Search Modal  */}
       {isSearchOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-base-100 rounded-lg shadow-xl w-full max-w-2xl">
+        <div className="fixed inset-0 flex items-center justify-center p-4 z-50">
+          <div className="bg-base-100/90 backdrop-blur-xl rounded-lg shadow-xl w-full max-w-2xl">
             <div className="p-4 flex justify-between items-center border-b">
               <h3 className="text-lg font-semibold">Nutri AI Assistant</h3>
               <button
@@ -151,8 +150,8 @@ const Home = () => {
                     "Best foods for weight loss",
                     "Quick protein recipes",
                   ].map((term) => (
-                    <button 
-                      key={term} 
+                    <button
+                      key={term}
                       className="btn btn-sm btn-ghost"
                       onClick={() => {
                         setSearchQuery(term);
@@ -168,7 +167,7 @@ const Home = () => {
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 };
 
@@ -198,18 +197,83 @@ const QuickAccess = () => (
   </div>
 );
 
-const RecommendedRecipes = () => (
-  <>
-    <p className="font-bold text-2xl md:text-3xl mt-8">Recommended for you</p>
-    <p className="text-slate-500 font-semibold ml-1 my-2 text-sm tracking-tight">
-      Choose from our wide range of meal options
-    </p>
-    <div className="grid gap-3 grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
-      {RECIPE_CARDS.map((recipe, index) => (
-        <RecipeCard key={index} {...recipe} />
-      ))}
-    </div>
-  </>
-);
+// Update the RecommendedRecipes component
+const RecommendedRecipes = () => {
+  const [recipes, setRecipes] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchRecommendedRecipes = async () => {
+      try {
+        setLoading(true);
+        const data = await apiRequest("/recipes?limit=4");
+
+        // Transform recipe data to match RecipeCard props
+        const transformedRecipes = data.recipes.map((recipe) => ({
+          recipeId: recipe.id,
+          title: recipe.name,
+          description: recipe.instructions.slice(0, 100) + "...",
+          calories: recipe.nutrition_info.calories,
+          cookTime: recipe.preparationTime,
+          image: recipe.image || "/2.jpg",
+          tags: [recipe.category, recipe.difficulty].concat(
+            recipe.allergens || []
+          ),
+        }));
+
+        setRecipes(transformedRecipes);
+      } catch (err) {
+        setError("Failed to load recommended recipes");
+        console.error("Error fetching recipes:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchRecommendedRecipes();
+  }, []);
+
+  return (
+    <>
+      <p className="font-bold text-2xl md:text-3xl mt-8">Recommended for you</p>
+      <p className="text-slate-500 font-semibold ml-1 my-2 text-sm tracking-tight">
+        Choose from our wide range of meal options
+      </p>
+      <div className="grid gap-3 grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
+        {loading ? (
+          Array(4)
+            .fill(0)
+            .map((_, index) => (
+              <div
+                key={index}
+                className="card bg-base-100 shadow animate-pulse"
+              >
+                <div className="h-48 bg-base-200 rounded-t-lg"></div>
+                <div className="card-body">
+                  <div className="h-4 bg-base-200 rounded w-3/4"></div>
+                  <div className="h-3 bg-base-200 rounded w-1/2 mt-2"></div>
+                  <div className="flex gap-2 mt-4">
+                    <div className="h-6 bg-base-200 rounded w-16"></div>
+                    <div className="h-6 bg-base-200 rounded w-16"></div>
+                  </div>
+                </div>
+              </div>
+            ))
+        ) : error ? (
+          <div className="col-span-full">
+            <div className="alert alert-error">
+              <span>{error}</span>
+            </div>
+          </div>
+        ) : (
+          recipes.map((recipe) => (
+            <RecipeCard key={recipe.recipeId} {...recipe} />
+          ))
+        )}
+      </div>
+    </>
+  );
+};
 
 export default Home;

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { GoogleLogin } from "@react-oauth/google";
 import * as jwtDecode from "jwt-decode";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useUser } from "../contexts/UserContext";
 import { apiRequest } from "../utils/api";
 import { AlertCircle } from "lucide-react";
@@ -122,15 +122,29 @@ const Auth = () => {
             </div>
           )}
 
-          {/* Google Login */}
-          <div className="flex justify-center">
-            <GoogleLogin
-              onSuccess={handleGoogleSuccess}
-              onError={handleGoogleError}
-              useOneTap
-              scope="email profile"
-              cookiePolicy={"single_host_origin"}
-            />
+          {/* Authentication Options */}
+          <div className="flex flex-col gap-4">
+            {/* Google Login */}
+            <div className="flex justify-center">
+              <GoogleLogin
+                onSuccess={handleGoogleSuccess}
+                onError={handleGoogleError}
+                useOneTap
+                scope="email profile"
+                cookiePolicy={"single_host_origin"}
+              />
+            </div>
+
+            {/* Divider */}
+            <div className="divider text-xs text-base-content/50">OR</div>
+
+            {/* Email/Password page */}
+            <Link 
+              to={`/auth/${activeTab === "signin" ? "login" : "register"}`}
+              className="btn btn-outline w-full"
+            >
+              Continue with Email and Password
+            </Link>
           </div>
 
           {/* Terms */}
