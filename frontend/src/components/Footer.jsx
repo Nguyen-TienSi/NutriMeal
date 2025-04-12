@@ -19,7 +19,7 @@ const Footer = () => {
       { name: "Contact", path: "/contact" },
     ],
     resources: [
-      { name: "Blog", path: "/blog" },
+      { name: "Community", path: "/community" },
       { name: "Nutrition Guide", path: "/nutrition-guide" },
       { name: "Recipe Database", path: "/recipes" },
       { name: "Help Center", path: "/help" },

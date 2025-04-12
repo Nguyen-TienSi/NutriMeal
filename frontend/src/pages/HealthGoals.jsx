@@ -1,11 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { Target, Scale, Activity, Apple, ArrowRight, ArrowLeft, LogIn } from 'lucide-react';
+import React, { useState } from 'react';
+import { Target, Scale, Activity, Apple, ArrowRight, ArrowLeft, LogIn, CheckCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { apiRequest } from '../utils/api';
 import { useUser } from '../contexts/UserContext';
 
 const HealthGoals = () => {
-  const [isLoading, setIsLoading] = useState(true);
   const [currentStep, setCurrentStep] = useState(1);
   const [errors, setErrors] = useState({});
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -261,20 +260,13 @@ const renderStep = () => {
   }
 };
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="loading loading-spinner loading-lg"></div>
-      </div>
-    );
-  }
-
   if (isSubmitted) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
+          <CheckCircle className="w-16 h-16 text-success mx-auto mb-4" />
           <h1 className="text-3xl font-bold mb-4">Health Goal Saved!</h1>
-          <p className="text-gray-600 mb-8">Your health goals have been successfully saved.</p>
+          <p className="text-base-content/70 mb-8">Your health goals have been successfully saved.</p>
           <button
             onClick={() => setIsSubmitted(false)}
             className="btn btn-primary"
