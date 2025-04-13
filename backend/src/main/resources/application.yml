@@ -1,6 +1,8 @@
 spring:
   application:
     name: NutriAI
+  profiles:
+    active: dev # dev, prod
 
   main:
     banner-mode: off
@@ -19,7 +21,18 @@ spring:
 
   data:
     mongodb:
-      uri: mongodb://localhost:27017/nutriai
+      uri: mongodb+srv://hieudoanw11:pDeujv3Wpc5K54xj@cluster0.tuyao3c.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
+      database: nutri_meal
+      auto-index-creation: true
 
 server:
   port: 8080
+  error:
+    whitelabel:
+      enabled: true
+  servlet:
+    session:
+      timeout: 30m
+
+logging:
+  config: classpath:logback-${spring.profiles.active}.xml
