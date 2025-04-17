@@ -41,4 +41,9 @@ func SetupRoutes(app *fiber.App) {
 	mealPlans := api.Group("/meal-plans")
 	mealPlans.Get("/user/:userId", handlers.GetMealPlansByUserID)
 	mealPlans.Post("/", handlers.CreateMealPlan)
+
+	// Food log routes
+	foodLogs := api.Group("/food-logs")
+	foodLogs.Get("/user/:userId", handlers.GetFoodLogsByUserID)
+	foodLogs.Post("/", handlers.CreateFoodLog)
 }

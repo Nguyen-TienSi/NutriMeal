@@ -1,14 +1,18 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { Search, Apple, Weight, Timer, Soup, ChefHat, Info, Loader2 } from "lucide-react";
+import { Search, Apple, Weight, Timer, Soup, ChefHat, Info, Loader2, PlusCircle } from "lucide-react";
 import { apiRequest } from '../utils/api';
+import { useUser } from '../contexts/UserContext';
 
 const RecipeDetails = () => {
+  const { user } = useUser();
   const { id } = useParams();
   const [recipe, setRecipe] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState("nutrition");
+  const [mealTime, setMealTime] = useState("Breakfast");
+  const [isLogging, setIsLogging] = useState(false);
 
   useEffect(() => {
     const fetchRecipe = async () => {
@@ -74,6 +78,38 @@ const RecipeDetails = () => {
       </div>
     );
   }
+
+  const handleLogMeal = async () => {
+    if (!user) {
+      alert("Please log in to track meals");
+      return;
+    }
+
+    try {
+      setIsLogging(true);
+      const today = new Date().toISOString().split('T')[0];
+
+      const foodLog = {
+        user_id: user._id,
+        food_name: recipe.name,
+        calories: recipe.nutrition_info.calories,
+        protein: recipe.nutrition_info.protein,
+        carbs: recipe.nutrition_info.carbs,
+        fat: recipe.nutrition_info.fat,
+        meal_time: mealTime,
+        date: today,
+        food_id: recipe.id
+      };
+
+      await apiRequest('/food-logs', 'POST', foodLog);
+      alert("Meal logged successfully!");
+    } catch (err) {
+      console.error("Error logging meal:", err);
+      alert("Failed to log meal");
+    } finally {
+      setIsLogging(false);
+    }
+  };
 
   return (
     <div className="min-h-screen p-10">
@@ -167,6 +203,36 @@ const RecipeDetails = () => {
                 )}
               </div>
             )}
+          </div>
+        </div>
+
+        <div className="card bg-base-100 shadow-xl mt-8">
+          <div className="card-body">
+            <h3 className="card-title text-lg mb-4">I just finished eating it.</h3>
+            <div className="flex items-center gap-4">
+              <select 
+                value={mealTime}
+                onChange={(e) => setMealTime(e.target.value)}
+                className="select select-bordered"
+              >
+                <option value="Breakfast">Breakfast</option>
+                <option value="Lunch">Lunch</option>
+                <option value="Dinner">Dinner</option>
+                {/* <option value="Snack">Snack</option> */}
+              </select>
+              <button
+                onClick={handleLogMeal}
+                disabled={isLogging}
+                className="btn btn-primary gap-2"
+              >
+                {isLogging ? (
+                  <Loader2 className="animate-spin" size={20} />
+                ) : (
+                  <PlusCircle size={20} />
+                )}
+                Log Meal
+              </button>
+            </div>
           </div>
         </div>
       </div>

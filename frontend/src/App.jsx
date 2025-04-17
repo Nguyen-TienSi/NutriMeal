@@ -16,6 +16,7 @@ import NotFound from './pages/NotFound';
 import Profile from './pages/Profile';
 import Community from './pages/Community';
 import Recipes from './pages/Recipes';
+import FoodLogs from './pages/FoodLogs';
 
 function App() {
   const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
@@ -43,6 +44,7 @@ function App() {
               <Route path="/recipe/:id" element={<RecipeDetails />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/community" element={<Community />} />
+              <Route path="/food-logs" element={<FoodLogs />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </div>
