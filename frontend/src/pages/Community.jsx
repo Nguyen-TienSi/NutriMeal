@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useUser } from "../contexts/UserContext";
-import { generateDummyPosts } from "../utils/dummyData";
 import { Loader2, LogIn } from "lucide-react";
 import { Link } from "react-router-dom";
 import PostCard from "../components/PostCard";
 import CreatePost from "../components/CreatePost";
+import { apiRequest } from "../utils/api";
 
 const Community = () => {
   const [posts, setPosts] = useState([]);
@@ -12,76 +12,141 @@ const Community = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [image, setImage] = useState(null);
-//   const [page, setPage] = useState(0);
+  const [page, setPage] = useState(0);
+  const [error, setError] = useState(null);
   const { user } = useUser();
+
+  // Helper function to format post data
+  const formatPost = (post) => ({
+    _id: post._id.$oid || post._id,
+    content: post.content,
+    image: post.image,
+    imageType: post.imageType,
+    createdAt: new Date(post.createdAt.$date?.$numberLong || post.createdAt).toISOString(),
+    likes: parseInt(post.likes?.$numberInt || post.likes || 0),
+    likedBy: post.likedBy || [],
+    author: post.author
+  });
+
+  // Fetch initial posts
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        const data = await apiRequest(`/community/posts?page=0&limit=10`);
+        const formattedPosts = data.map(formatPost);
+        setPosts(formattedPosts);
+      } catch (err) {
+        setError("Failed to load posts");
+        console.error("Error fetching posts:", err);
+      }
+    };
+    fetchPosts();
+  }, []);
 
   const handleCreatePost = async (e) => {
     e.preventDefault();
-    if (!newPost.trim() && !image) return;
-
+    const content = newPost.trim();
+    
+    if (!content) {
+      setError("Content is required");
+      return;
+    }
+  
     setIsLoading(true);
     try {
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      const formData = new FormData();
+      formData.append("content", content);
       
-      const newDummyPost = {
-        _id: `post-${Date.now()}`,
-        content: newPost,
-        image: image ? URL.createObjectURL(image) : null,
-        createdAt: new Date().toISOString(),
-        likes: 0,
-        isLiked: false,
-        author: {
-          _id: user._id,
-          name: user.name,
-          picture: user.picture,
+      if (image) {
+        // Validate file size and type
+        if (image.size > 5 * 1024 * 1024) {
+          setError("Image too large (max 5MB)");
+          return;
         }
-      };
-
-      setPosts(prev => [newDummyPost, ...prev]);
+        if (!image.type.startsWith('image/')) {
+          setError("Invalid file type. Please upload an image.");
+          return;
+        }
+        formData.append("image", image, image.name);
+      }
+  
+      // Add author data as individual fields
+      formData.append("author.id", user._id);
+      formData.append("author.name", user.name);
+      formData.append("author.picture", user.picture || "/default-avatar.png");
+  
+      const createdPost = await apiRequest("/community/posts", "POST", formData, true);
+      
+      // Format the new post
+      const formattedPost = formatPost(createdPost);
+      setPosts(prev => [formattedPost, ...prev]);
       setNewPost("");
       setImage(null);
+      setError(null);
     } catch (error) {
       console.error("Failed to create post:", error);
+      setError(error.message || "Failed to create post. Please try again.");
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleLike = async (postId) => {
-    setPosts(prev => prev.map(post => {
-      if (post._id === postId) {
-        return {
-          ...post,
-          likes: post.isLiked ? post.likes - 1 : post.likes + 1,
-          isLiked: !post.isLiked
-        };
-      }
-      return post;
-    }));
+    if (!user) return; // Prevent liking if not logged in
+
+    try {
+      // Call the like API endpoint with user ID
+      const response = await apiRequest(`/community/posts/${postId}/like`, "POST", {
+        userId: user._id
+      });
+
+      // Update posts state optimistically
+      setPosts(prev => prev.map(post => {
+        if (post._id === postId) {
+          const newLikedBy = response.liked 
+            ? [...post.likedBy, user._id]
+            : post.likedBy.filter(id => id !== user._id);
+
+          return {
+            ...post,
+            likes: response.liked ? post.likes + 1 : post.likes - 1,
+            likedBy: newLikedBy
+          };
+        }
+        return post;
+      }));
+    } catch (error) {
+      console.error("Failed to update like:", error);
+      setError("Failed to update like. Please try again.");
+    }
   };
 
   const loadMorePosts = async () => {
     setIsLoadingMore(true);
     try {
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      const newPosts = generateDummyPosts(posts.length);
-      setPosts(prev => [...prev, ...newPosts]);
+      const nextPage = page + 1;
+      const data = await apiRequest(`/community/posts?page=${nextPage}&limit=10`);
+      const formattedPosts = data.map(formatPost);
+      setPosts(prev => [...prev, ...formattedPosts]);
+      setPage(nextPage);
     } catch (error) {
       console.error("Failed to load more posts:", error);
+      setError("Failed to load more posts");
     } finally {
       setIsLoadingMore(false);
     }
   };
 
-  useEffect(() => {
-    const initialPosts = generateDummyPosts(0);
-    setPosts(initialPosts);
-  }, []);
-
   return (
     <div className="min-h-screen p-10">
       <div className="max-w-2xl mx-auto">
         <h1 className="text-3xl font-bold mb-8">Community</h1>
+
+        {error && (
+          <div className="alert alert-error mb-4">
+            <span>{error}</span>
+          </div>
+        )}
 
         {user ? (
           <CreatePost
@@ -115,6 +180,7 @@ const Community = () => {
               post={post} 
               onLike={handleLike}
               requireAuth={!user}
+              user={user}
             />
           ))}
 

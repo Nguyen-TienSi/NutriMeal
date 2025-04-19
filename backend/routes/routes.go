@@ -46,4 +46,10 @@ func SetupRoutes(app *fiber.App) {
 	foodLogs := api.Group("/food-logs")
 	foodLogs.Get("/user/:userId", handlers.GetFoodLogsByUserID)
 	foodLogs.Post("/", handlers.CreateFoodLog)
+
+	// Community routes
+	community := api.Group("/community")
+	community.Get("/posts", handlers.GetCommunityPosts)
+	community.Post("/posts", handlers.CreateCommunityPost)
+	community.Post("/posts/:postId/like", handlers.LikePost)  // Add this line
 }

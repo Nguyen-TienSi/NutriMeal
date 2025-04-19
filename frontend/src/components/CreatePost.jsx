@@ -10,6 +10,22 @@ const CreatePost = ({
   isLoading, 
   onSubmit 
 }) => {
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        alert("Image too large (max 5MB)");
+        return;
+      }
+      if (!file.type.startsWith('image/')) {
+        alert("Please select an image file");
+        return;
+      }
+      setImage(file);
+    }
+  };
+
   return (
     <div className="card bg-base-100 shadow-xl mb-8">
       <div className="card-body">
@@ -49,7 +65,7 @@ const CreatePost = ({
                     type="file"
                     accept="image/*"
                     className="hidden"
-                    onChange={(e) => setImage(e.target.files[0])}
+                    onChange={handleImageChange}
                   />
                 </label>
                 <button
