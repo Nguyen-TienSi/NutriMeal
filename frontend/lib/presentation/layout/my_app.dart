@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-
-import '../views/onboarding/onboarding_welcome_screen.dart';
-import '../../core/app_config.dart';
+import 'package:nutriai_app/core/app_config.dart' show appName;
+import 'package:nutriai_app/presentation/views/onboarding/onboarding_screen.dart'
+    show OnboardingScreen;
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -12,9 +12,14 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: appName,
       theme: ThemeData(
+        colorScheme: ColorScheme.fromSwatch().copyWith(
+          primary: Colors.green,
+          onPrimary: Colors.white,
+        ),
         primarySwatch: Colors.green,
+        useMaterial3: true,
       ),
-      home: const OnboardingWelcomeScreen(),
+      home: const OnboardingScreen(),
     );
   }
 }

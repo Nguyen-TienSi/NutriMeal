@@ -6,6 +6,7 @@ spring:
 
   main:
     banner-mode: off
+    lazy-initialization: true
 
   security:
     oauth2:
@@ -21,9 +22,13 @@ spring:
 
   data:
     mongodb:
-      uri: mongodb+srv://hieudoanw11:pDeujv3Wpc5K54xj@cluster0.tuyao3c.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
+      uri: ${MONGO_URI}
       database: nutri_meal
       auto-index-creation: true
+      uuid-representation: standard
+
+  jpa:
+    show-sql: true
 
 server:
   port: 8080
@@ -36,3 +41,6 @@ server:
 
 logging:
   config: classpath:logback-${spring.profiles.active}.xml
+  level:
+    "[org.springframework.data.mongodb.core.MongoTemplate]": DEBUG
+    "[org.springframework.web]": DEBUG

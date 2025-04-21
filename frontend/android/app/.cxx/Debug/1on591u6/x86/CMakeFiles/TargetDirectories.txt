@@ -1,0 +1,2 @@
+D:/Bai tap/Do An Thuc Te/Current/NutriMeal/frontend/android/app/.cxx/Debug/1on591u6/x86/CMakeFiles/edit_cache.dir
+D:/Bai tap/Do An Thuc Te/Current/NutriMeal/frontend/android/app/.cxx/Debug/1on591u6/x86/CMakeFiles/rebuild_cache.dir

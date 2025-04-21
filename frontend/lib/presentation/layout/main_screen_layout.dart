@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
-
-import '../views/progress/progress_screen.dart';
-import 'main_app_bar.dart';
-import '../views/ask-ai/ask_ai_screen.dart';
-import '../views/home/home_screen.dart';
-import '../views/recipe/recipe_screen.dart';
-import '../views/settings/profile_screen.dart';
-import 'bottom_nav_bar.dart';
+import 'package:nutriai_app/presentation/layout/main_app_bar.dart'
+    show MainAppBar;
+import 'package:nutriai_app/presentation/layout/main_bottom_nav_bar.dart'
+    show MainBottomNavBar;
+import 'package:nutriai_app/presentation/views/ask-ai/ask_ai_screen.dart'
+    show AskAIScreen;
+import 'package:nutriai_app/presentation/views/community/social_post_screen.dart'
+    show SocialPostScreen;
+import 'package:nutriai_app/presentation/views/home/home_screen.dart'
+    show HomeScreen;
+import 'package:nutriai_app/presentation/views/health-progress-tracking/health_progress_tracking_screen.dart'
+    show HealthProgressTrackingScreen;
+import 'package:nutriai_app/presentation/views/recipe/recipe_screen.dart'
+    show RecipeScreen;
 
 class MainScreenLayout extends StatefulWidget {
   const MainScreenLayout({super.key});
@@ -21,9 +27,9 @@ class _State extends State<MainScreenLayout> {
   final List<Widget> _screens = [
     const HomeScreen(),
     const RecipeScreen(),
-    const ProgressScreen(),
+    const HealthProgressTrackingScreen(),
     const AskAIScreen(),
-    const ProfileScreen(),
+    const SocialPostScreen(),
   ];
 
   void _onItemTapped(int index) {
@@ -36,8 +42,12 @@ class _State extends State<MainScreenLayout> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: MainAppBar(),
-      body: _screens[_selectedIndex],
-      bottomNavigationBar: BottomNavBar(
+      body: SafeArea(
+          child: IndexedStack(
+        index: _selectedIndex,
+        children: _screens,
+      )),
+      bottomNavigationBar: MainBottomNavBar(
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
       ),
