@@ -1,4 +1,4 @@
-package com.uth.nutriai.utils;
+package com.uth.nutriai.converter;
 
 import com.mongodb.lang.NonNull;
 import org.springframework.core.convert.converter.Converter;

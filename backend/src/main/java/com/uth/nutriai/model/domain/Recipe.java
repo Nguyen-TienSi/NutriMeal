@@ -3,6 +3,7 @@ package com.uth.nutriai.model.domain;
 import java.time.Duration;
 import java.util.List;
 
+import com.uth.nutriai.model.enumeration.TimeOfDay;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -26,4 +27,5 @@ public class Recipe extends BaseEntity {
     private List<Ingredient> ingredients;
     private List<FoodTag> foodTags;
     private List<Nutrient> nutrients;
+    private List<TimeOfDay> timesOfDay;
 }

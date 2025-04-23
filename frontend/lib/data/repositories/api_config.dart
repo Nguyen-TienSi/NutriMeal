@@ -1,10 +1,10 @@
 mixin ApiConfig {
-  static const String apiVersion = '1';
-  static const String httpScheme = 'http';
-  static const String apiHost = '10.0.2.2';
-  static const int apiPort = 8080;
-  static const String apiPath = 'api';
-  static const String apiKey = 'YOUR_API_KEY';
+  String apiVersion = '1';
+  String httpScheme = 'http';
+  String apiHost = '192.168.2.9';
+  int apiPort = 8080;
+  String apiPath = 'api';
+  String apiKey = 'YOUR_API_KEY';
 
   Uri get apiUri => Uri(
         scheme: httpScheme,

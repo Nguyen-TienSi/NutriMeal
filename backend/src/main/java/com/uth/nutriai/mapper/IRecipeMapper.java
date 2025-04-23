@@ -18,16 +18,19 @@ import java.util.List;
 @Mapper(componentModel = "spring", uses = {
         IIngredientMapper.class,
         IFoodTagMapper.class,
-        INutrientMapper.class
+        INutrientMapper.class,
+        ITimeOfDayMapper.class,
 })
 public interface IRecipeMapper {
 
+    @Mapping(target = "timesOfDay", source = "timeOfDayDtoList")
     @Mapping(target = "cookingTime", expression = "java(mapToDuration(recipeCreateDto.cookingTime()))")
     @Mapping(target = "ingredients", source = "ingredientDtoList")
     @Mapping(target = "foodTags", source = "foodTagDtoList")
     @Mapping(target = "nutrients", source = "nutrientDtoList")
     Recipe mapToRecipe(RecipeCreateDto recipeCreateDto);
 
+    @Mapping(target = "timeOfDayDtoList", source = "timesOfDay")
     @Mapping(target = "auditMetadataDto", expression = "java(new AuditMetadataDto(recipe))")
     @Mapping(target = "cookingTime", expression = "java(mapToLong(recipe.getCookingTime()))")
     @Mapping(target = "ingredientDtoList", source = "ingredients")
@@ -35,6 +38,7 @@ public interface IRecipeMapper {
     @Mapping(target = "nutrientDtoList", source = "nutrients")
     RecipeDetailDto mapToRecipeDetailDto(Recipe recipe);
 
+    @Mapping(target = "timesOfDay", source = "timeOfDayDtoList")
     @Mapping(target = "cookingTime", expression = "java(mapToDuration(recipeUpdateDto.cookingTime()))")
     @Mapping(target = "ingredients", source = "ingredientDtoList")
     @Mapping(target = "foodTags", source = "foodTagDtoList")
@@ -42,6 +46,7 @@ public interface IRecipeMapper {
     @Mapping(target = "id", ignore = true)
     Recipe mapToRecipe(RecipeUpdateDto recipeUpdateDto);
 
+    @Mapping(target = "timeOfDayDtoList", source = "timesOfDay")
     @Mapping(target = "nutrientDtoList", source = "nutrients")
     @Mapping(target = "calories", ignore = true)
     RecipeSummaryDto mapToRecipeSummaryDto(Recipe recipe);
@@ -70,7 +75,9 @@ public interface IRecipeMapper {
                 recipe.getServing(),
                 recipe.getServingUnit(),
                 recipeSummaryDto.getCalories(),
-                recipeSummaryDto.nutrientDtoList()
+                recipeSummaryDto.nutrientDtoList(),
+                recipeSummaryDto.timeOfDayDtoList()
         );
     }
+
 }

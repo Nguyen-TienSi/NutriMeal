@@ -4,7 +4,7 @@ import 'package:nutriai_app/data/models/recipe_summary_data.dart'
 import 'package:nutriai_app/data/repositories/api_repository.dart';
 import 'package:nutriai_app/data/repositories/http_api_provider.dart'
     show HttpApiProvider;
-import 'package:nutriai_app/service/recipe_service.dart';
+import 'package:nutriai_app/service/api-service/recipe_service.dart';
 import 'recipe_card.dart' show RecipeCard;
 
 class RecipeSection extends StatefulWidget {

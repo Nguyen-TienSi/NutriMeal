@@ -1,7 +1,9 @@
 package com.uth.nutriai.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.uth.nutriai.dto.shared.NutrientDto;
+import com.uth.nutriai.dto.shared.TimeOfDayDto;
 import com.uth.nutriai.utils.NutritionCalculator;
 
 import java.util.List;
@@ -15,7 +17,9 @@ public record RecipeSummaryDto(
         String servingUnit,
         String calories,
 
-        @JsonIgnore List<NutrientDto> nutrientDtoList
+        @JsonIgnore List<NutrientDto> nutrientDtoList,
+
+        @JsonProperty("timesOfDay") List<TimeOfDayDto> timeOfDayDtoList
 ) implements NutritionCalculator {
     @Override
     public double calculateNutrients() {

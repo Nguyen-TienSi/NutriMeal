@@ -1,8 +1,10 @@
 package com.uth.nutriai.dto.request;
 
+import com.uth.nutriai.annotation.AllowedTimeOfDay;
 import com.uth.nutriai.dto.shared.FoodTagDto;
 import com.uth.nutriai.dto.shared.IngredientDto;
 import com.uth.nutriai.dto.shared.NutrientDto;
+import com.uth.nutriai.dto.shared.TimeOfDayDto;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -44,7 +46,18 @@ public record RecipeCreateDto(
 
         @JsonProperty("nutrients")
         @NotNull(message = "Nutrients are required")
-        List<@Valid NutrientDto> nutrientDtoList
+        List<@Valid NutrientDto> nutrientDtoList,
+
+        @JsonProperty("timesOfDay")
+        @NotNull(message = "Time of day is required")
+        List<@AllowedTimeOfDay(anyOf = {
+                TimeOfDayDto.MORNING,
+                TimeOfDayDto.NOON,
+                TimeOfDayDto.AFTERNOON,
+                TimeOfDayDto.EVENING,
+                TimeOfDayDto.NIGHT
+        }) @Valid TimeOfDayDto> timeOfDayDtoList
+
 
 ) {
 }

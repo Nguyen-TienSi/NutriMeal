@@ -1,0 +1,23 @@
+openapi: 3.0.1
+info:
+  title: NutriAI API
+  description: A NutriAI API using OpenAPI 3
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080/api/
+paths:
+  /greeting/get-hello:
+    get:
+      summary: Returns a greeting message
+      description: This endpoint returns a simple greeting.
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Hello, world!

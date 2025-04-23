@@ -7,4 +7,3 @@ public enum TimeOfDay {
     EVENING,
     NIGHT
 }
-

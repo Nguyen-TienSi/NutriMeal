@@ -8,8 +8,10 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 import com.mongodb.lang.NonNull;
-import com.uth.nutriai.utils.DurationToLongWriteConverter;
-import com.uth.nutriai.utils.LongToDurationReadConverter;
+import com.uth.nutriai.converter.DurationToLongWriteConverter;
+import com.uth.nutriai.converter.LongToDurationReadConverter;
+import com.uth.nutriai.converter.TimeOfDayReadConverter;
+import com.uth.nutriai.converter.TimeOfDayWriteConverter;
 import org.bson.UuidRepresentation;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.mongo.MongoProperties;
@@ -164,6 +166,8 @@ public class MongoConfig extends AbstractMongoClientConfiguration {
         List<Converter<?, ?>> converters = new ArrayList<>();
         converters.add(new DurationToLongWriteConverter());
         converters.add(new LongToDurationReadConverter());
+        converters.add(new TimeOfDayWriteConverter());
+        converters.add(new TimeOfDayReadConverter());
         return new MongoCustomConversions(converters);
     }
 }
