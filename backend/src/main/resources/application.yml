@@ -13,17 +13,37 @@ spring:
       client:
         registration:
           google:
-            client-id: ""
-            client-secret: ""
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
+            scope:
+              - openid
+              - email
+              - profile
+            redirect-uri:
+              - https://www.getpostman.com/oauth2/callback
+              - http://localhost:8000/login/oauth2/code/google
+            client-authentication-method:
+              - client_secret_basic
+            authorization-grant-type:
+              - authorization_code
+              - refresh_token
+            client-name: Google
+        provider:
+          google:
+            authorization-uri: https://accounts.google.com/o/oauth2/auth
+            token-uri: https://oauth2.googleapis.com/token
+            user-info-uri: https://www.googleapis.com/oauth2/v3/userinfo
+            user-name-attribute: sub
 
       resource server:
         jwt:
-          issuer-uri: ""
+          issuer-uri: https://accounts.google.com
+          jwk-set-uri: https://www.googleapis.com/oauth2/v3/certs
 
   data:
     mongodb:
       uri: ${MONGO_URI}
-      database: nutri_meal
+      database: ${MONGO_DATABASE}
       auto-index-creation: true
       uuid-representation: standard
 

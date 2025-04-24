@@ -24,6 +24,7 @@ class RecipeSection extends StatefulWidget {
 class _State extends State<RecipeSection> {
   final RecipeService recipeService = RecipeService();
   List<RecipeSummaryData> fetchedRecipeSummaryList = [];
+  bool isLoading = true;
 
   @override
   void initState() {
@@ -33,24 +34,31 @@ class _State extends State<RecipeSection> {
 
   Future<void> fetchRecipes() async {
     try {
-      final List<RecipeSummaryData> fetchedData =
-          await recipeService.fetchRecipeSummaryList();
-
+      final fetchedData = await recipeService.fetchRecipeSummaryList();
       if (mounted) {
         setState(() {
           fetchedRecipeSummaryList = fetchedData;
+          isLoading = false;
         });
       }
     } catch (e) {
       debugPrint('❌ Error fetching recipes: $e');
-      // Show error UI
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    if (isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
     if (fetchedRecipeSummaryList.isEmpty) {
-      return Center(child: Text('No recipes available.'));
+      return const Center(child: Text('No recipes available.'));
     }
 
     final List<Widget> renderedRecipeCards = fetchedRecipeSummaryList

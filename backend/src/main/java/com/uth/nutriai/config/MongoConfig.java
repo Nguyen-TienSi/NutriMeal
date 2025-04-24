@@ -1,18 +1,18 @@
 package com.uth.nutriai.config;
 
-import java.time.Instant;
-import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.TimeUnit;
-
+import com.mongodb.ConnectionString;
+import com.mongodb.MongoClientSettings;
+import com.mongodb.ReadPreference;
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
 import com.mongodb.lang.NonNull;
-import com.uth.nutriai.converter.DurationToLongWriteConverter;
-import com.uth.nutriai.converter.LongToDurationReadConverter;
-import com.uth.nutriai.converter.TimeOfDayReadConverter;
-import com.uth.nutriai.converter.TimeOfDayWriteConverter;
+import com.uth.nutriai.converter.*;
+import com.uth.nutriai.repository.UuidIdentifiedRepositoryImpl;
 import org.bson.UuidRepresentation;
+import org.bson.codecs.configuration.CodecRegistries;
+import org.bson.codecs.configuration.CodecRegistry;
+import org.bson.codecs.jsr310.Jsr310CodecProvider;
+import org.bson.codecs.pojo.PojoCodecProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.mongo.MongoProperties;
 import org.springframework.context.annotation.Bean;
@@ -22,7 +22,6 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
 import org.springframework.data.auditing.DateTimeProvider;
-import org.springframework.data.convert.CustomConversions;
 import org.springframework.data.mongodb.MongoDatabaseFactory;
 import org.springframework.data.mongodb.MongoTransactionManager;
 import org.springframework.data.mongodb.config.AbstractMongoClientConfiguration;
@@ -37,15 +36,14 @@ import org.springframework.data.mongodb.core.mapping.MongoMappingContext;
 import org.springframework.data.mongodb.core.mapping.MongoSimpleTypes;
 import org.springframework.data.mongodb.core.mapping.event.ValidatingMongoEventListener;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
-
-import com.mongodb.ConnectionString;
-import com.mongodb.MongoClientSettings;
-import com.mongodb.ReadPreference;
-import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoClients;
-import com.uth.nutriai.repository.UuidIdentifiedRepositoryImpl;
-
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
+
+import java.time.Instant;
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 @Configuration
 @EnableMongoRepositories(basePackages = "com.uth.nutriai.repository", repositoryBaseClass = UuidIdentifiedRepositoryImpl.class)
@@ -63,11 +61,33 @@ public class MongoConfig extends AbstractMongoClientConfiguration {
         return mongoProperties().getDatabase();
     }
 
+    @Override
+    protected void configureClientSettings(MongoClientSettings.Builder builder) {
+        builder.codecRegistry(codecRegistry());
+    }
+
+    @Bean(name = "codecRegistry")
+    CodecRegistry codecRegistry() {
+        CodecRegistry pojoCodecRegistry = CodecRegistries
+                .fromProviders(PojoCodecProvider.builder().automatic(true).build());
+        CodecRegistry jsr310CodecRegistry = CodecRegistries.fromProviders(new Jsr310CodecProvider());
+
+        return CodecRegistries.fromRegistries(
+                CodecRegistries.fromCodecs(new InstantCodec()),
+                MongoClientSettings.getDefaultCodecRegistry(),
+                jsr310CodecRegistry,
+                pojoCodecRegistry);
+    }
+
     @Bean(name = "mongoClient")
-    MongoClient mongoClient(@Qualifier("mongoProperties") MongoProperties mongoProperties) {
+    MongoClient mongoClient(
+            @Qualifier("mongoProperties") MongoProperties mongoProperties,
+            @Qualifier("codecRegistry") CodecRegistry codecRegistry) {
         MongoClientSettings settings = MongoClientSettings.builder()
                 .applyConnectionString(new ConnectionString(mongoProperties.getUri()))
                 .uuidRepresentation(UuidRepresentation.STANDARD)
+                .codecRegistry(codecRegistry)
+                .retryWrites(true)
                 .applyToConnectionPoolSettings(builder -> builder
                         .maxConnectionIdleTime(60, TimeUnit.SECONDS)
                         .minSize(50)
@@ -139,15 +159,18 @@ public class MongoConfig extends AbstractMongoClientConfiguration {
             @NonNull @Qualifier("mongoCustomConversions") MongoCustomConversions mongoCustomConversions,
             @NonNull @Qualifier("mongoMappingContext") MongoMappingContext mongoMappingContext) {
         DefaultDbRefResolver dbRefResolver = new DefaultDbRefResolver(mongoDbFactory);
-        MappingMongoConverter converter = new MappingMongoConverter(dbRefResolver, mongoMappingContext) {
-            @Override
-            public void setCustomConversions(@NonNull CustomConversions conversions) {
-                super.setCustomConversions(conversions);
-                conversions.registerConvertersIn(conversionService);
-            }
-        };
+        // MappingMongoConverter converter = new MappingMongoConverter(dbRefResolver,
+        // mongoMappingContext) {
+        // @Override
+        // public void setCustomConversions(@NonNull CustomConversions conversions) {
+        // super.setCustomConversions(conversions);
+        // conversions.registerConvertersIn(conversionService);
+        // }
+        // };
+        MappingMongoConverter converter = new MappingMongoConverter(dbRefResolver, mongoMappingContext);
         converter.setCustomConversions(mongoCustomConversions);
-        converter.setCodecRegistryProvider(mongoDbFactory);
+        // converter.setCodecRegistryProvider(mongoDbFactory);
+        converter.setCodecRegistryProvider(this::codecRegistry);
         converter.afterPropertiesSet();
         converter.setTypeMapper(new DefaultMongoTypeMapper(null));
         return converter;
@@ -168,6 +191,8 @@ public class MongoConfig extends AbstractMongoClientConfiguration {
         converters.add(new LongToDurationReadConverter());
         converters.add(new TimeOfDayWriteConverter());
         converters.add(new TimeOfDayReadConverter());
+        converters.add(new InstantToDateWriteConverter());
+        converters.add(new DateToInstantReadConverter());
         return new MongoCustomConversions(converters);
     }
 }

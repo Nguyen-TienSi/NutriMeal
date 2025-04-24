@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:nutriai_app/presentation/views/settings/profile_screen.dart'
+    show ProfileScreen;
+import 'package:nutriai_app/service/external-service/google_signin_service.dart'
+    show GoogleSignInService;
 
 import 'social_login_button.dart' show SocialLoginButton;
 
@@ -42,8 +46,31 @@ class LoginBottomSheetButton extends StatelessWidget {
               SocialLoginButton(
                 buttonText: 'Continue with Google',
                 imagePath: 'assets/images/google_branding_logo.png',
-                onPressed: () {
-                  // Handle Google login
+                onPressed: () async {
+                  final googleSignInService = GoogleSignInService();
+
+                  try {
+                    await googleSignInService.signInWithGoogle();
+                    if (googleSignInService.isSignedIn) {
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        Navigator.of(context).pushReplacement(MaterialPageRoute(
+                          builder: (context) => const ProfileScreen(),
+                        ));
+                      });
+                    } else {
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Google sign-in failed')),
+                        );
+                      });
+                    }
+                  } catch (error) {
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('An error occurred: $error')),
+                      );
+                    });
+                  }
                 },
               ),
               SizedBox(height: 10),
