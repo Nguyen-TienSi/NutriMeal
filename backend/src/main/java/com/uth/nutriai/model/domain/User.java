@@ -15,7 +15,10 @@ import com.uth.nutriai.model.enumeration.HealthGoal;
 @SuperBuilder
 @Document(collection = "users")
 public class User extends BaseEntity {
+    private String userId;
     private String name;
+    private String email;
+    private String pictureUrl;
     private String authProvider;
     private ActivityLevel activityLevel;
     private HealthGoal healthGoal;

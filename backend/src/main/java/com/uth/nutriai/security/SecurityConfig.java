@@ -1,5 +1,6 @@
 package com.uth.nutriai.security;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,6 +11,8 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtDecoders;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
+import org.springframework.security.oauth2.server.resource.web.authentication.BearerTokenAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository;
 
@@ -17,39 +20,46 @@ import org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository;
 @EnableWebSecurity
 public class SecurityConfig {
 
+    @Autowired
+    private TokenAuthenticationFilter tokenAuthenticationFilter;
+
     private final String[] SWAGGER_ENDPOINTS = {
-            "/v3/api-docs/**",
             "/swagger-ui/**",
             "/swagger-ui.html",
-            "/swagger-docs",
-            "/openapi.yaml",
-            "/api-docs"
+            "/swagger-resources/**",
+            "/swagger-resources",
+            "/v3/api-docs/**",
+            "/v3/api-docs",
+            "/webjars/**",
+            "/openapi.yaml"
     };
 
-    private final String[] WHITELIST_ENDPOINTS = {};
+    private final String[] WHITELIST_ENDPOINTS = {
+            "/api/auth/**"
+    };
 
     @Bean
-//    @Order(Ordered.HIGHEST_PRECEDENCE)
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
-//                .securityMatcher()
+        return http
                 .authorizeHttpRequests((auth) -> auth
                         .requestMatchers(SWAGGER_ENDPOINTS).permitAll()
-                        .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers(WHITELIST_ENDPOINTS).permitAll()
-                        .anyRequest().authenticated())
+                        .anyRequest().fullyAuthenticated()
+                )
                 .cors(Customizer.withDefaults())
                 .csrf(csrfConfigurer -> csrfConfigurer
                         .ignoringRequestMatchers(SWAGGER_ENDPOINTS)
-                        .ignoringRequestMatchers("/api/auth/**")
+                        .ignoringRequestMatchers(WHITELIST_ENDPOINTS)
                         .csrfTokenRepository(new HttpSessionCsrfTokenRepository())
                 )
                 .formLogin(AbstractHttpConfigurer::disable)
-                .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()))
-                .sessionManagement(sessionManager -> sessionManager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .oauth2Login(Customizer.withDefaults());
-
-        return http
+                .oauth2ResourceServer(oauth2 -> oauth2
+                        .jwt(jwtConfigurer -> jwtConfigurer.jwtAuthenticationConverter(new JwtAuthenticationConverter()))
+                )
+                .sessionManagement(sessionManager -> sessionManager
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .oauth2Login(Customizer.withDefaults())
+                .addFilterBefore(tokenAuthenticationFilter, BearerTokenAuthenticationFilter.class)
                 .build();
     }
 
