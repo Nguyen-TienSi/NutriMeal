@@ -22,6 +22,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
 import org.springframework.data.auditing.DateTimeProvider;
+import org.springframework.data.convert.CustomConversions;
 import org.springframework.data.mongodb.MongoDatabaseFactory;
 import org.springframework.data.mongodb.MongoTransactionManager;
 import org.springframework.data.mongodb.config.AbstractMongoClientConfiguration;
@@ -76,7 +77,8 @@ public class MongoConfig extends AbstractMongoClientConfiguration {
                 CodecRegistries.fromCodecs(new InstantCodec()),
                 MongoClientSettings.getDefaultCodecRegistry(),
                 jsr310CodecRegistry,
-                pojoCodecRegistry);
+                pojoCodecRegistry
+        );
     }
 
     @Bean(name = "mongoClient")
@@ -118,7 +120,8 @@ public class MongoConfig extends AbstractMongoClientConfiguration {
     @NonNull
     public MongoTemplate mongoTemplate(
             @NonNull @Qualifier("mongoDbFactory") MongoDatabaseFactory mongoDbFactory,
-            @NonNull @Qualifier("mappingMongoConverter") MappingMongoConverter mappingMongoConverter) {
+            @NonNull @Qualifier("mappingMongoConverter") MappingMongoConverter mappingMongoConverter
+    ) {
         return new MongoTemplate(mongoDbFactory, mappingMongoConverter);
     }
 
@@ -146,7 +149,8 @@ public class MongoConfig extends AbstractMongoClientConfiguration {
     @Primary
     @Bean(name = "transactionManager")
     MongoTransactionManager transactionManager(
-            @Qualifier("mongoDbFactory") MongoDatabaseFactory mongoDbFactory) {
+            @Qualifier("mongoDbFactory") MongoDatabaseFactory mongoDbFactory
+    ) {
         return new MongoTransactionManager(mongoDbFactory);
     }
 
@@ -157,17 +161,18 @@ public class MongoConfig extends AbstractMongoClientConfiguration {
     public MappingMongoConverter mappingMongoConverter(
             @NonNull @Qualifier("mongoDbFactory") MongoDatabaseFactory mongoDbFactory,
             @NonNull @Qualifier("mongoCustomConversions") MongoCustomConversions mongoCustomConversions,
-            @NonNull @Qualifier("mongoMappingContext") MongoMappingContext mongoMappingContext) {
+            @NonNull @Qualifier("mongoMappingContext") MongoMappingContext mongoMappingContext
+    ) {
         DefaultDbRefResolver dbRefResolver = new DefaultDbRefResolver(mongoDbFactory);
-        // MappingMongoConverter converter = new MappingMongoConverter(dbRefResolver,
-        // mongoMappingContext) {
-        // @Override
-        // public void setCustomConversions(@NonNull CustomConversions conversions) {
-        // super.setCustomConversions(conversions);
-        // conversions.registerConvertersIn(conversionService);
-        // }
-        // };
-        MappingMongoConverter converter = new MappingMongoConverter(dbRefResolver, mongoMappingContext);
+        MappingMongoConverter converter = new MappingMongoConverter(dbRefResolver,
+                mongoMappingContext) {
+            @Override
+            public void setCustomConversions(@NonNull CustomConversions conversions) {
+                super.setCustomConversions(conversions);
+                conversions.registerConvertersIn(conversionService);
+            }
+        };
+//        MappingMongoConverter converter = new MappingMongoConverter(dbRefResolver, mongoMappingContext);
         converter.setCustomConversions(mongoCustomConversions);
         // converter.setCodecRegistryProvider(mongoDbFactory);
         converter.setCodecRegistryProvider(this::codecRegistry);

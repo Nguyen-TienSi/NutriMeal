@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:nutriai_app/presentation/views/settings/profile_screen.dart'
     show ProfileScreen;
-import 'package:nutriai_app/service/external-service/google_signin_service.dart'
-    show GoogleSignInService;
+import 'package:nutriai_app/service/external-service/google_auth_service.dart'
+    show GoogleAuthService;
 
 import 'social_login_button.dart' show SocialLoginButton;
 
@@ -47,11 +47,11 @@ class LoginBottomSheetButton extends StatelessWidget {
                 buttonText: 'Continue with Google',
                 imagePath: 'assets/images/google_branding_logo.png',
                 onPressed: () async {
-                  final googleSignInService = GoogleSignInService();
+                  final googleAuthService = GoogleAuthService();
 
                   try {
-                    await googleSignInService.signInWithGoogle();
-                    if (googleSignInService.isSignedIn) {
+                    await googleAuthService.signInWithGoogle();
+                    if (googleAuthService.isSignedIn) {
                       WidgetsBinding.instance.addPostFrameCallback((_) {
                         Navigator.of(context).pushReplacement(MaterialPageRoute(
                           builder: (context) => const ProfileScreen(),

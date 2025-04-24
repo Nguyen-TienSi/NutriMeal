@@ -2,16 +2,18 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
-class GoogleSignInService {
+class GoogleAuthService {
   final GoogleSignIn _googleSignIn = GoogleSignIn(
     scopes: ['openid', 'email', 'profile'],
+    serverClientId:
+        '760175289893-3qi56cjjrp25k325546o4taaj26keinf.apps.googleusercontent.com',
   );
 
   GoogleSignInAccount? _currentUser;
   bool _isSigningIn = false;
   bool _isSignedIn = false;
 
-  GoogleSignInService() {
+  GoogleAuthService() {
     _googleSignIn.onCurrentUserChanged.listen((GoogleSignInAccount? account) {
       _currentUser = account;
       _setSigningIn(false);

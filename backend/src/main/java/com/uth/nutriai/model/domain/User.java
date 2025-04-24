@@ -16,6 +16,7 @@ import com.uth.nutriai.model.enumeration.HealthGoal;
 @Document(collection = "users")
 public class User extends BaseEntity {
     private String name;
+    private String authProvider;
     private ActivityLevel activityLevel;
     private HealthGoal healthGoal;
     private int currentWeight;

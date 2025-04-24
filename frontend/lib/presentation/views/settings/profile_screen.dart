@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:nutriai_app/presentation/views/onboarding/onboarding_screen.dart'
     show OnboardingScreen;
-import 'package:nutriai_app/service/external-service/google_signin_service.dart'
-    show GoogleSignInService;
+import 'package:nutriai_app/service/external-service/google_auth_service.dart'
+    show GoogleAuthService;
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
 
   @override
-  State<ProfileScreen> createState() => _ProfileScreenState();
+  State<ProfileScreen> createState() => _State();
 }
 
-class _ProfileScreenState extends State<ProfileScreen> {
-  final GoogleSignInService googleSignInService = GoogleSignInService();
+class _State extends State<ProfileScreen> {
+  final GoogleAuthService googleSignInService = GoogleAuthService();
 
   @override
   void initState() {
@@ -23,8 +23,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void _checkSignIn() async {
     await googleSignInService.signInSilently();
     if (googleSignInService.isSignedIn) {
+      _logUserInfo();
       setState(() {});
     }
+  }
+
+  void _logUserInfo() async {
+    final accessToken = await googleSignInService.getAccessToken();
+    final idToken = await googleSignInService.getIdToken();
+    final userInfo = googleSignInService.currentUser;
+
+    debugPrint('AccessToken: $accessToken');
+    debugPrint('IdToken: $idToken');
+    debugPrint('User Info: $userInfo');
   }
 
   @override

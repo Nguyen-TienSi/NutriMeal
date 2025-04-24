@@ -19,9 +19,7 @@ spring:
               - openid
               - email
               - profile
-            redirect-uri:
-              - https://www.getpostman.com/oauth2/callback
-              - http://localhost:8000/login/oauth2/code/google
+            redirect-uri: http://localhost:8000/api/auth/google
             client-authentication-method:
               - client_secret_basic
             authorization-grant-type:
@@ -34,8 +32,9 @@ spring:
             token-uri: https://oauth2.googleapis.com/token
             user-info-uri: https://www.googleapis.com/oauth2/v3/userinfo
             user-name-attribute: sub
+            issuer-uri: https://accounts.google.com
 
-      resource server:
+      resource-server:
         jwt:
           issuer-uri: https://accounts.google.com
           jwk-set-uri: https://www.googleapis.com/oauth2/v3/certs
@@ -68,6 +67,8 @@ logging:
   level:
     "[org.springframework.data.mongodb.core.MongoTemplate]": DEBUG
     "[org.springframework.web]": DEBUG
+    "[org.springframework.beans.factory]": DEBUG
+    "[org.springframework.security]": DEBUG
 
 springdoc:
   api-docs:
