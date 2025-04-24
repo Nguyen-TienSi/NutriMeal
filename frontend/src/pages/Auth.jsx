@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import { GoogleLogin } from "@react-oauth/google";
+import { LoginSocialFacebook } from "reactjs-social-login";
 import * as jwtDecode from "jwt-decode";
 import { useNavigate, Link } from "react-router-dom";
 import { useUser } from "../contexts/UserContext";
 import { apiRequest } from "../utils/api";
 import { AlertCircle } from "lucide-react";
+import { FacebookLoginButton } from "react-social-login-buttons";
 
 const Auth = () => {
   const [activeTab, setActiveTab] = useState("signin");
@@ -14,10 +16,10 @@ const Auth = () => {
 
   const handleGoogleSignIn = async (userData) => {
     try {
-      const response = await apiRequest('/auth/signin', 'POST', {
-        email: userData.email
+      const response = await apiRequest("/auth/signin", "POST", {
+        email: userData.email,
       });
-      
+
       signIn({
         _id: response._id,
         email: response.email,
@@ -27,7 +29,7 @@ const Auth = () => {
 
       navigate("/");
     } catch (err) {
-      if (err.message === 'User not found') {
+      if (err.message === "User not found") {
         setError("Account not found. Please sign up first.");
         setActiveTab("signup");
       } else {
@@ -38,8 +40,8 @@ const Auth = () => {
 
   const handleGoogleSignUp = async (userData) => {
     try {
-      const response = await apiRequest('/auth/signup', 'POST', userData);
-      
+      const response = await apiRequest("/auth/signup", "POST", userData);
+
       signIn({
         _id: response._id,
         email: response.email,
@@ -49,7 +51,7 @@ const Auth = () => {
 
       navigate("/");
     } catch (err) {
-      if (err.message === 'Email already exists') {
+      if (err.message === "Email already exists") {
         setError("Account already exists. Please sign in.");
         setActiveTab("signin");
       } else {
@@ -61,7 +63,7 @@ const Auth = () => {
   const handleGoogleSuccess = async (credentialResponse) => {
     try {
       const details = jwtDecode.jwtDecode(credentialResponse.credential);
-      
+
       const userData = {
         email: details.email,
         name: details.name,
@@ -74,7 +76,7 @@ const Auth = () => {
         await handleGoogleSignUp(userData);
       }
     } catch (err) {
-      console.error('Authentication failed:', err);
+      console.error("Authentication failed:", err);
       setError(err.message || "Failed to authenticate. Please try again.");
     }
   };
@@ -82,6 +84,74 @@ const Auth = () => {
   const handleGoogleError = () => {
     setError("Login Failed");
     console.error("Login Failed");
+  };
+
+  const handleFacebookSuccess = async (response) => {
+    try {
+      const userData = {
+        email: response.data.email,
+        name: response.data.name,
+        picture: response.data.picture?.data?.url,
+        facebookId: response.data.id,
+      };
+      // log the user data for debugging
+      console.log(userData);
+      if (activeTab === "signin") {
+        await handleFacebookSignIn(userData);
+      } else {
+        await handleFacebookSignUp(userData);
+      }
+    } catch (err) {
+      console.error("Facebook authentication failed:", err);
+      setError(err.message || "Failed to authenticate with Facebook");
+    }
+  };
+
+  const handleFacebookSignIn = async (userData) => {
+    try {
+      const response = await apiRequest("/auth/signin", "POST", {
+        email: userData.email,
+        facebookId: userData.facebookId,
+      });
+
+      signIn({
+        _id: response._id,
+        email: response.email,
+        name: response.name,
+        picture: response.picture,
+      });
+
+      navigate("/");
+    } catch (err) {
+      if (err.message === "User not found") {
+        setError("Account not found. Please sign up first.");
+        setActiveTab("signup");
+      } else {
+        throw err;
+      }
+    }
+  };
+
+  const handleFacebookSignUp = async (userData) => {
+    try {
+      const response = await apiRequest("/auth/signup", "POST", userData);
+
+      signIn({
+        _id: response._id,
+        email: response.email,
+        name: response.name,
+        picture: response.picture,
+      });
+
+      navigate("/");
+    } catch (err) {
+      if (err.message === "Email already exists") {
+        setError("Account already exists. Please sign in.");
+        setActiveTab("signin");
+      } else {
+        throw err;
+      }
+    }
   };
 
   return (
@@ -95,13 +165,17 @@ const Auth = () => {
           {/* Tabs */}
           <div className="tabs tabs-boxed mb-6">
             <button
-              className={`tab flex-1 ${activeTab === "signin" ? "tab-active" : ""}`}
+              className={`tab flex-1 ${
+                activeTab === "signin" ? "tab-active" : ""
+              }`}
               onClick={() => setActiveTab("signin")}
             >
               Sign In
             </button>
             <button
-              className={`tab flex-1 ${activeTab === "signup" ? "tab-active" : ""}`}
+              className={`tab flex-1 ${
+                activeTab === "signup" ? "tab-active" : ""
+              }`}
               onClick={() => setActiveTab("signup")}
             >
               Sign Up
@@ -109,8 +183,8 @@ const Auth = () => {
           </div>
 
           <p className="text-center text-base-content/70 mb-6">
-            {activeTab === "signin" 
-              ? "Sign in with your account" 
+            {activeTab === "signin"
+              ? "Sign in with your account"
               : "Create a new account"}
           </p>
 
@@ -135,11 +209,24 @@ const Auth = () => {
               />
             </div>
 
+            {/* Facebook Login */}
+            <LoginSocialFacebook
+              appId={import.meta.env.VITE_FACEBOOK_APP_ID}
+              onResolve={handleFacebookSuccess}
+              onReject={(err) => {
+                console.error("Facebook login failed:", err);
+                setError("Failed to login with Facebook");
+              }}
+              className="w-full"
+            >
+              <FacebookLoginButton />
+            </LoginSocialFacebook>
+
             {/* Divider */}
             <div className="divider text-xs text-base-content/50">OR</div>
 
             {/* Email/Password page */}
-            <Link 
+            <Link
               to={`/auth/${activeTab === "signin" ? "login" : "register"}`}
               className="btn btn-outline w-full"
             >
@@ -150,8 +237,13 @@ const Auth = () => {
           {/* Terms */}
           <p className="text-xs text-center text-base-content/70 mt-4">
             By continuing, you agree to our{" "}
-            <a href="/terms" className="link">Terms of Service</a> and{" "}
-            <a href="/privacy" className="link">Privacy Policy</a>
+            <a href="/terms" className="link">
+              Terms of Service
+            </a>{" "}
+            and{" "}
+            <a href="/privacy" className="link">
+              Privacy Policy
+            </a>
           </p>
         </div>
       </div>
