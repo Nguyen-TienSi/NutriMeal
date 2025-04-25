@@ -1,6 +1,5 @@
 package com.uth.nutriai.annotation;
 
-import com.uth.nutriai.dto.shared.TimeOfDayDto;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 
@@ -17,13 +16,22 @@ import java.lang.annotation.Target;
         ElementType.TYPE_USE
 })
 @Retention(RetentionPolicy.RUNTIME)
-@Constraint(validatedBy = AllowedTimeOfDayValidator.class)
-public @interface AllowedTimeOfDay {
-    String message() default "Invalid time of day";
+@Constraint(validatedBy = AllowedEnumValidator.class)
+public @interface AllowedEnum {
+
+    String message() default "Value is not allowed";
 
     Class<?>[] groups() default {};
 
     Class<? extends Payload>[] payload() default {};
 
-    TimeOfDayDto[] anyOf(); // cho phép nhiều giá trị enum
+    /**
+     * Enum class (must implement `Enum`)
+     */
+    Class<? extends Enum<?>> enumClass();
+
+    /**
+     * Enum values allowed
+     */
+    String[] allowed();
 }

@@ -9,11 +9,26 @@ import org.mapstruct.Mapping;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring", imports = AuditMetadataDto.class)
+@Mapper(componentModel = "spring", imports = AuditMetadataDto.class, uses = {
+        IActivityLevelMapper.class,
+        IHealthGoalMapper.class,
+})
 public interface IUserMapper {
 
+    @Mapping(target = "userId", source = "userId")
+    @Mapping(target = "name", source = "name")
+    @Mapping(target = "email", source = "email")
+    @Mapping(target = "pictureUrl", source = "pictureUrl")
+    @Mapping(target = "authProvider", source = "authProvider")
+    @Mapping(target = "activityLevel", source = "activityLevelDto")
+    @Mapping(target = "healthGoal", source = "healthGoalDto")
+    @Mapping(target = "currentWeight", source = "currentWeight")
+    @Mapping(target = "targetWeight", source = "targetWeight")
+    @Mapping(target = "currentHeight", source = "currentHeight")
     User mapToUser(UserCreateDto userCreateDto);
 
+    @Mapping(target = "activityLevelDto", source = "activityLevel")
+    @Mapping(target = "healthGoalDto", source = "healthGoal")
     @Mapping(target = "auditMetadataDto", expression = "java(new AuditMetadataDto(user))")
     UserDetailDto mapToUserDetailDto(User user);
 

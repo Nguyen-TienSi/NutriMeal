@@ -9,6 +9,7 @@ import com.uth.nutriai.mapper.IUserMapper;
 import com.uth.nutriai.model.domain.User;
 import com.uth.nutriai.service.IUserService;
 import com.uth.nutriai.dto.response.UserDetailDto;
+import com.uth.nutriai.utils.EtagUtil;
 import org.springframework.stereotype.Service;
 
 import lombok.AllArgsConstructor;
@@ -41,5 +42,22 @@ public class UserServiceImpl implements IUserService {
     @Override
     public void deleteUser(UUID id) {
         userDao.delete(id);
+    }
+
+    @Override
+    public boolean isUserAvailable(String email) {
+        return userDao.existsByEmail(email);
+    }
+
+    @Override
+    public UserDetailDto findUserByEmail(String email) {
+        User user = userDao.findByEmail(email);
+        return userMapper.mapToUserDetailDto(user);
+    }
+
+    @Override
+    public String currentEtag(String email) {
+        User user = userDao.findByEmail(email);
+        return EtagUtil.generateEtag(user);
     }
 }

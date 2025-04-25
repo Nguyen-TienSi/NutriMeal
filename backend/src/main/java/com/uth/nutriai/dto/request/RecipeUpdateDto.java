@@ -1,7 +1,7 @@
 package com.uth.nutriai.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.uth.nutriai.annotation.AllowedTimeOfDay;
+import com.uth.nutriai.annotation.AllowedEnum;
 import com.uth.nutriai.dto.shared.FoodTagDto;
 import com.uth.nutriai.dto.shared.IngredientDto;
 import com.uth.nutriai.dto.shared.NutrientDto;
@@ -57,13 +57,11 @@ public record RecipeUpdateDto(
 
         @JsonProperty("timesOfDay")
         @NotNull(message = "Time of day is required")
-        List<@AllowedTimeOfDay(anyOf = {
-                TimeOfDayDto.MORNING,
-                TimeOfDayDto.NOON,
-                TimeOfDayDto.AFTERNOON,
-                TimeOfDayDto.EVENING,
-                TimeOfDayDto.NIGHT
-        }) @Valid TimeOfDayDto> timeOfDayDtoList
+        @Valid
+        List<@AllowedEnum(
+                enumClass = TimeOfDayDto.class,
+                allowed = { "MORNING", "NOON", "AFTERNOON", "EVENING", "NIGHT" }
+        ) @Valid TimeOfDayDto> timeOfDayDtoList
 
 ) {
 }

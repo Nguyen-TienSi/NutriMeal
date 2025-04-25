@@ -198,6 +198,10 @@ public class MongoConfig extends AbstractMongoClientConfiguration {
         converters.add(new TimeOfDayReadConverter());
         converters.add(new InstantToDateWriteConverter());
         converters.add(new DateToInstantReadConverter());
+        converters.add(new ActivityLevelWriteConverter());
+        converters.add(new ActivityLevelReadConverter());
+        converters.add(new HealthGoalWriteConverter());
+        converters.add(new HealthGoalReadConverter());
         return new MongoCustomConversions(converters);
     }
 }

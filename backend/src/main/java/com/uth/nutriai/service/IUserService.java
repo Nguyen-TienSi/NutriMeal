@@ -15,4 +15,10 @@ public interface IUserService {
     UserDetailDto createUser(UserCreateDto userCreateDto);
 
     void deleteUser(UUID id);
+
+    boolean isUserAvailable(String email);
+
+    UserDetailDto findUserByEmail(String email);
+
+    String currentEtag(String email);
 }

@@ -2,6 +2,7 @@ package com.uth.nutriai.controller;
 
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.uth.nutriai.security.GoogleTokenVerifier;
+import com.uth.nutriai.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
@@ -10,17 +11,14 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/auth/google")
+@RequestMapping(value = "/api/auth/google", produces = "application/vnd.company.app-v1+json")
 public class GoogleAuthController {
 
     @Value("${spring.security.oauth2.client.registration.google.client-id}")
@@ -32,6 +30,9 @@ public class GoogleAuthController {
 
     @Autowired
     private JwtDecoder jwtDecoder;
+
+    @Autowired
+    private IUserService userService;
 
     @PostMapping("/token/exchange")
     public ResponseEntity<?> exchangeTokenWithGoogle(@RequestBody Map<String, String> body) {
@@ -81,16 +82,22 @@ public class GoogleAuthController {
     }
 
     @PostMapping("/verify-user")
-    public ResponseEntity<?> authenticateWithGoogle(@RequestBody Map<String, String> payload) {
-        String idToken = payload.get("idToken");
+    public ResponseEntity<?> authenticateWithGoogle(@RequestHeader("Authorization") String authHeader) {
 
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Missing or invalid Authorization header");
+        }
+
+        String idToken = authHeader.substring(7);
         GoogleIdToken.Payload userPayload = GoogleTokenVerifier.verifyToken(idToken, clientId);
 
         String email = userPayload.getEmail();
-        String name = (String) userPayload.get("name");
 
-        // TODO: handle user login/register
-        return ResponseEntity.ok(jwtDecoder.decode(idToken));
+        if (userService.isUserAvailable(email)) {
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
 }

@@ -1,11 +1,14 @@
 package com.uth.nutriai.controller;
 
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.uth.nutriai.dto.request.UserCreateDto;
 import com.uth.nutriai.dto.response.ApiResponse;
 import com.uth.nutriai.dto.response.UserDetailDto;
+import com.uth.nutriai.security.GoogleTokenVerifier;
 import com.uth.nutriai.service.IUserService;
 import jakarta.validation.Valid;
-import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,9 +19,12 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping(value = "api/users", produces = "application/vnd.company.app-v1+json")
-@AllArgsConstructor
 public class UserController {
 
+    @Value("${spring.security.oauth2.client.registration.google.client-id}")
+    private String clientId;
+
+    @Autowired
     private IUserService userService;
 
     @GetMapping
@@ -31,22 +37,65 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/search")
-    public ResponseEntity<ApiResponse<UserDetailDto>> findUserById(@RequestParam UUID id) {
-        UserDetailDto userDetailDto = userService.findUserById(id);
-        if (userDetailDto == null) {
-            return ResponseEntity.noContent().build();
+    @RequestMapping(value = "/search", method = {RequestMethod.GET, RequestMethod.HEAD})
+    public ResponseEntity<ApiResponse<UserDetailDto>> findUserById(
+            @RequestParam String email,
+            @RequestHeader(value = "If-None-Match", required = false) String eTag
+    ) {
+        if (!userService.isUserAvailable(email)) {
+            return ResponseEntity.notFound().build();
         }
+
+        String currentEtag = userService.currentEtag(email);
+
+        if (eTag != null && eTag.equals(currentEtag)) {
+            return ResponseEntity.status(HttpStatus.NOT_MODIFIED).build();
+        }
+
+        UserDetailDto userDetailDto = userService.findUserByEmail(email);
+
         ApiResponse<UserDetailDto> response = new ApiResponse<>(userDetailDto);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok()
+                .eTag(currentEtag)
+                .body(response);
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse<UserDetailDto>> createUser(@Valid @RequestBody UserCreateDto userCreateDto) {
-        UserDetailDto createdUser = userService.createUser(userCreateDto);
-        URI location = URI.create("/api/users/" + createdUser.id());
+    public ResponseEntity<ApiResponse<UserDetailDto>> createUser(
+            @RequestHeader("Authorization") String authHeader,
+            @Valid @RequestBody UserCreateDto userCreateDto) {
+
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        String idToken = authHeader.substring(7);
+        GoogleIdToken.Payload userPayload = GoogleTokenVerifier.verifyToken(idToken, clientId);
+
+        String subject = userPayload.getSubject();
+        String email = userPayload.getEmail();
+        String name = (String) userPayload.get("name");
+        String pictureUrl = (String) userPayload.get("picture");
+        String authProvider = (String) userPayload.get("iss");
+
+        UserCreateDto userToCreate = new UserCreateDto(
+                subject,
+                name,
+                email,
+                pictureUrl,
+                authProvider,
+                userCreateDto.activityLevelDto(),
+                userCreateDto.healthGoalDto(),
+                userCreateDto.currentWeight(),
+                userCreateDto.targetWeight(),
+                userCreateDto.currentHeight()
+        );
+
+        UserDetailDto createdUser = userService.createUser(userToCreate);
+        URI location = URI.create("/api/users/search?email=" + createdUser.email());
+        String currentEtag = userService.currentEtag(createdUser.email());
         ApiResponse<UserDetailDto> response = new ApiResponse<>(createdUser);
-        return ResponseEntity.created(location).body(response);
+        return ResponseEntity.created(location).eTag(currentEtag).body(response);
     }
 
     @PutMapping
