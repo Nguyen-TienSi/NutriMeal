@@ -4,16 +4,17 @@ import com.uth.nutriai.dto.request.RecipeCreateDto;
 import com.uth.nutriai.dto.request.RecipeUpdateDto;
 import com.uth.nutriai.dto.response.RecipeDetailDto;
 import com.uth.nutriai.dto.response.RecipeSummaryDto;
+import com.uth.nutriai.model.domain.Nutrient;
 import com.uth.nutriai.model.domain.Recipe;
-import org.mapstruct.AfterMapping;
+import com.uth.nutriai.utils.INutritionCalculator;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 
 import java.time.Duration;
 import java.util.List;
+import java.util.Map;
 
 @Mapper(componentModel = "spring", uses = {
         IIngredientMapper.class,
@@ -21,7 +22,7 @@ import java.util.List;
         INutrientMapper.class,
         ITimeOfDayMapper.class,
 })
-public interface IRecipeMapper {
+public interface IRecipeMapper extends INutritionCalculator<Recipe> {
 
     @Mapping(target = "timesOfDay", source = "timeOfDayDtoList")
     @Mapping(target = "cookingTime", expression = "java(mapToDuration(recipeCreateDto.cookingTime()))")
@@ -35,7 +36,6 @@ public interface IRecipeMapper {
     @Mapping(target = "cookingTime", expression = "java(mapToLong(recipe.getCookingTime()))")
     @Mapping(target = "ingredientDtoList", source = "ingredients")
     @Mapping(target = "foodTagDtoList", source = "foodTags")
-    @Mapping(target = "nutrientDtoList", source = "nutrients")
     RecipeDetailDto mapToRecipeDetailDto(Recipe recipe);
 
     @Mapping(target = "timesOfDay", source = "timeOfDayDtoList")
@@ -47,8 +47,7 @@ public interface IRecipeMapper {
     Recipe mapToRecipe(RecipeUpdateDto recipeUpdateDto);
 
     @Mapping(target = "timeOfDayDtoList", source = "timesOfDay")
-    @Mapping(target = "nutrientDtoList", source = "nutrients")
-    @Mapping(target = "calories", ignore = true)
+    @Mapping(target = "calories", expression = "java(getCalories(recipe))")
     RecipeSummaryDto mapToRecipeSummaryDto(Recipe recipe);
 
     List<RecipeSummaryDto> mapToRecipeSummaryDtoList(List<Recipe> recipeList);
@@ -66,18 +65,30 @@ public interface IRecipeMapper {
         return duration == null ? null : duration.toMinutes();
     }
 
-    @AfterMapping
-    default void afterMappingToRecipeSummaryDto(@MappingTarget RecipeSummaryDto recipeSummaryDto, Recipe recipe) {
-        recipeSummaryDto = new RecipeSummaryDto(
-                recipeSummaryDto.id(),
-                recipe.getRecipeName(),
-                recipe.getImageUrl(),
-                recipe.getServing(),
-                recipe.getServingUnit(),
-                recipeSummaryDto.getCalories(),
-                recipeSummaryDto.nutrientDtoList(),
-                recipeSummaryDto.timeOfDayDtoList()
-        );
+    @Override
+    default double calculateCalories(Recipe entity) {
+        double protein = 0;
+        double carbs = 0;
+        double fat = 0;
+
+        for (Nutrient nutrient : entity.getNutrients()) {
+            String name = nutrient.getName().toLowerCase();
+            switch (name) {
+                case "protein" -> protein = nutrient.getValue();
+                case "carbohydrates", "carbs" -> carbs = nutrient.getValue();
+                case "fat" -> fat = nutrient.getValue();
+            }
+        }
+
+        return protein * 4 + carbs * 4 + fat * 9;
     }
 
+    default String getCalories(Recipe recipe) {
+        return String.format("%.2f kcal", calculateCalories(recipe));
+    }
+
+    @Override
+    default List<Map<Nutrient, Double>> getConsumedNutrients(Recipe entity) {
+        return null;
+    };
 }
