@@ -1,13 +1,42 @@
 import 'package:flutter/material.dart';
 import 'package:nutriai_app/presentation/views/settings/profile_screen.dart'
     show ProfileScreen;
-import 'package:nutriai_app/service/external-service/google_auth_service.dart'
-    show GoogleAuthService;
+import 'package:nutriai_app/service/external-service/auth_manager.dart'
+    show AuthManager;
+import 'package:nutriai_app/service/external-service/auth_provider.dart'
+    show AuthProvider;
+import 'package:nutriai_app/service/external-service/auth_user.dart'
+    show AuthUser;
 
 import 'social_login_button.dart' show SocialLoginButton;
 
 class LoginBottomSheetButton extends StatelessWidget {
   const LoginBottomSheetButton({super.key});
+
+  Future<void> _login(AuthProvider provider, BuildContext context) async {
+    try {
+      AuthUser? authUser = await AuthManager.signIn(provider);
+      if (authUser != null) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          Navigator.of(context).pushReplacement(MaterialPageRoute(
+            builder: (context) => const ProfileScreen(),
+          ));
+        });
+      } else {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Login failed. Please try again.')),
+          );
+        });
+      }
+    } catch (error) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('An error occurred: $error')),
+        );
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -47,38 +76,15 @@ class LoginBottomSheetButton extends StatelessWidget {
                 buttonText: 'Continue with Google',
                 imagePath: 'assets/images/google_branding_logo.png',
                 onPressed: () async {
-                  final googleAuthService = GoogleAuthService();
-
-                  try {
-                    await googleAuthService.signInWithGoogle();
-                    if (googleAuthService.isSignedIn) {
-                      WidgetsBinding.instance.addPostFrameCallback((_) {
-                        Navigator.of(context).pushReplacement(MaterialPageRoute(
-                          builder: (context) => const ProfileScreen(),
-                        ));
-                      });
-                    } else {
-                      WidgetsBinding.instance.addPostFrameCallback((_) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Google sign-in failed')),
-                        );
-                      });
-                    }
-                  } catch (error) {
-                    WidgetsBinding.instance.addPostFrameCallback((_) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('An error occurred: $error')),
-                      );
-                    });
-                  }
+                  _login(AuthProvider.google, context);
                 },
               ),
               SizedBox(height: 10),
               SocialLoginButton(
                 buttonText: 'Continue with Facebook',
                 imagePath: 'assets/images/facebook_branding_logo.png',
-                onPressed: () {
-                  // Handle Facebook login
+                onPressed: () async {
+                  _login(AuthProvider.facebook, context);
                 },
               ),
               SizedBox(height: 20),

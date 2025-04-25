@@ -20,16 +20,17 @@ class GoogleAuthService {
       _setSignedIn(account != null);
       debugPrint('Current user changed: ${account?.email}');
     });
-    _googleSignIn.signInSilently();
   }
 
   bool get isSigningIn => _isSigningIn;
+
   bool get isSignedIn => _isSignedIn;
+
   GoogleSignInAccount? get currentUser => _currentUser;
 
-  Future<void> signInWithGoogle() async {
-    _setSigningIn(true);
+  Future<void> signIn() async {
     try {
+      _setSigningIn(true);
       final account = await _googleSignIn.signIn();
       if (account != null) {
         _currentUser = account;
@@ -46,10 +47,12 @@ class GoogleAuthService {
       }
       _setSigningIn(false);
       rethrow;
+    } finally {
+      _setSigningIn(false);
     }
   }
 
-  Future<void> signOutGoogle() async {
+  Future<void> signOut() async {
     try {
       await _googleSignIn.signOut();
       _setSignedIn(false);
@@ -59,12 +62,14 @@ class GoogleAuthService {
   }
 
   Future<void> signInSilently() async {
-    _setSigningIn(true);
     try {
+      _setSigningIn(true);
       await _googleSignIn.signInSilently();
     } catch (error) {
       _setSigningIn(false);
       rethrow;
+    } finally {
+      _setSigningIn(false);
     }
   }
 

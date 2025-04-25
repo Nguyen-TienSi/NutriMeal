@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">NutriAI</string>
+    <string name="facebook_app_id">619080861119706</string>
+    <string name="fb_login_protocol_scheme">fb619080861119706</string>
+    <string name="facebook_client_token">1cf469ddbc3eb14267dbb9675085b29c</string>
+</resources>

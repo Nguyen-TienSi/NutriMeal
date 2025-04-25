@@ -1,37 +1,42 @@
 import 'package:flutter/material.dart';
 import 'package:nutriai_app/presentation/views/onboarding/onboarding_screen.dart'
     show OnboardingScreen;
-import 'package:nutriai_app/service/external-service/google_auth_service.dart'
-    show GoogleAuthService;
+import 'package:nutriai_app/service/external-service/auth_manager.dart';
+import 'package:nutriai_app/service/external-service/auth_user.dart'
+    show AuthUser;
+import 'package:nutriai_app/service/external-service/google_auth_service.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
 
   @override
-  State<ProfileScreen> createState() => _State();
+  State<ProfileScreen> createState() => _ProfileScreenState();
 }
 
-class _State extends State<ProfileScreen> {
-  final GoogleAuthService googleSignInService = GoogleAuthService();
+class _ProfileScreenState extends State<ProfileScreen> {
+  late Future<AuthUser?> _authUser = Future.value(null);
 
   @override
   void initState() {
     super.initState();
-    _checkSignIn();
+    checkSignIn();
   }
 
-  void _checkSignIn() async {
-    await googleSignInService.signInSilently();
-    if (googleSignInService.isSignedIn) {
+  void checkSignIn() async {
+    if (await AuthManager.isLoggedIn()) {
       _logUserInfo();
-      setState(() {});
+      setState(() {
+        _authUser = AuthManager.getAuthUser();
+      });
     }
   }
 
   void _logUserInfo() async {
-    final accessToken = await googleSignInService.getAccessToken();
-    final idToken = await googleSignInService.getIdToken();
-    final userInfo = googleSignInService.currentUser;
+    final googleAuthService = GoogleAuthService();
+    await googleAuthService.signInSilently();
+    final accessToken = await googleAuthService.getAccessToken();
+    final idToken = await googleAuthService.getIdToken();
+    final userInfo = googleAuthService.currentUser;
 
     debugPrint('AccessToken: $accessToken');
     debugPrint('IdToken: $idToken');
@@ -40,52 +45,77 @@ class _State extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final userInfo = googleSignInService.currentUser;
-
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Profile'),
-      ),
+      appBar: AppBar(title: const Text('Profile')),
       body: SafeArea(
-        child: userInfo == null
-            ? const Center(child: CircularProgressIndicator())
-            : Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    if (userInfo.photoUrl != null)
-                      CircleAvatar(
-                        backgroundImage: NetworkImage(userInfo.photoUrl!),
-                        radius: 50,
-                      ),
-                    const SizedBox(height: 16),
-                    Text(
-                      userInfo.displayName ?? 'No Name',
-                      style: const TextStyle(
-                          fontSize: 20, fontWeight: FontWeight.bold),
+        child: FutureBuilder<AuthUser?>(
+          future: _authUser,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
+
+            final userInfo = snapshot.data;
+
+            if (userInfo == null) {
+              return Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Center(child: Text('User not logged in')),
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: () async {
+                      if (context.mounted) {
+                        Navigator.of(context).pushReplacement(
+                          MaterialPageRoute(
+                              builder: (_) => const OnboardingScreen()),
+                        );
+                      }
+                    },
+                    child: const Text('Return to Onboarding Screen'),
+                  ),
+                ],
+              );
+            }
+
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  if (userInfo.photoUrl != null)
+                    CircleAvatar(
+                      backgroundImage: NetworkImage(userInfo.photoUrl!),
+                      radius: 50,
                     ),
-                    const SizedBox(height: 8),
-                    Text(
-                      userInfo.email,
-                      style: const TextStyle(fontSize: 16),
-                    ),
-                    const SizedBox(height: 16),
-                    ElevatedButton(
-                      onPressed: () async {
-                        await googleSignInService.signOutGoogle();
-                        WidgetsBinding.instance.addPostFrameCallback((_) {
-                          Navigator.of(context)
-                              .pushReplacement(MaterialPageRoute(
-                            builder: (context) => const OnboardingScreen(),
-                          ));
-                        });
-                      },
-                      child: const Text('Sign Out'),
-                    ),
-                  ],
-                ),
+                  const SizedBox(height: 16),
+                  Text(
+                    userInfo.name ?? 'No Name',
+                    style: const TextStyle(
+                        fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    userInfo.email ?? 'No Email',
+                    style: const TextStyle(fontSize: 16),
+                  ),
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: () async {
+                      await AuthManager.signOut();
+                      if (context.mounted) {
+                        Navigator.of(context).pushReplacement(
+                          MaterialPageRoute(
+                              builder: (_) => const OnboardingScreen()),
+                        );
+                      }
+                    },
+                    child: const Text('Sign Out'),
+                  ),
+                ],
               ),
+            );
+          },
+        ),
       ),
     );
   }
