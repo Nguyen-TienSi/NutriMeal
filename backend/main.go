@@ -38,7 +38,7 @@ func main() {
 	// middleware
 	app.Use(logger.New())
 	app.Use(cors.New(cors.Config{
-		AllowOrigins:     "http://localhost:5173", 
+		AllowOrigins:     "http://localhost:5173, https://localhost:5173", 
 		AllowHeaders:     "Origin, Content-Type, Accept, Authorization",
 		AllowCredentials: true, 
 		AllowMethods:     "GET,POST,PUT,DELETE,OPTIONS", 
