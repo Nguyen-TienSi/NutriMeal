@@ -3,6 +3,16 @@ import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class GoogleAuthService {
+  GoogleAuthService() {
+    // _googleSignIn.signInSilently();
+    _googleSignIn.onCurrentUserChanged.listen((GoogleSignInAccount? account) {
+      _currentUser = account;
+      _setSigningIn(false);
+      _setSignedIn(account != null);
+      debugPrint('Current user changed: ${account?.email}');
+    });
+  }
+
   final GoogleSignIn _googleSignIn = GoogleSignIn(
     scopes: ['openid', 'email', 'profile'],
     serverClientId:
@@ -13,15 +23,6 @@ class GoogleAuthService {
   bool _isSigningIn = false;
   bool _isSignedIn = false;
 
-  GoogleAuthService() {
-    _googleSignIn.onCurrentUserChanged.listen((GoogleSignInAccount? account) {
-      _currentUser = account;
-      _setSigningIn(false);
-      _setSignedIn(account != null);
-      debugPrint('Current user changed: ${account?.email}');
-    });
-  }
-
   bool get isSigningIn => _isSigningIn;
 
   bool get isSignedIn => _isSignedIn;
@@ -29,6 +30,7 @@ class GoogleAuthService {
   GoogleSignInAccount? get currentUser => _currentUser;
 
   Future<void> signIn() async {
+    if (_currentUser != null) return;
     try {
       _setSigningIn(true);
       final account = await _googleSignIn.signIn();
@@ -45,7 +47,6 @@ class GoogleAuthService {
       if (error is PlatformException) {
         debugPrint('Google Sign-In PlatformException: ${error.message}');
       }
-      _setSigningIn(false);
       rethrow;
     } finally {
       _setSigningIn(false);
@@ -54,22 +55,11 @@ class GoogleAuthService {
 
   Future<void> signOut() async {
     try {
+      _currentUser = null;
       await _googleSignIn.signOut();
       _setSignedIn(false);
     } catch (error) {
       rethrow;
-    }
-  }
-
-  Future<void> signInSilently() async {
-    try {
-      _setSigningIn(true);
-      await _googleSignIn.signInSilently();
-    } catch (error) {
-      _setSigningIn(false);
-      rethrow;
-    } finally {
-      _setSigningIn(false);
     }
   }
 
@@ -83,10 +73,10 @@ class GoogleAuthService {
   }
 
   Future<String?> getAccessToken() =>
-      _getAuthenticationToken((auth) => Future.value(auth.accessToken));
+      _getAuthenticationToken((auth) => auth.accessToken);
 
   Future<String?> getIdToken() =>
-      _getAuthenticationToken((auth) => Future.value(auth.idToken));
+      _getAuthenticationToken((auth) => auth.idToken);
 
   Future<String?> getEmail() async => _currentUser?.email;
 
@@ -99,11 +89,11 @@ class GoogleAuthService {
   Future<String?> getServerAuthCode() async => _currentUser?.serverAuthCode;
 
   Future<String?> _getAuthenticationToken(
-      Future<String?> Function(GoogleSignInAuthentication)
-          tokenExtractor) async {
+      String? Function(GoogleSignInAuthentication) tokenExtractor) async {
     try {
+      // await _googleSignIn.signInSilently();
       final auth = await _currentUser?.authentication;
-      return auth != null ? await tokenExtractor(auth) : null;
+      return auth != null ? tokenExtractor(auth) : null;
     } catch (error) {
       rethrow;
     }

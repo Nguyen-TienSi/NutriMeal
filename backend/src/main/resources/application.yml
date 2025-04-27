@@ -20,11 +20,8 @@ spring:
               - email
               - profile
             redirect-uri: http://localhost:8000/api/auth/google
-            client-authentication-method:
-              - client_secret_basic
-            authorization-grant-type:
-              - authorization_code
-              - refresh_token
+            client-authentication-method: client_secret_basic
+            authorization-grant-type: authorization_code
             client-name: Google
         provider:
           google:

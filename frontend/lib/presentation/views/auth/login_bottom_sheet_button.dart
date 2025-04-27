@@ -5,8 +5,6 @@ import 'package:nutriai_app/service/external-service/auth_manager.dart'
     show AuthManager;
 import 'package:nutriai_app/service/external-service/auth_provider.dart'
     show AuthProvider;
-import 'package:nutriai_app/service/external-service/auth_user.dart'
-    show AuthUser;
 
 import 'social_login_button.dart' show SocialLoginButton;
 
@@ -15,26 +13,22 @@ class LoginBottomSheetButton extends StatelessWidget {
 
   Future<void> _login(AuthProvider provider, BuildContext context) async {
     try {
-      AuthUser? authUser = await AuthManager.signIn(provider);
-      if (authUser != null) {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          Navigator.of(context).pushReplacement(MaterialPageRoute(
-            builder: (context) => const ProfileScreen(),
-          ));
-        });
+      await AuthManager.signIn(provider);
+      if (!context.mounted) return;
+      if (AuthManager.isLoggedIn()) {
+        Navigator.of(context).pushReplacement(MaterialPageRoute(
+          builder: (context) => const ProfileScreen(),
+        ));
       } else {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Login failed. Please try again.')),
-          );
-        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Login failed. Please try again.')),
+        );
       }
     } catch (error) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('An error occurred: $error')),
-        );
-      });
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('An error occurred: $error')),
+      );
     }
   }
 

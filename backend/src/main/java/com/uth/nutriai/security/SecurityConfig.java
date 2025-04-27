@@ -35,7 +35,9 @@ public class SecurityConfig {
     };
 
     private final String[] WHITELIST_ENDPOINTS = {
-            "/api/auth/**"
+            "/api/auth/**",
+            "/api/health",
+            "/api/recipes/**",
     };
 
     @Bean
@@ -45,6 +47,7 @@ public class SecurityConfig {
                         .requestMatchers(SWAGGER_ENDPOINTS).permitAll()
                         .requestMatchers(WHITELIST_ENDPOINTS).permitAll()
                         .anyRequest().fullyAuthenticated()
+//                                .anyRequest().permitAll()
                 )
                 .cors(Customizer.withDefaults())
                 .csrf(csrfConfigurer -> csrfConfigurer

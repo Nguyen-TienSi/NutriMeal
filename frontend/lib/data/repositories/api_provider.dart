@@ -1,29 +1,34 @@
 abstract class ApiProvider {
+  Future<dynamic> head({
+    required String endPoint,
+    Map<String, dynamic>? queryParameters,
+  });
+
   Future<T> get<T>({
     required String endPoint,
     Map<String, dynamic>? queryParameters,
-    T Function(Map<String, dynamic>)? fromJson,
+    T Function(dynamic)? fromJson,
   });
 
   Future<T> post<T>({
     required String endPoint,
-    Map<String, dynamic>? data,
-    Map<String, dynamic>? files,
-    T Function(Map<String, dynamic>)? fromJson,
+    var data,
+    var files,
+    T Function(dynamic)? fromJson,
   });
 
   Future<T> put<T>({
     required String endPoint,
-    Map<String, dynamic>? data,
-    Map<String, dynamic>? files,
-    T Function(Map<String, dynamic>)? fromJson,
+    var data,
+    var files,
+    T Function(dynamic)? fromJson,
   });
 
   Future<T> patch<T>({
     required String endPoint,
-    Map<String, dynamic>? data,
-    Map<String, dynamic>? files,
-    T Function(Map<String, dynamic>)? fromJson,
+    var data,
+    var files,
+    T Function(dynamic)? fromJson,
   });
 
   Future<T> delete<T>({
@@ -31,22 +36,14 @@ abstract class ApiProvider {
     Map<String, dynamic>? queryParameters,
   });
 
-  Future<dynamic> head({
-    required String endPoint,
-    Map<String, dynamic>? queryParameters,
-  });
-
-  Future<Map<String, dynamic>> sendRequest({
+  Future<dynamic> sendRequest({
     required String method,
     required String endPoint,
     Map<String, dynamic>? queryParameters,
-    Map<String, dynamic>? data,
+    var data,
   });
 
-  Future<bool> isServerAvailable({
-    required String endPoint,
-    Map<String, dynamic>? queryParameters,
-  });
+  Future<bool> isServerAvailable(dynamic response);
 
   Future<bool> isInternetAvailable();
 

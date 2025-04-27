@@ -6,7 +6,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ProblemDetail;
@@ -29,26 +28,27 @@ import java.util.stream.Stream;
 @Component
 public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
-    @Value("${spring.security.oauth2.client.registration.google.client-id}")
-    private String clientId;
-
     @Autowired
     private ObjectMapper objectMapper;
+
+    @Autowired
+    private GoogleTokenVerifier googleTokenVerifier;
 
     private static final String AUTHORIZATION_HEADER = "Authorization";
     private static final String BEARER_PREFIX = "Bearer ";
 
     private final List<RequestMatcher> skipMatchers = Stream.of(
             "/api/auth/**",
+            "/api/health",
             "/swagger-ui/**",
             "/swagger-ui.html",
             "/swagger-resources/**",
             "/v3/api-docs/**",
             "/v3/api-docs",
             "/webjars/**",
-            "/openapi.yaml"
+            "/openapi.yaml",
+            "/api/recipes/**"
     ).map(AntPathRequestMatcher::new).collect(Collectors.toList());
-
 
     @Override
     protected boolean shouldNotFilter(@NonNull HttpServletRequest request) {
@@ -84,7 +84,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
     private String extractUserIdFromToken(String token) {
 
         try {
-            return GoogleTokenVerifier.verifyToken(token, clientId).getSubject();
+            return googleTokenVerifier.verify(token).getSubject();
         } catch (Exception e) {
             throw new RuntimeException("Error extracting user id from token", e);
         }

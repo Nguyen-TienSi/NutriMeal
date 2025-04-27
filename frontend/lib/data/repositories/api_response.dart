@@ -1,19 +1,24 @@
 class ApiResponse {
-  final bool success;
   final dynamic data;
   final String? message;
 
-  ApiResponse({required this.success, this.data, this.message});
+  ApiResponse({this.data, this.message});
 
-  factory ApiResponse.fromJson(Map<String, dynamic> json) {
-    return ApiResponse(
-      success: json['success'] ?? false,
-      data: json['data'],
-      message: json['message'],
-    );
+  factory ApiResponse.fromResponse(dynamic response) {
+    if (response == null) return ApiResponse.withError('No data found');
+
+    if (response is Map<String, dynamic>) {
+      if (response.containsKey('data') && response['data'] != null) {
+        return ApiResponse(data: response['data']);
+      } else {
+        return ApiResponse.withError(response['message'] ?? 'No data found');
+      }
+    }
+
+    return ApiResponse.withError('Invalid response format');
   }
 
-  factory ApiResponse.withError(String error) {
-    return ApiResponse(success: false, message: error);
+  factory ApiResponse.withError(String message) {
+    return ApiResponse(message: message);
   }
 }

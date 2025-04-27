@@ -1,13 +1,14 @@
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:nutriai_app/exception/server_exception.dart';
 import 'package:shared_preferences/shared_preferences.dart'
     show SharedPreferences;
 
 import 'api_config.dart' show ApiConfig;
 import 'http_provider.dart' show HttpProvider;
+import 'token_manager.dart' show TokenManager;
 
 class DioApiProvider extends HttpProvider with ApiConfig {
   final Dio dio = Dio();
@@ -19,29 +20,48 @@ class DioApiProvider extends HttpProvider with ApiConfig {
       receiveTimeout: Duration(milliseconds: 3000),
       sendTimeout: Duration(milliseconds: 3000),
       headers: headers,
-      contentType: 'application/json',
       responseType: ResponseType.json,
     );
 
     dio.interceptors.add(InterceptorsWrapper(
       onRequest: (options, handler) async {
-        final token = await getAccessToken();
+        final uri =
+            buildUri(options.path, queryParameters: options.queryParameters);
+        final prefs = await SharedPreferences.getInstance();
+        final storedEtag = prefs.getString('etag_$uri');
+
+        if (storedEtag != null) {
+          options.headers['If-None-Match'] = storedEtag;
+          options.headers['If-Match'] = storedEtag;
+        }
+
+        final token = TokenManager.getValidToken();
         if (token != null && token.isNotEmpty) {
           options.headers['Authorization'] = 'Bearer $token';
         }
         return handler.next(options);
       },
+      onResponse: (response, handler) async {
+        final uri = buildUri(response.requestOptions.path,
+            queryParameters: response.requestOptions.queryParameters);
+        final etag = response.headers.value('etag');
+        if (etag != null) {
+          SharedPreferences.getInstance().then((prefs) {
+            prefs.setString('etag_$uri', etag);
+          });
+        }
+        return handler.next(response);
+      },
       onError: (DioException error, handler) async {
         if (error.response?.statusCode == 401) {
-          // Thử refresh token
           try {
-            final newToken = await refreshAccessToken();
+            // Có thể thử lấy lại token mới từ TokenManager
+            TokenManager.clear(); // Xóa token cũ
+            final newToken = TokenManager.getValidToken();
 
             if (newToken != null && newToken.isNotEmpty) {
-              // Gán token mới vào request cũ và retry
               final options = error.requestOptions;
               options.headers['Authorization'] = 'Bearer $newToken';
-
               final retryResponse = await dio.fetch(options);
               return handler.resolve(retryResponse);
             } else {
@@ -50,6 +70,12 @@ class DioApiProvider extends HttpProvider with ApiConfig {
           } catch (e) {
             return handler.reject(error);
           }
+        } else if (error.response?.statusCode == 500) {
+          debugPrint('🔴 Server error: ${error.response?.data}');
+          throw ServerException(
+            message: '⚠️ Internal Server Error: ${error.response?.data}',
+            statusCode: error.response?.statusCode,
+          );
         }
 
         return handler.next(error);
@@ -58,36 +84,73 @@ class DioApiProvider extends HttpProvider with ApiConfig {
   }
 
   @override
-  Future<T> get<T>({
+  Future<dynamic> sendRequest({
+    required String method,
     required String endPoint,
     Map<String, dynamic>? queryParameters,
-    T Function(Map<String, dynamic>)? fromJson,
+    var data,
   }) async {
+    Response response = switch (method.toUpperCase()) {
+      'GET' => await dio.get(endPoint, queryParameters: queryParameters),
+      'POST' =>
+        await dio.post(endPoint, queryParameters: queryParameters, data: data),
+      'PUT' =>
+        await dio.put(endPoint, queryParameters: queryParameters, data: data),
+      'PATCH' =>
+        await dio.patch(endPoint, queryParameters: queryParameters, data: data),
+      'DELETE' => await dio.delete(endPoint, queryParameters: queryParameters),
+      'HEAD' => await dio.head(endPoint, queryParameters: queryParameters),
+      _ => throw UnsupportedError('HTTP method $method is not supported'),
+    };
+
+    if (!await isServerAvailable(response)) {
+      debugPrint('🔴 Server respond error!');
+      throw ServerException(
+          message: '⚠️ Server respond error!', statusCode: response.statusCode);
+    }
+
+    return _processResponse(response);
+  }
+
+  @override
+  Future head({
+    required String endPoint,
+    Map<String, dynamic>? queryParameters,
+  }) {
+    try {
+      return sendRequest(
+        method: 'HEAD',
+        endPoint: endPoint,
+        queryParameters: queryParameters,
+      );
+    } catch (e, stackTrace) {
+      if (e is Exception) {
+        handleError(e);
+      } else {
+        debugPrint('Unknown error: $e\n$stackTrace');
+      }
+      rethrow;
+    }
+  }
+
+  @override
+  Future<T> get<T>(
+      {required String endPoint,
+      Map<String, dynamic>? queryParameters,
+      T Function(dynamic)? fromJson}) async {
     final uri = buildUri(endPoint, queryParameters: queryParameters);
-    final cacheKey = 'cache_${uri.toString()}';
     final prefs = await SharedPreferences.getInstance();
+    final cacheKey = 'cache_${uri.toString()}';
     const cacheDuration = Duration(minutes: 0);
 
     try {
       if (!await isInternetAvailable()) {
-        final cached = prefs.getString(cacheKey);
-        if (cached != null) {
-          final decoded = jsonDecode(cached);
-          final timestamp =
-              DateTime.fromMillisecondsSinceEpoch(decoded['timestamp']);
-          final now = DateTime.now();
-          if (now.difference(timestamp) < cacheDuration) {
-            debugPrint('🟡 [Offline] Returning valid cache for $cacheKey');
-            return decoded['data'];
-          }
-        }
-        throw SocketException("No Internet and no valid cache available");
+        throw SocketException("⚠️ No Internet ");
       }
 
-      if (!await isServerAvailable()) {
-        debugPrint('🔴 Server is not available!');
-        throw Exception("Server is down");
-      }
+      await head(
+          endPoint: queryParameters != null ? endPoint : 'health',
+          queryParameters: queryParameters);
 
       final data = await sendRequest(
         method: 'GET',
@@ -95,165 +158,102 @@ class DioApiProvider extends HttpProvider with ApiConfig {
         queryParameters: queryParameters,
       );
 
-      final cacheObject = {
-        'timestamp': DateTime.now().millisecondsSinceEpoch,
-        'data': data,
-      };
-
-      await prefs.setString(cacheKey, jsonEncode(cacheObject));
-      debugPrint('🟢 [Online] Fetched & cached $cacheKey');
-
+      await _cacheData(prefs, cacheKey, data);
       return fromJson != null ? fromJson(data) : data as T;
-    } catch (e) {
-      handleError(e as Exception);
+    } catch (e, stackTrace) {
+      if (e is Exception) {
+        handleError(e);
+      } else {
+        debugPrint('Unknown error: $e\n$stackTrace');
+      }
+      final cachedData = await _getCachedData(prefs, cacheKey, cacheDuration);
+      if (cachedData != null) {
+        return fromJson?.call(cachedData) ?? cachedData as T;
+      } else {
+        debugPrint('🔴 No cached data available for $cacheKey');
+      }
       rethrow;
     }
   }
 
   @override
-  Future<T> post<T>({
-    required String endPoint,
-    Map<String, dynamic>? data,
-    Map<String, dynamic>? files,
-    T Function(Map<String, dynamic>)? fromJson,
-  }) async {
-    final response = await sendRequest(
-        method: 'POST', endPoint: endPoint, data: data, files: files);
-    return fromJson != null ? fromJson(response) : response as T;
+  Future<T> patch<T>(
+      {required String endPoint,
+      var data,
+      var files,
+      T Function(dynamic)? fromJson}) {
+    // TODO: implement patch
+    throw UnimplementedError();
   }
 
   @override
-  Future<T> put<T>({
-    required String endPoint,
-    Map<String, dynamic>? data,
-    Map<String, dynamic>? files,
-    T Function(Map<String, dynamic>)? fromJson,
-  }) async {
-    final response = await sendRequest(
-        method: 'PUT', endPoint: endPoint, data: data, files: files);
-    return fromJson != null ? fromJson(response) : response as T;
+  Future<T> post<T>(
+      {required String endPoint,
+      var data,
+      var files,
+      T Function(dynamic)? fromJson}) {
+    // TODO: implement post
+    throw UnimplementedError();
   }
 
   @override
-  Future<T> patch<T>({
-    required String endPoint,
-    Map<String, dynamic>? data,
-    Map<String, dynamic>? files,
-    T Function(Map<String, dynamic>)? fromJson,
-  }) async {
-    final response = await sendRequest(
-        method: 'PATCH', endPoint: endPoint, data: data, files: files);
-    return fromJson != null ? fromJson(response) : response as T;
+  Future<T> put<T>(
+      {required String endPoint,
+      var data,
+      var files,
+      T Function(dynamic)? fromJson}) {
+    // TODO: implement put
+    throw UnimplementedError();
   }
 
   @override
   Future<T> delete<T>({
     required String endPoint,
     Map<String, dynamic>? queryParameters,
-  }) async {
-    final response = await sendRequest(
-        method: 'DELETE', endPoint: endPoint, queryParameters: queryParameters);
-    return response as T;
+  }) {
+    // TODO: implement delete
+    throw UnimplementedError();
   }
 
-  Map<String, dynamic> _processResponse(Response response) {
-    if (response.statusCode! >= 200 && response.statusCode! < 300) {
+  dynamic _processResponse(Response response) {
+    if ([204, 304, 404].contains(response.statusCode) &&
+        response.data.isEmpty) {
+      return null;
+    }
+    try {
+      if (response.data is String) return jsonDecode(response.data);
       return response.data;
-    } else {
-      throw HttpException('Invalid JSON: ${response.data}');
-    }
-  }
-
-  @override
-  Future<Response> head(
-      {required String endPoint, Map<String, dynamic>? queryParameters}) async {
-    try {
-      if (!await isInternetAvailable()) {
-        throw SocketException("No Internet");
-      }
-      if (!await isServerAvailable()) {
-        throw SocketException("Server is down");
-      }
-      if (queryParameters != null) {
-        return await dio.head(endPoint, queryParameters: queryParameters);
-      }
-      return await dio.head(endPoint);
     } catch (e) {
-      handleError(e as Exception);
-      rethrow;
+      throw ServerException(
+          message: '⚠️ Invalid JSON format: $e',
+          statusCode: response.statusCode);
     }
   }
 
-  @override
-  Future<Map<String, dynamic>> sendRequest({
-    required String method,
-    required String endPoint,
-    Map<String, dynamic>? queryParameters,
-    Map<String, dynamic>? data,
-    Map<String, dynamic>? files,
-  }) async {
-    try {
-      if (!await isInternetAvailable()) {
-        throw const SocketException("No Internet");
+  Future<dynamic> _getCachedData(
+      SharedPreferences prefs, String cacheKey, Duration cacheDuration) async {
+    final cached = prefs.getString(cacheKey);
+    if (cached != null) {
+      final decoded = jsonDecode(cached);
+      final timestamp =
+          DateTime.fromMillisecondsSinceEpoch(decoded['timestamp']);
+      if (DateTime.now().difference(timestamp) < cacheDuration) {
+        debugPrint('🟡 [Offline] Returning valid cache for $cacheKey');
+        return decoded['data'];
       }
-
-      if (!await isServerAvailable()) {
-        throw const SocketException("Server is down");
-      }
-
-      final requestData = files != null && files.isNotEmpty
-          ? await _buildFormData(data, files)
-          : data;
-
-      Response response = switch (method.toUpperCase()) {
-        'GET' => await dio.get(endPoint, queryParameters: queryParameters),
-        'POST' => await dio.post(endPoint, data: requestData),
-        'PUT' => await dio.put(endPoint, data: requestData),
-        'PATCH' => await dio.patch(endPoint, data: requestData),
-        'DELETE' =>
-          await dio.delete(endPoint, queryParameters: queryParameters),
-        'HEAD' => await dio.head(endPoint),
-        _ => throw UnsupportedError('HTTP method $method is not supported'),
-      };
-
-      return _processResponse(response);
-    } catch (e) {
-      handleError(e as Exception);
-      rethrow;
     }
-  }
-
-  Future<FormData> _buildFormData(
-      Map<String, dynamic>? data, Map<String, dynamic> files) async {
-    final formData = FormData.fromMap(data ?? {});
-    for (final entry in files.entries) {
-      formData.files.add(MapEntry(
-        entry.key,
-        await MultipartFile.fromFile(entry.value),
-      ));
-    }
-    return formData;
-  }
-
-  Future<String?> getAccessToken() async {
-    // Ví dụ đọc từ SharedPreferences hoặc secure storage
-    return 'your_access_token';
-  }
-
-  Future<String?> refreshAccessToken() async {
-    // Gọi API refresh token
-    final refreshToken = 'your_refresh_token';
-    final response = await dio.post('/auth/refresh', data: {
-      'refresh_token': refreshToken,
-    });
-
-    if (response.statusCode == 200) {
-      final newToken = response.data['access_token'];
-      // Lưu lại token mới
-      // await saveAccessToken(newToken);
-      return newToken;
-    }
-
+    debugPrint('🔴 [Offline] No valid cache for $cacheKey');
     return null;
+  }
+
+  Future<void> _cacheData(
+      SharedPreferences prefs, String cacheKey, dynamic data) async {
+    await prefs.setString(
+        cacheKey,
+        jsonEncode({
+          'timestamp': DateTime.now().millisecondsSinceEpoch,
+          'data': data,
+        }));
+    debugPrint('🟢 [Online] Fetched & cached $cacheKey');
   }
 }

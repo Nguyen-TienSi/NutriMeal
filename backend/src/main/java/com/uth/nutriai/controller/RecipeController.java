@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping(value = "api/recipes", produces = "application/vnd.company.app-v1+json")
+@RequestMapping(value = "/api/recipes", produces = "application/vnd.company.app-v1+json")
 @AllArgsConstructor
 public class RecipeController {
 

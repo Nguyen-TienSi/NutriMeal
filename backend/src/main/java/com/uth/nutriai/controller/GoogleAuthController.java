@@ -32,9 +32,12 @@ public class GoogleAuthController {
     private JwtDecoder jwtDecoder;
 
     @Autowired
+    private GoogleTokenVerifier googleTokenVerifier;
+
+    @Autowired
     private IUserService userService;
 
-    @PostMapping("/token/exchange")
+    @PostMapping("/exchange-token")
     public ResponseEntity<?> exchangeTokenWithGoogle(@RequestBody Map<String, String> body) {
         String code = body.get("serverAuthCode");
         if (code == null) {
@@ -89,7 +92,7 @@ public class GoogleAuthController {
         }
 
         String idToken = authHeader.substring(7);
-        GoogleIdToken.Payload userPayload = GoogleTokenVerifier.verifyToken(idToken, clientId);
+        GoogleIdToken.Payload userPayload = googleTokenVerifier.verify(idToken);
 
         String email = userPayload.getEmail();
 

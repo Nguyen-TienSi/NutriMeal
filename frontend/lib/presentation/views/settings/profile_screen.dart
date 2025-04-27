@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:nutriai_app/data/repositories/token_manager.dart';
 import 'package:nutriai_app/presentation/views/onboarding/onboarding_screen.dart'
     show OnboardingScreen;
 import 'package:nutriai_app/service/external-service/auth_manager.dart';
 import 'package:nutriai_app/service/external-service/auth_user.dart'
     show AuthUser;
-import 'package:nutriai_app/service/external-service/google_auth_service.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -23,24 +23,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   void checkSignIn() async {
-    if (await AuthManager.isLoggedIn()) {
-      _logUserInfo();
+    if (AuthManager.isLoggedIn()) {
+      _logInfo();
+      final authUser = await AuthManager.getAuthUser();
       setState(() {
-        _authUser = AuthManager.getAuthUser();
+        _authUser = Future.value(authUser);
       });
     }
   }
 
-  void _logUserInfo() async {
-    final googleAuthService = GoogleAuthService();
-    await googleAuthService.signInSilently();
-    final accessToken = await googleAuthService.getAccessToken();
-    final idToken = await googleAuthService.getIdToken();
-    final userInfo = googleAuthService.currentUser;
-
-    debugPrint('AccessToken: $accessToken');
-    debugPrint('IdToken: $idToken');
-    debugPrint('User Info: $userInfo');
+  void _logInfo() {
+    final idToken = TokenManager.getValidToken();
+    debugPrint('🔑 Token: $idToken');
   }
 
   @override

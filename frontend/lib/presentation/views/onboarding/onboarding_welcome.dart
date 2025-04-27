@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:nutriai_app/core/app_config.dart';
-import 'package:nutriai_app/presentation/views/auth/login_screen.dart'
-    show LoginScreen;
 import 'package:nutriai_app/presentation/views/auth/login_bottom_sheet_button.dart';
 
 class OnboardingWelcome extends StatelessWidget {

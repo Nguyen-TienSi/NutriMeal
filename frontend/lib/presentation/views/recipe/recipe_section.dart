@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nutriai_app/data/models/recipe_summary_data.dart'
     show RecipeSummaryData;
-import 'package:nutriai_app/data/repositories/api_repository.dart';
-import 'package:nutriai_app/data/repositories/http_api_provider.dart'
-    show HttpApiProvider;
 import 'package:nutriai_app/service/api-service/recipe_service.dart';
 import 'recipe_card.dart' show RecipeCard;
 
@@ -35,19 +32,19 @@ class _State extends State<RecipeSection> {
   Future<void> fetchRecipes() async {
     try {
       final fetchedData = await recipeService.fetchRecipeSummaryList();
-      if (mounted) {
-        setState(() {
-          fetchedRecipeSummaryList = fetchedData;
-          isLoading = false;
-        });
-      }
+      _updateState(fetchedData, false);
     } catch (e) {
       debugPrint('❌ Error fetching recipes: $e');
-      if (mounted) {
-        setState(() {
-          isLoading = false;
-        });
-      }
+      _updateState([], false);
+    }
+  }
+
+  void _updateState(List<RecipeSummaryData> recipes, bool loading) {
+    if (mounted) {
+      setState(() {
+        fetchedRecipeSummaryList = recipes;
+        isLoading = loading;
+      });
     }
   }
 

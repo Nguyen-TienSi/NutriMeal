@@ -4,6 +4,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:nutriai_app/data/repositories/api_provider.dart';
 import 'package:http/http.dart' as http;
 import 'package:dio/dio.dart' as dio;
+import 'package:nutriai_app/exception/server_exception.dart';
 
 abstract class HttpProvider implements ApiProvider {
   @override
@@ -16,21 +17,29 @@ abstract class HttpProvider implements ApiProvider {
   }
 
   @override
-  Future<bool> isServerAvailable({
-    String endPoint = 'health',
-    Map<String, dynamic>? queryParameters,
-  }) async {
+  Future<bool> isServerAvailable(dynamic response) async {
     try {
-      final response =
-          await head(endPoint: endPoint, queryParameters: queryParameters);
-
       if (response is http.Response || response is dio.Response) {
-        return [200, 204, 304].contains(response.statusCode);
+        if (response.statusCode > 500) {
+          throw ServerException(
+              message: 'Server error!', statusCode: response.statusCode);
+        }
+      } else if (response is dio.DioException) {
+        switch (response.type) {
+          case dio.DioExceptionType.unknown:
+          case dio.DioExceptionType.connectionTimeout:
+          case dio.DioExceptionType.receiveTimeout:
+          case dio.DioExceptionType.sendTimeout:
+          case dio.DioExceptionType.badResponse:
+          case dio.DioExceptionType.cancel:
+          case dio.DioExceptionType.badCertificate:
+          case dio.DioExceptionType.connectionError:
+            return false;
+        }
       }
-
-      return false;
+      return true;
     } catch (e) {
-      debugPrint("Error checking server availability: $e");
+      debugPrint('Error checking server availability: $e');
       return false;
     }
   }
@@ -40,7 +49,7 @@ abstract class HttpProvider implements ApiProvider {
     if (e is SocketException) {
       debugPrint("Please check your internet connection.");
     } else {
-      debugPrint("An error occurred: $e");
+      debugPrint("⚠️ [Error] $e");
     }
   }
 }

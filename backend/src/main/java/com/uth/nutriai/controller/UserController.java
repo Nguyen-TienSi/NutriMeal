@@ -18,14 +18,14 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping(value = "api/users", produces = "application/vnd.company.app-v1+json")
+@RequestMapping(value = "/api/users", produces = "application/vnd.company.app-v1+json")
 public class UserController {
-
-    @Value("${spring.security.oauth2.client.registration.google.client-id}")
-    private String clientId;
 
     @Autowired
     private IUserService userService;
+
+    @Autowired
+    private GoogleTokenVerifier googleTokenVerifier;
 
     @GetMapping
     public ResponseEntity<ApiResponse<List<UserDetailDto>>> findAllUsers() {
@@ -70,7 +70,7 @@ public class UserController {
         }
 
         String idToken = authHeader.substring(7);
-        GoogleIdToken.Payload userPayload = GoogleTokenVerifier.verifyToken(idToken, clientId);
+        GoogleIdToken.Payload userPayload = googleTokenVerifier.verify(idToken);
 
         String subject = userPayload.getSubject();
         String email = userPayload.getEmail();
