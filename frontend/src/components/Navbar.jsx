@@ -6,7 +6,6 @@ import {
   Search,
   Sun,
   Moon,
-  Heart,
   LogOut,
   User,
   Home,
@@ -166,7 +165,6 @@ const Navbar = () => {
               </ul>
             </div>
             <Link to="/" className="btn btn-ghost text-xl gap-2 normal-case">
-              <Heart className="text-primary" />
               NutriMeal
             </Link>
           </div>
