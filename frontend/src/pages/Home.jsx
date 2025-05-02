@@ -90,7 +90,7 @@ const Home = () => {
           isSearchOpen ? "blur-sm" : ""
         }`}
       >
-        <QuickAccess />
+        {/* <QuickAccess /> */}
         <RecommendedRecipes />
         <FloatingButton isOpen={isSearchOpen} setIsOpen={setIsSearchOpen} />
       </div>
@@ -207,7 +207,7 @@ const RecommendedRecipes = () => {
     const fetchRecommendedRecipes = async () => {
       try {
         setLoading(true);
-        const data = await apiRequest("/recipes?limit=4");
+        const data = await apiRequest("/recipes?limit=8");
 
         // Transform recipe data to match RecipeCard props
         const transformedRecipes = data.recipes.map((recipe) => ({
@@ -242,7 +242,7 @@ const RecommendedRecipes = () => {
       </p>
       <div className="grid gap-3 grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
         {loading ? (
-          Array(4)
+          Array(8)
             .fill(0)
             .map((_, index) => (
               <div
