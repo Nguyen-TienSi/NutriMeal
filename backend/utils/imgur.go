@@ -78,7 +78,7 @@ func UploadToImgur(file *multipart.FileHeader) (*fiber.Map, error) {
 
     return &fiber.Map{
         "link": imgurResp.Data.Link,
-        "deleteHash": imgurResp.Data.DeleteHash, // Changed from delete_hash to deleteHash
+        "deleteHash": imgurResp.Data.DeleteHash, // 
     }, nil
 }
 

@@ -3,6 +3,7 @@ package handlers
 import (
 	"context"
 	"fmt"
+	"log"
 	"nitri-meal-backend/database"
 	"nitri-meal-backend/models"
 	"nitri-meal-backend/utils"
@@ -161,7 +162,7 @@ func UpdateUser(c *fiber.Ctx) error {
         return c.Status(400).JSON(fiber.Map{"error": "Invalid request body"})
     }
 
-    // No need to parse birthday since it's now a string
+    // 
     delete(updateData, "picture") // Remove picture from regular updates
     if len(updateData) > 0 {
         updateData["updated_at"] = time.Now()
@@ -172,7 +173,7 @@ func UpdateUser(c *fiber.Ctx) error {
         }
     }
 
-    // Return the updated user data instead of just OK
+    // Return the updated user data 
     var updatedUser models.User
     err = collection.FindOne(ctx, bson.M{"_id": objectId}).Decode(&updatedUser)
     if err != nil {
@@ -244,7 +245,7 @@ func UpdateUserPicture(c *fiber.Ctx) error {
         err = utils.DeleteFromImgur(existingUser.DeleteHash)
         if err != nil {
             // Log error but continue
-            fmt.Printf("Failed to delete old image: %v\n", err)
+            log.Printf("[ERROR] Failed to delete old image: %v\n", err)
         }
     }
 
