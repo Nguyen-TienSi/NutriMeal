@@ -20,18 +20,42 @@ const HealthProgress = () => {
         setLoading(true);
         const data = await apiRequest(`/food-logs/user/${user._id}`);
         
-        // Get current week's dates
+        // Get current week's dates (Monday to Sunday)
         const today = new Date();
-        const monday = new Date(today);
-        monday.setDate(today.getDate() - today.getDay() + 1);
-        const sunday = new Date(monday);
-        sunday.setDate(monday.getDate() + 6);
+        const startOfWeek = new Date(today);
+        // Get Monday (1) of current week
+        const day = startOfWeek.getDay() || 7; // Convert Sunday (0) to 7
+        startOfWeek.setDate(startOfWeek.getDate() - day + 1);
+        startOfWeek.setHours(0, 0, 0, 0);
+
+        const endOfWeek = new Date(startOfWeek);
+        endOfWeek.setDate(startOfWeek.getDate() + 6); // Add 6 days to get to Sunday
+        endOfWeek.setHours(23, 59, 59, 999);
+
+        console.log('Week range:', { 
+          startOfWeek: startOfWeek.toISOString(), 
+          endOfWeek: endOfWeek.toISOString(),
+          today: today.toISOString()
+        }); // Debug log
 
         // Group logs by date and calculate daily totals
         const dailyTotals = data.reduce((acc, log) => {
           const logDate = new Date(log.date);
-          const date = log.date;
+          const date = logDate.toISOString().split('T')[0]; // Format: YYYY-MM-DD
           
+          // Check if log is in current week using timestamp comparison
+          const isCurrentWeek = logDate.getTime() >= startOfWeek.getTime() && 
+                               logDate.getTime() <= endOfWeek.getTime();
+          
+          console.log('Processing log:', { 
+            date, 
+            isCurrentWeek, 
+            calories: log.calories,
+            protein: log.protein,
+            carbs: log.carbs,
+            fat: log.fat
+          }); // Debug log
+
           if (!acc[date]) {
             acc[date] = {
               date,
@@ -40,21 +64,23 @@ const HealthProgress = () => {
               carbs: 0,
               fat: 0,
               count: 0,
-              isCurrentWeek: logDate >= monday && logDate <= sunday
+              isCurrentWeek
             };
           }
-          acc[date].calories += log.calories;
-          acc[date].protein += log.protein;
-          acc[date].carbs += log.carbs;
-          acc[date].fat += log.fat;
+          
+          acc[date].calories += parseFloat(log.calories) || 0;
+          acc[date].protein += parseFloat(log.protein) || 0;
+          acc[date].carbs += parseFloat(log.carbs) || 0;
+          acc[date].fat += parseFloat(log.fat) || 0;
           acc[date].count += 1;
+          
           return acc;
         }, {});
 
-        // Convert to array and sort by date
         const processedData = Object.values(dailyTotals)
           .sort((a, b) => new Date(a.date) - new Date(b.date));
 
+        console.log('Processed data:', processedData); // Debug log
         setFoodLogs(processedData);
       } catch (err) {
         setError('Failed to load food logs');
@@ -67,17 +93,27 @@ const HealthProgress = () => {
     fetchFoodLogs();
   }, [user]);
 
-  // Calculate weekly totals
+  // Calculate weekly totals with better logging
   const weeklyTotals = useMemo(() => {
-    return foodLogs
-      .filter(log => log.isCurrentWeek)
+    console.log('Calculating weekly totals from:', foodLogs); // Debug log
+    
+    const totals = foodLogs
+      .filter(log => {
+        console.log('Checking log:', { date: log.date, isCurrentWeek: log.isCurrentWeek }); // Debug log
+        return log.isCurrentWeek;
+      })
       .reduce((acc, log) => {
-        acc.calories += log.calories;
-        acc.protein += log.protein;
-        acc.carbs += log.carbs;
-        acc.fat += log.fat;
-        return acc;
+        console.log('Adding to totals:', log); // Debug log
+        return {
+          calories: acc.calories + (parseFloat(log.calories) || 0),
+          protein: acc.protein + (parseFloat(log.protein) || 0),
+          carbs: acc.carbs + (parseFloat(log.carbs) || 0),
+          fat: acc.fat + (parseFloat(log.fat) || 0)
+        };
       }, { calories: 0, protein: 0, carbs: 0, fat: 0 });
+
+    console.log('Final totals:', totals); // Debug log
+    return totals;
   }, [foodLogs]);
 
   const metrics = [
