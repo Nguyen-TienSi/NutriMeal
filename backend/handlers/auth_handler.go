@@ -43,6 +43,7 @@ func SignIn(c *fiber.Ctx) error {
 	if err != nil {
 		return c.Status(404).JSON(fiber.Map{
 			"error": "User not found",
+			// "detail err": err.Error(),
 		})
 	}
 

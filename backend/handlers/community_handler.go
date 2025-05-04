@@ -219,3 +219,49 @@ func LikePost(c *fiber.Ctx) error {
         "liked": !isLiked,
     })
 }
+
+// DeleteCommunityPost deletes a post if the user owns it
+func DeleteCommunityPost(c *fiber.Ctx) error {
+    // Get post ID from URL
+    postID, err := primitive.ObjectIDFromHex(c.Params("postId"))
+    if err != nil {
+        return c.Status(400).JSON(fiber.Map{
+            "error": "Invalid post ID",
+        })
+    }
+
+    // Get user ID from request
+    userID := c.Query("userId")
+    if userID == "" {
+        return c.Status(400).JSON(fiber.Map{
+            "error": "User ID is required",
+        })
+    }
+
+    collection := database.GetCollection("community_posts")
+    ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+    defer cancel()
+
+    // Find and delete the post only if the user is the author
+    result, err := collection.DeleteOne(ctx, bson.M{
+        "_id": postID,
+        "author._id": userID,
+    })
+
+    if err != nil {
+        return c.Status(500).JSON(fiber.Map{
+            "error": "Failed to delete post",
+        })
+    }
+
+    if result.DeletedCount == 0 {
+        return c.Status(403).JSON(fiber.Map{
+            "error": "Not authorized to delete this post",
+        })
+    }
+
+    return c.Status(200).JSON(fiber.Map{
+        "success": true,
+        "message": "Post deleted successfully",
+    })
+}

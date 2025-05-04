@@ -22,6 +22,7 @@ func SetupRoutes(app *fiber.App) {
 	users.Post("/", handlers.CreateUser)
 	users.Get("/:id", handlers.GetUser)
 	users.Put("/:id", handlers.UpdateUser)
+	users.Put("/:id/picture", handlers.UpdateUserPicture) // Add this line
 
 	// Health goal routes
 	healthGoals := api.Group("/health-goals")
@@ -51,5 +52,6 @@ func SetupRoutes(app *fiber.App) {
 	community := api.Group("/community")
 	community.Get("/posts", handlers.GetCommunityPosts)
 	community.Post("/posts", handlers.CreateCommunityPost)
-	community.Post("/posts/:postId/like", handlers.LikePost)  // Add this line
+	community.Post("/posts/:postId/like", handlers.LikePost)  
+	community.Delete("posts/:postId", handlers.DeleteCommunityPost)
 }

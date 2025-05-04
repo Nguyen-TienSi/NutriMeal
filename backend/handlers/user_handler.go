@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"nitri-meal-backend/database"
 	"nitri-meal-backend/models"
+	"nitri-meal-backend/utils"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -104,50 +105,81 @@ func GetUser(c *fiber.Ctx) error {
 }
 
 func UpdateUser(c *fiber.Ctx) error {
-	collection := database.GetCollection("users")
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
+    userId := c.Params("id")
+    objectId, err := primitive.ObjectIDFromHex(userId)
+    if err != nil {
+        return c.Status(400).JSON(fiber.Map{"error": "Invalid ID format"})
+    }
 
-	id := c.Params("id")
-	objectId, err := primitive.ObjectIDFromHex(id)
-    
-    fmt.Println(objectId)
-	if err != nil {
-		return c.Status(400).JSON(fiber.Map{
-			"error": "Invalid ID format",
-		})
-	}
+    collection := database.GetCollection("users")
+    ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+    defer cancel()
 
-	update := new(models.User)
-	if err := c.BodyParser(update); err != nil {
-		return c.Status(400).JSON(fiber.Map{
-			"error": "Failed to parse request body",
-		})
-	}
+    // Get existing user
+    var existingUser models.User
+    err = collection.FindOne(ctx, bson.M{"_id": objectId}).Decode(&existingUser)
+    if err != nil {
+        return c.Status(404).JSON(fiber.Map{"error": "User not found"})
+    }
 
-	update.UpdatedAt = time.Now()
+    // Handle file upload
+    file, err := c.FormFile("picture")
+    if err == nil && file != nil {
+        // Delete old image if exists
+        if existingUser.DeleteHash != "" {
+            err = utils.DeleteFromImgur(existingUser.DeleteHash)
+            if err != nil {
+                // Log the error but continue - don't block update if delete fails
+                fmt.Printf("Failed to delete old image: %v\n", err)
+            }
+        }
 
-	result, err := collection.UpdateOne(
-		ctx,
-		bson.M{"_id": objectId},
-		bson.M{"$set": update},
-	)
+        // Upload new image
+        result, err := utils.UploadToImgur(file)
+        if err != nil {
+            return c.Status(500).JSON(fiber.Map{"error": "Failed to upload image"})
+        }
 
-	if err != nil {
-		return c.Status(500).JSON(fiber.Map{
-			"error": "Failed to update user",
-		})
-	}
+        // Update user with new image info
+        update := bson.M{
+            "$set": bson.M{
+                "picture":    (*result)["link"].(string),
+                "deleteHash": (*result)["deleteHash"].(string),
+                "updatedAt": time.Now(),
+            },
+        }
 
-	if result.MatchedCount == 0 {
-		return c.Status(404).JSON(fiber.Map{
-			"error": "User not found",
-		})
-	}
+        _, err = collection.UpdateOne(ctx, bson.M{"_id": objectId}, update)
+        if err != nil {
+            return c.Status(500).JSON(fiber.Map{"error": "Failed to update user"})
+        }
+    }
 
-	return c.JSON(fiber.Map{
-		"message": "User updated successfully",
-	})
+    // Update other fields if provided
+    var updateData map[string]interface{}
+    if err := c.BodyParser(&updateData); err != nil {
+        return c.Status(400).JSON(fiber.Map{"error": "Invalid request body"})
+    }
+
+    // No need to parse birthday since it's now a string
+    delete(updateData, "picture") // Remove picture from regular updates
+    if len(updateData) > 0 {
+        updateData["updated_at"] = time.Now()
+        update := bson.M{"$set": updateData}
+        _, err = collection.UpdateOne(ctx, bson.M{"_id": objectId}, update)
+        if err != nil {
+            return c.Status(500).JSON(fiber.Map{"error": "Failed to update user"})
+        }
+    }
+
+    // Return the updated user data instead of just OK
+    var updatedUser models.User
+    err = collection.FindOne(ctx, bson.M{"_id": objectId}).Decode(&updatedUser)
+    if err != nil {
+        return c.Status(500).JSON(fiber.Map{"error": "Failed to fetch updated user"})
+    }
+
+    return c.JSON(updatedUser)
 }
 
 func GetUserByEmail(c *fiber.Ctx) error {
@@ -181,4 +213,67 @@ func GetUserByEmail(c *fiber.Ctx) error {
         "name":    user.Name,
         "picture": user.Picture,
     })
+}
+
+func UpdateUserPicture(c *fiber.Ctx) error {
+    userId := c.Params("id")
+    objectId, err := primitive.ObjectIDFromHex(userId)
+    if err != nil {
+        return c.Status(400).JSON(fiber.Map{"error": "Invalid user ID"})
+    }
+
+    // Get file from request
+    file, err := c.FormFile("picture")
+    if err != nil {
+        return c.Status(400).JSON(fiber.Map{"error": "No file uploaded"})
+    }
+
+    // Get existing user for delete hash
+    collection := database.GetCollection("users")
+    ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+    defer cancel()
+
+    var existingUser models.User
+    err = collection.FindOne(ctx, bson.M{"_id": objectId}).Decode(&existingUser)
+    if err != nil {
+        return c.Status(404).JSON(fiber.Map{"error": "User not found"})
+    }
+
+    // Delete old image if exists
+    if existingUser.DeleteHash != "" {
+        err = utils.DeleteFromImgur(existingUser.DeleteHash)
+        if err != nil {
+            // Log error but continue
+            fmt.Printf("Failed to delete old image: %v\n", err)
+        }
+    }
+
+    // Upload new image
+    result, err := utils.UploadToImgur(file)
+    if err != nil {
+        return c.Status(500).JSON(fiber.Map{"error": "Failed to upload image"})
+    }
+
+    // Update user with new image info
+    update := bson.M{
+        "$set": bson.M{
+            "picture":    (*result)["link"].(string),
+            "deleteHash": (*result)["deleteHash"].(string),
+            "updatedAt":  time.Now(),
+        },
+    }
+
+    _, err = collection.UpdateOne(ctx, bson.M{"_id": objectId}, update)
+    if err != nil {
+        return c.Status(500).JSON(fiber.Map{"error": "Failed to update user"})
+    }
+
+    // Return updated user
+    var updatedUser models.User
+    err = collection.FindOne(ctx, bson.M{"_id": objectId}).Decode(&updatedUser)
+    if err != nil {
+        return c.Status(500).JSON(fiber.Map{"error": "Failed to fetch updated user"})
+    }
+
+    return c.JSON(updatedUser)
 }

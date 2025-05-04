@@ -1,40 +1,30 @@
 const API_BASE_URL = 'http://localhost:3000/api';
 
-export const apiRequest = async (endpoint, method = 'GET', body = null, isFormData = false) => {
-  try {
+export const apiRequest = async (endpoint, method = "GET", data = null, isFormData = false) => {
+    const url = `${import.meta.env.VITE_API_BASE_URL}${endpoint}`;
+    
+    const headers = {};
+    if (!isFormData) {
+        headers["Content-Type"] = "application/json";
+    }
+
     const options = {
-      method,
-      credentials: 'include',
-      mode: 'cors'
+        method,
+        headers,
+        credentials: "include",
+        mode: "cors",
     };
 
-    if (body) {
-      if (isFormData) {
-        // For FormData, let the browser handle the Content-Type
-        options.body = body;
-      } else {
-        options.headers = {
-          'Content-Type': 'application/json'
-        };
-        options.body = JSON.stringify(body);
-      }
+    if (data) {
+        options.body = isFormData ? data : JSON.stringify(data);
     }
 
-    // Always accept JSON response
-    options.headers = {
-      ...options.headers,
-      'Accept': 'application/json'
-    };
-
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, options);
-    const data = await response.json();
-
+    const response = await fetch(url, options);
+    
     if (!response.ok) {
-      throw new Error(data.error || `Request failed with status ${response.status}`);
+        const error = await response.json().catch(() => ({ error: "Server error" }));
+        throw new Error(error.error || `HTTP error! status: ${response.status}`);
     }
 
-    return data;
-  } catch (error) {
-    throw error;
-  }
+    return response.json();
 };

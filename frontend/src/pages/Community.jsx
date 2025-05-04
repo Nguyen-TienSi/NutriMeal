@@ -121,6 +121,24 @@ const Community = () => {
     }
   };
 
+  const handleDeletePost = async (postId) => {
+    if (!user) return;
+
+    if (!window.confirm('Are you sure you want to delete this post?')) {
+        return;
+    }
+
+    try {
+        await apiRequest(`/community/posts/${postId}?userId=${user._id}`, 'DELETE');
+        
+        // Remove the post from state
+        setPosts(prev => prev.filter(post => post._id !== postId));
+    } catch (error) {
+        console.error('Failed to delete post:', error);
+        setError('Failed to delete post. Please try again.');
+    }
+  };
+
   const loadMorePosts = async () => {
     setIsLoadingMore(true);
     try {
@@ -179,6 +197,7 @@ const Community = () => {
               key={post._id} 
               post={post} 
               onLike={handleLike}
+              onDelete={handleDeletePost}
               requireAuth={!user}
               user={user}
             />

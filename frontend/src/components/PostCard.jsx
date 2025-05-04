@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { Heart, Share2, MoreVertical } from 'lucide-react';
+import { Heart, Share2, MoreVertical, Trash2 } from 'lucide-react';
 import ShareMenu from './ShareMenu';
 
-const PostCard = ({ post, onLike, requireAuth, user }) => {
+const PostCard = ({ post, onLike, onDelete, requireAuth, user }) => {
   const [isShareMenuOpen, setIsShareMenuOpen] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const formattedDate = new Date(post.createdAt).toLocaleDateString('en-US', {
     year: 'numeric',
@@ -14,10 +15,11 @@ const PostCard = ({ post, onLike, requireAuth, user }) => {
   });
 
   const isLiked = user && post.likedBy?.includes(user._id);
+  const isAuthor = user?._id === post.author._id;
 
   // Convert binary image data to base64 URL if needed
   const getImageUrl = () => {
-    console.log('Image data:', post.image);
+    // console.log('Image data:', post.image);
     console.log('Image type:', post.imageType);
     
     if (!post.image) return null;
@@ -70,9 +72,31 @@ const PostCard = ({ post, onLike, requireAuth, user }) => {
               </p>
             </div>
           </div>
-          <button className="btn btn-ghost btn-sm btn-circle">
-            <MoreVertical size={20} />
-          </button>
+          <div className="relative">
+            <button 
+              className="btn btn-ghost btn-sm btn-circle"
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+            >
+              <MoreVertical size={20} />
+            </button>
+            
+            {isMenuOpen && isAuthor && (
+              <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-base-100 ring-1 ring-black ring-opacity-5">
+                <div className="py-1">
+                  <button
+                    onClick={() => {
+                      onDelete(post._id);
+                      setIsMenuOpen(false);
+                    }}
+                    className="flex w-full items-center px-4 py-2 text-sm text-error hover:bg-base-200 gap-2"
+                  >
+                    <Trash2 size={16} />
+                    Delete Post
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Post Content */}
