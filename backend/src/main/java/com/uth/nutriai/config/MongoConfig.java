@@ -8,6 +8,7 @@ import com.mongodb.client.MongoClients;
 import com.mongodb.lang.NonNull;
 import com.uth.nutriai.converter.*;
 import com.uth.nutriai.repository.UuidIdentifiedRepositoryImpl;
+import com.uth.nutriai.security.SpringSecurityAuditorAware;
 import org.bson.UuidRepresentation;
 import org.bson.codecs.configuration.CodecRegistries;
 import org.bson.codecs.configuration.CodecRegistry;
@@ -23,6 +24,7 @@ import org.springframework.core.convert.converter.Converter;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
 import org.springframework.data.auditing.DateTimeProvider;
 import org.springframework.data.convert.CustomConversions;
+import org.springframework.data.domain.AuditorAware;
 import org.springframework.data.mongodb.MongoDatabaseFactory;
 import org.springframework.data.mongodb.MongoTransactionManager;
 import org.springframework.data.mongodb.config.AbstractMongoClientConfiguration;
@@ -187,6 +189,11 @@ public class MongoConfig extends AbstractMongoClientConfiguration {
         Instant instant = zonedDateTime.toInstant(); // Convert to (UTC)
 
         return () -> Optional.of(instant);
+    }
+
+    @Bean(name = "auditingProvider")
+    AuditorAware<String> auditorAware() {
+        return () -> new SpringSecurityAuditorAware().getCurrentAuditor();
     }
 
     @Bean(name = "mongoCustomConversions")

@@ -4,6 +4,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface IDao<T, ID> {
 
@@ -11,7 +12,7 @@ public interface IDao<T, ID> {
 
     List<T> findAll();
 
-    T findById(ID id);
+    Optional<T> findById(ID id);
 
     T save(T entity);
 

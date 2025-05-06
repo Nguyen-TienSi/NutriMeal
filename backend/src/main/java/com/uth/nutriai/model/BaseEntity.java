@@ -10,7 +10,6 @@ import org.springframework.data.mongodb.core.mapping.FieldType;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
-import java.util.UUID;
 
 @NoArgsConstructor
 @Getter
@@ -20,11 +19,11 @@ public abstract class BaseEntity extends UuidIdentifiedEntity {
 
     @CreatedBy
     @Field("createdBy")
-    protected UUID createdBy;
+    protected String createdBy;
 
     @LastModifiedBy
     @Field("lastModifiedBy")
-    protected UUID lastModifiedBy;
+    protected String lastModifiedBy;
 
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     @CreatedDate

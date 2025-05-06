@@ -16,6 +16,6 @@ public class CommentDaoImpl extends GenericDaoImpl<Comment, UUID> implements ICo
 
     @Override
     public List<Comment> findCommentsByUserPostId(UUID postId) {
-        return ((ICommentRepository) repository).findCommentsByUserPostId(postId);
+        return ((ICommentRepository) repository).findByUserPostId(postId);
     }
 }

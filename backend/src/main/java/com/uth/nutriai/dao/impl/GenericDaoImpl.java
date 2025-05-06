@@ -3,6 +3,7 @@ package com.uth.nutriai.dao.impl;
 import com.uth.nutriai.dao.IDao;
 import com.uth.nutriai.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.bson.BsonRegularExpression;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -34,8 +35,8 @@ public abstract class GenericDaoImpl<T, ID> implements IDao<T, ID> {
     }
 
     @Override
-    public T findById(ID id) {
-        return repository.findById(id).orElse(null);
+    public Optional<T> findById(ID id) {
+        return repository.findById(id);
     }
 
     @Override
@@ -62,7 +63,14 @@ public abstract class GenericDaoImpl<T, ID> implements IDao<T, ID> {
 
     public List<T> findByField(String fieldName, Object value, Class<T> className) {
         var query = new Query();
-        query.addCriteria(Criteria.where(fieldName).is(value));
+        Criteria criteria = Criteria.where(fieldName);
+        if (value instanceof String) {
+            BsonRegularExpression regex = new BsonRegularExpression((String) value, "i");
+            criteria.regex(regex);
+        } else {
+            criteria.is(value);
+        }
+        query.addCriteria(criteria);
         return mongoTemplate.find(query, className);
     }
 

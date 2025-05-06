@@ -4,19 +4,28 @@ class OnboardingAdditionalHealthGoals extends StatefulWidget {
   const OnboardingAdditionalHealthGoals({super.key});
 
   @override
-  State<OnboardingAdditionalHealthGoals> createState() => _State();
+  State<OnboardingAdditionalHealthGoals> createState() =>
+      _OnboardingAdditionalHealthGoalsState();
 }
 
-class _State extends State<OnboardingAdditionalHealthGoals> {
-  final List<String?> _selectedGoals = [];
+class _OnboardingAdditionalHealthGoalsState
+    extends State<OnboardingAdditionalHealthGoals> {
+  final List<String> _selectedGoals = [];
 
-  void _selectGoal(String goalName) {
+  final List<String> _healthGoals = [
+    "Living longer",
+    "Feeling energized",
+    "Optimize athletic performance",
+    "Build healthier habits",
+    "Eliminate All-or-Nothing mindset",
+    "Prevent lifestyle diseases",
+  ];
+
+  void _toggleGoalSelection(String goalName) {
     setState(() {
-      if (_selectedGoals.contains(goalName)) {
-        _selectedGoals.remove(goalName);
-      } else {
-        _selectedGoals.add(goalName);
-      }
+      _selectedGoals.contains(goalName)
+          ? _selectedGoals.remove(goalName)
+          : _selectedGoals.add(goalName);
     });
   }
 
@@ -30,25 +39,37 @@ class _State extends State<OnboardingAdditionalHealthGoals> {
           'What additional goals do you have?',
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
-        _healthGoalCard("Living longer"),
-        _healthGoalCard("Feeling energized"),
-        _healthGoalCard("Optimize athletic performance"),
-        _healthGoalCard("Build healthier habits"),
-        _healthGoalCard("Eliminate All-or-Nothing mindset"),
-        _healthGoalCard("Prevent lifestyle diseases"),
+        ..._healthGoals.map((goal) => HealthGoalCard(
+              goalName: goal,
+              isSelected: _selectedGoals.contains(goal),
+              onTap: () => _toggleGoalSelection(goal),
+            )),
       ],
     );
   }
+}
 
-  Widget _healthGoalCard(String goalName) {
+class HealthGoalCard extends StatelessWidget {
+  final String goalName;
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  const HealthGoalCard({
+    required this.goalName,
+    required this.isSelected,
+    required this.onTap,
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => _selectGoal(goalName),
+      onTap: onTap,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 8.0),
         width: double.infinity,
         child: Card(
-          color:
-              _selectedGoals.contains(goalName) ? Colors.green : Colors.white,
+          color: isSelected ? Colors.green : Colors.white,
           child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: Text(
@@ -56,9 +77,7 @@ class _State extends State<OnboardingAdditionalHealthGoals> {
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
-                color: _selectedGoals.contains(goalName)
-                    ? Colors.white
-                    : Colors.black,
+                color: isSelected ? Colors.white : Colors.black,
               ),
             ),
           ),

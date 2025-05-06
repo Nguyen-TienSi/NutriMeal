@@ -2,6 +2,7 @@ package com.uth.nutriai.dao.impl;
 
 import com.uth.nutriai.dao.IMealLogDao;
 import com.uth.nutriai.model.domain.MealLog;
+import com.uth.nutriai.model.domain.User;
 import com.uth.nutriai.repository.IMealLogRepository;
 import org.springframework.stereotype.Component;
 
@@ -16,7 +17,7 @@ public class MealLogDaoImpl extends GenericDaoImpl<MealLog, UUID> implements IMe
     }
 
     @Override
-    public List<MealLog> findMealLogsByMealDate(Date date) {
-        return findByField("mealDate", date, MealLog.class);
+    public List<MealLog> findByTrackingDateAndUser(Date trackingDate, User user) {
+        return ((IMealLogRepository) repository).findByTrackingDateAndUser(trackingDate, user);
     }
 }

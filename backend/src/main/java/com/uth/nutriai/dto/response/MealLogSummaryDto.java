@@ -9,7 +9,7 @@ import java.util.UUID;
 public record MealLogSummaryDto(
         UUID id,
         @JsonProperty("timeOfDay") TimeOfDayDto timeOfDayDto,
-        Date mealDate,
+        Date trackingDate,
         double totalCalories,
         double consumedCalories
 ) {

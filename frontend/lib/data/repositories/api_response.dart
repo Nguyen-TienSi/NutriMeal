@@ -11,7 +11,7 @@ class ApiResponse {
       if (response.containsKey('data') && response['data'] != null) {
         return ApiResponse(data: response['data']);
       } else {
-        return ApiResponse.withError(response['message'] ?? 'No data found');
+        return ApiResponse.withError(response['title'] ?? 'No data found');
       }
     }
 

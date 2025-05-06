@@ -15,11 +15,6 @@ import java.util.List;
 })
 public interface IUserMapper {
 
-    @Mapping(target = "userId", source = "userId")
-    @Mapping(target = "name", source = "name")
-    @Mapping(target = "email", source = "email")
-    @Mapping(target = "pictureUrl", source = "pictureUrl")
-    @Mapping(target = "authProvider", source = "authProvider")
     @Mapping(target = "activityLevel", source = "activityLevelDto")
     @Mapping(target = "healthGoal", source = "healthGoalDto")
     @Mapping(target = "currentWeight", source = "currentWeight")

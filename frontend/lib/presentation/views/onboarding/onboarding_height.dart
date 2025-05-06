@@ -1,119 +1,78 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:nutriai_app/data/models/user_create_data.dart';
 
 class OnboardingHeight extends StatefulWidget {
-  const OnboardingHeight({super.key});
+  final UserCreateData userCreateData;
+  const OnboardingHeight({super.key, required this.userCreateData});
 
   @override
-  State<OnboardingHeight> createState() => _State();
+  State<OnboardingHeight> createState() => _OnboardingHeightState();
 }
 
-class _State extends State<OnboardingHeight> {
-  final TextEditingController _cmController = TextEditingController();
-  final TextEditingController _feetController = TextEditingController();
-  final TextEditingController _inchesController = TextEditingController();
-
-  late bool _isCm;
+class _OnboardingHeightState extends State<OnboardingHeight> {
+  late final TextEditingController _cmController;
 
   @override
   void initState() {
     super.initState();
-    _isCm = true;
+    widget.userCreateData.currentHeight = 170;
+    _cmController = TextEditingController(
+      text: widget.userCreateData.currentHeight.toString(),
+    );
+    _cmController.addListener(_onHeightChanged);
   }
 
-  @override
-  void dispose() {
-    _cmController.dispose();
-    _feetController.dispose();
-    _inchesController.dispose();
-    super.dispose();
-  }
-
-  void _changeHeightUnit() {
+  void _onHeightChanged() {
+    final text = _cmController.text;
+    final height = int.tryParse(text);
     setState(() {
-      if (_isCm) {
-        final cm = double.tryParse(_cmController.text) ?? 0;
-        final totalInches = cm / 2.54;
-        final feet = totalInches ~/ 12;
-        final inches = (totalInches % 12).round();
-
-        _feetController.text = feet.toString();
-        _inchesController.text = inches.toString();
-      } else {
-        final feet = int.tryParse(_feetController.text) ?? 0;
-        final inches = int.tryParse(_inchesController.text) ?? 0;
-        final cm = feet * 30.48 + inches * 2.54;
-
-        _cmController.text = cm.round().toString();
-      }
-
-      _isCm = !_isCm;
+      widget.userCreateData.currentHeight = height;
     });
   }
 
   @override
+  void dispose() {
+    _cmController.removeListener(_onHeightChanged);
+    _cmController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            if (_isCm)
-              _heightInputField(
-                heightController: _cmController,
-                heightUnit: "cm",
-                maxLength: 3,
-              ),
-            if (!_isCm)
-              Row(
-                children: [
-                  _heightInputField(
-                    heightController: _feetController,
-                    heightUnit: "feet",
-                    maxLength: 2,
-                  ),
-                  _heightInputField(
-                    heightController: _inchesController,
-                    heightUnit: "inches",
-                    maxLength: 2,
-                  ),
-                ],
-              )
-          ],
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            ElevatedButton(
-              onPressed: _changeHeightUnit,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: !_isCm ? Colors.green : Colors.grey,
-              ),
-              child: Text(
-                "ft/in",
-                style: TextStyle(
-                  color: !_isCm ? Colors.white : Colors.black,
-                  fontWeight: !_isCm ? FontWeight.bold : FontWeight.normal,
-                ),
-              ),
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 24),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Text(
+            "What is your height?",
+            style: TextStyle(
+              fontSize: 32,
+              fontWeight: FontWeight.bold,
+              color: Colors.black87,
+              letterSpacing: -0.5,
             ),
-            ElevatedButton(
-              onPressed: _changeHeightUnit,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: _isCm ? Colors.green : Colors.grey,
-              ),
-              child: Text(
-                "cm",
-                style: TextStyle(
-                  color: _isCm ? Colors.white : Colors.black,
-                  fontWeight: _isCm ? FontWeight.bold : FontWeight.normal,
-                ),
-              ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 12),
+          const Text(
+            "Enter your height in centimeters",
+            style: TextStyle(
+              fontSize: 16,
+              color: Colors.black54,
+              height: 1.5,
             ),
-          ],
-        ),
-      ],
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 48),
+          _heightInputField(
+            heightController: _cmController,
+            heightUnit: "cm",
+            maxLength: 3,
+          ),
+        ],
+      ),
     );
   }
 
@@ -123,8 +82,17 @@ class _State extends State<OnboardingHeight> {
     required int maxLength,
   }) {
     return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.black),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 20,
+            offset: const Offset(0, 8),
+          ),
+        ],
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -139,7 +107,7 @@ class _State extends State<OnboardingHeight> {
 
               final textWidth = _calculateTextWidth(
                 text,
-                const TextStyle(fontSize: 48, fontWeight: FontWeight.bold),
+                const TextStyle(fontSize: 56, fontWeight: FontWeight.bold),
               );
 
               return SizedBox(
@@ -151,10 +119,13 @@ class _State extends State<OnboardingHeight> {
                   decoration: const InputDecoration(
                     border: InputBorder.none,
                     contentPadding: EdgeInsets.zero,
+                    isDense: true,
                   ),
                   style: const TextStyle(
-                    fontSize: 48,
+                    fontSize: 56,
                     fontWeight: FontWeight.bold,
+                    color: Colors.black87,
+                    letterSpacing: -1,
                   ),
                   inputFormatters: [
                     FilteringTextInputFormatter.digitsOnly,
@@ -164,11 +135,14 @@ class _State extends State<OnboardingHeight> {
               );
             },
           ),
+          const SizedBox(width: 12),
           Text(
             heightUnit,
             style: const TextStyle(
-              fontSize: 18,
-              color: Colors.black,
+              fontSize: 24,
+              color: Colors.black54,
+              fontWeight: FontWeight.w500,
+              letterSpacing: -0.5,
             ),
           ),
         ],

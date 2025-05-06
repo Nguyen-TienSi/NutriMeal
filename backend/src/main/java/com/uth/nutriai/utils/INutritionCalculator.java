@@ -12,27 +12,22 @@ public interface INutritionCalculator<T extends BaseEntity> {
         return calculateFromNutrients(getConsumedNutrients(entity));
     }
 
-    private double calculateFromNutrients(List<Map<Nutrient, Double>> consumedNutrients) {
+    private double calculateFromNutrients(List<Nutrient> consumedNutrients) {
         double protein = 0;
         double carbs = 0;
         double fat = 0;
 
-        for (Map<Nutrient, Double> consumed : consumedNutrients) {
-            for (Map.Entry<Nutrient, Double> entry : consumed.entrySet()) {
-                String name = entry.getKey().getName().toLowerCase();
-                double value = entry.getValue();
-
-                switch (name) {
-                    case "protein" -> protein += value;
-                    case "carbohydrates", "carbs" -> carbs += value;
-                    case "fat" -> fat += value;
-                }
+        for (Nutrient nutrient : consumedNutrients) {
+            String name = nutrient.getName().toLowerCase();
+            switch (name) {
+                case "protein" -> protein = nutrient.getValue();
+                case "carbohydrates", "carbs" -> carbs = nutrient.getValue();
+                case "fat" -> fat = nutrient.getValue();
             }
         }
 
-        // 1g protein = 4 kcal, 1g carb = 4 kcal, 1g fat = 9 kcal
-        return (protein * 4) + (carbs * 4) + (fat * 9);
+        return protein * 4 + carbs * 4 + fat * 9;
     }
 
-    List<Map<Nutrient, Double>> getConsumedNutrients(T entity);
+    List<Nutrient> getConsumedNutrients(T entity);
 }

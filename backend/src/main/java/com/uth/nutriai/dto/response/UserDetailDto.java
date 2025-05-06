@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.uth.nutriai.dto.shared.ActivityLevelDto;
 import com.uth.nutriai.dto.shared.HealthGoalDto;
 
+import java.util.Date;
 import java.util.UUID;
 
 public record UserDetailDto(
@@ -14,6 +15,8 @@ public record UserDetailDto(
         String email,
         String pictureUrl,
         String authProvider,
+        String gender,
+        Date dateOfBirth,
         @JsonProperty("activityLevel") ActivityLevelDto activityLevelDto,
         @JsonProperty("healthGoal") HealthGoalDto healthGoalDto,
         int currentWeight,

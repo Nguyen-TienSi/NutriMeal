@@ -1,36 +1,130 @@
 package com.uth.nutriai.service.impl;
 
+import com.github.fge.jsonpatch.JsonPatch;
+import com.github.fge.jsonpatch.JsonPatchException;
 import com.uth.nutriai.dao.IMealLogDao;
+import com.uth.nutriai.dao.IRecipeDao;
+import com.uth.nutriai.dao.IUserDao;
+import com.uth.nutriai.dto.internal.MealLogUpdateDto;
 import com.uth.nutriai.dto.response.MealLogDetailDto;
 import com.uth.nutriai.dto.response.MealLogSummaryDto;
+import com.uth.nutriai.event.model.HealthTrackingUpdateEvent;
+import com.uth.nutriai.exception.ResourceNotFoundException;
 import com.uth.nutriai.mapper.IMealLogMapper;
 import com.uth.nutriai.model.domain.MealLog;
+import com.uth.nutriai.model.domain.Nutrient;
+import com.uth.nutriai.model.domain.User;
+import com.uth.nutriai.model.enumeration.TimeOfDay;
+import com.uth.nutriai.service.IJsonPatchService;
 import com.uth.nutriai.service.IMealLogService;
 import com.uth.nutriai.utils.EtagUtil;
 import lombok.AllArgsConstructor;
+import lombok.SneakyThrows;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.io.IOException;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Service
 public class MealLogServiceImpl implements IMealLogService {
 
     private IMealLogDao mealLogDao;
+    private IUserDao userDao;
+    private IRecipeDao recipeDao;
     private IMealLogMapper mealLogMapper;
+    private IJsonPatchService jsonPatchService;
+    private ApplicationEventPublisher applicationEventPublisher;
 
     @Override
-    public List<MealLogSummaryDto> findMealLogsByDate(Date mealDate) {
-        List<MealLog> mealLogList = mealLogDao.findMealLogsByMealDate(mealDate);
+    public List<MealLogSummaryDto> findMealLogsByTrackingDate(Date trackingDate) {
+        String userId = Optional.ofNullable(SecurityContextHolder.getContext().getAuthentication())
+                .map(authentication -> authentication.getPrincipal() instanceof Jwt jwt ? jwt.getSubject() : null)
+                .orElse(null);
+
+        if (userId == null) {
+            return Collections.emptyList();
+        }
+
+        User user = userDao.findByUserId(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with userId: " + userId));
+
+        List<MealLog> mealLogList = mealLogDao.findByTrackingDateAndUser(trackingDate, user);
+
+        if (mealLogList.isEmpty()) {
+            mealLogList = Arrays.stream(TimeOfDay.values())
+                    .filter(tod -> List.of(TimeOfDay.MORNING, TimeOfDay.NOON, TimeOfDay.EVENING).contains(tod))
+                    .map(timeOfDay -> {
+                        MealLog mealLog = new MealLog();
+                        mealLog.setUser(user);
+                        mealLog.setTrackingDate(trackingDate);
+                        mealLog.setTimeOfDay(timeOfDay);
+                        mealLog.setTotalCalories(0.0);
+                        mealLog.setRecipeList(new ArrayList<>());
+                        mealLog.setConsumedNutrients(new ArrayList<>());
+                        return mealLogDao.save(mealLog);
+                    })
+                    .collect(Collectors.toList());
+        }
+
         return mealLogMapper.mapToMealLogSummaryDtoList(mealLogList);
     }
 
     @Override
     public MealLogDetailDto findMealLogById(UUID id) {
-        MealLog mealLog = mealLogDao.findById(id);
+        MealLog mealLog = mealLogDao.findById(id).orElseThrow(() -> new ResourceNotFoundException("MealLog not found with id: " + id));
         return mealLogMapper.mapToMealLogDetailDto(mealLog);
+    }
+
+    @SneakyThrows({JsonPatchException.class, IOException.class})
+    @Override
+    public MealLogDetailDto patchMealLog(UUID id, JsonPatch jsonPatch) {
+        MealLog mealLog = mealLogDao.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("MealLog not found with id: " + id));
+
+        MealLog patchedMealLog = jsonPatchService.applyPatch(jsonPatch, mealLog, MealLog.class);
+
+        updateConsumedNutrients(patchedMealLog);
+
+        MealLog savedMealLog = mealLogDao.save(patchedMealLog);
+
+        publishHealthTrackingUpdate(savedMealLog);
+
+        return mealLogMapper.mapToMealLogDetailDto(savedMealLog);
+    }
+
+    private void updateConsumedNutrients(MealLog mealLog) {
+        Map<String, Nutrient> nutrientMap = mealLog.getRecipeList().stream()
+                .map(recipe -> recipeDao.findById(recipe.getId())
+                        .orElseThrow(() -> new ResourceNotFoundException("Recipe not found: " + recipe.getId())))
+                .flatMap(recipe -> recipe.getNutrients().stream())
+                .collect(Collectors.groupingBy(
+                        Nutrient::getName,
+                        Collectors.reducing(
+                                null,
+                                nutrient -> Nutrient.builder()
+                                        .name(nutrient.getName())
+                                        .unit(nutrient.getUnit())
+                                        .value(nutrient.getValue())
+                                        .build(),
+                                (n1, n2) -> {
+                                    if (n1 == null) return n2;
+                                    n1.setValue(n1.getValue() + n2.getValue());
+                                    return n1;
+                                }
+                        )
+                ));
+
+        mealLog.setConsumedNutrients(new ArrayList<>(nutrientMap.values()));
+    }
+
+    private void publishHealthTrackingUpdate(MealLog mealLog) {
+        MealLogUpdateDto mealLogUpdateDto = mealLogMapper.mapToMealLogUpdateDto(mealLog);
+        applicationEventPublisher.publishEvent(new HealthTrackingUpdateEvent(this, mealLogUpdateDto));
     }
 
     @Override
@@ -40,7 +134,7 @@ public class MealLogServiceImpl implements IMealLogService {
 
     @Override
     public String currentEtag(UUID id) {
-        MealLog mealLog = mealLogDao.findById(id);
-        return EtagUtil.generateEtag(mealLog);
+        MealLog mealLog = mealLogDao.findById(id).orElse(null);
+        return EtagUtil.generateEtag(Objects.requireNonNull(mealLog));
     }
 }

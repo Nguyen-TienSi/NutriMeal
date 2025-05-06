@@ -19,6 +19,6 @@ public class AllowedEnumValidator implements ConstraintValidator<AllowedEnum, En
     @Override
     public boolean isValid(Enum<?> value, ConstraintValidatorContext context) {
         if (value == null) return true;
-        return allowedValues.contains(value.name());
+        return allowedValues.contains(value.name().toLowerCase());
     }
 }

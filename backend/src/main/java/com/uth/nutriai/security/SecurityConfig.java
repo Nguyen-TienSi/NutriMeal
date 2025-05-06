@@ -38,6 +38,8 @@ public class SecurityConfig {
             "/api/auth/**",
             "/api/health",
             "/api/recipes/**",
+            "/api/health-tracking/*",
+            "/api/meal-logs/*"
     };
 
     @Bean

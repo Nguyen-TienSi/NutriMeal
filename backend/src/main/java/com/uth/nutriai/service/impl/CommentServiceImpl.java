@@ -12,6 +12,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @AllArgsConstructor
@@ -34,7 +35,7 @@ public class CommentServiceImpl implements ICommentService {
 
     @Override
     public String currentEtag(UUID id) {
-        Comment comment = commentDao.findById(id);
-        return EtagUtil.generateEtag(comment);
+        Comment comment = commentDao.findById(id).orElse(null);
+        return EtagUtil.generateEtag(Objects.requireNonNull(comment));
     }
 }

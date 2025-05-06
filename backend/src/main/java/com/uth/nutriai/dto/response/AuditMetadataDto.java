@@ -6,8 +6,8 @@ import java.util.Date;
 import java.util.UUID;
 
 public record AuditMetadataDto(
-        UUID createdBy,
-        UUID lastModifiedBy,
+        String createdBy,
+        String lastModifiedBy,
         Date createdAt,
         Date lastModifiedAt,
         Long version,

@@ -6,6 +6,7 @@ import com.uth.nutriai.dto.response.ApiResponse;
 import com.uth.nutriai.dto.response.RecipeDetailDto;
 import com.uth.nutriai.dto.response.RecipeSummaryDto;
 import com.uth.nutriai.service.IRecipeService;
+import com.uth.nutriai.utils.ObjectDataTypeParser;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -33,18 +34,20 @@ public class RecipeController {
         return ResponseEntity.ok(response);
     }
 
-    @RequestMapping(value = "/search", method = {RequestMethod.GET, RequestMethod.HEAD})
+    @RequestMapping(value = "/{id}", method = {RequestMethod.GET, RequestMethod.HEAD})
     public ResponseEntity<ApiResponse<RecipeDetailDto>> findRecipeById(
-            @RequestParam UUID id,
+            @PathVariable("id") UUID id,
             @RequestHeader(value = "If-None-Match", required = false) String eTag
     ) {
+        if (id == null) {
+            return ResponseEntity.badRequest().build();
+        }
+
         if (!recipeService.isRecipeAvailable(id)) {
             return ResponseEntity.notFound().build();
         }
 
-        String currentEtag = recipeService.currentEtag(id);
-
-        if (eTag != null && eTag.equals(currentEtag)) {
+        if (eTag != null && eTag.equals(recipeService.currentEtag(id))) {
             return ResponseEntity.status(HttpStatus.NOT_MODIFIED).build();
         }
 
@@ -52,18 +55,41 @@ public class RecipeController {
 
         ApiResponse<RecipeDetailDto> response = new ApiResponse<>(recipeDetailDto);
         return ResponseEntity.ok()
-                .eTag(currentEtag)
+                .eTag(recipeService.currentEtag(id))
                 .body(response);
+    }
+
+    @RequestMapping(value = "/search/{keyword}/{value}", method = {RequestMethod.GET})
+    public ResponseEntity<ApiResponse<List<RecipeSummaryDto>>> findRecipesByKeyword(
+            @PathVariable("keyword") String keyword,
+            @PathVariable("value") String value
+    ) {
+        if (keyword == null || keyword.isBlank()) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        Object parsedValue = ObjectDataTypeParser.parse(value);
+        if (!recipeService.isRecipeAvailable(keyword, parsedValue)) {
+            return ResponseEntity.notFound().build();
+        }
+
+        List<RecipeSummaryDto> recipeSummaryDtoList = recipeService.findRecipesByField(keyword, parsedValue);
+        if (recipeSummaryDtoList.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        ApiResponse<List<RecipeSummaryDto>> response = new ApiResponse<>(recipeSummaryDtoList);
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping
     public ResponseEntity<ApiResponse<RecipeDetailDto>> createRecipe(
             @Valid @RequestBody RecipeCreateDto recipeCreateDto) {
         RecipeDetailDto recipeDetailDto = recipeService.createRecipe(recipeCreateDto);
-        URI location = URI.create("/api/recipes/search?id=" + recipeDetailDto.id());
-        String currentEtag = recipeService.currentEtag(recipeDetailDto.id());
+        URI location = URI.create("/api/recipes/" + recipeDetailDto.id());
         ApiResponse<RecipeDetailDto> response = new ApiResponse<>(recipeDetailDto);
-        return ResponseEntity.created(location).eTag(currentEtag).body(response);
+        return ResponseEntity.created(location)
+                .eTag(recipeService.currentEtag(recipeDetailDto.id()))
+                .body(response);
     }
 
     @PutMapping
@@ -91,7 +117,7 @@ public class RecipeController {
     public ResponseEntity<Void> deleteRecipe(
             @RequestParam UUID id,
             @RequestHeader(value = "If-Match", required = false) String eTag
-            ) {
+    ) {
 
         if (!recipeService.isRecipeAvailable(id)) {
             return ResponseEntity.notFound().build();
@@ -105,4 +131,13 @@ public class RecipeController {
         return ResponseEntity.noContent().build();
     }
 
+    @GetMapping("/meal-time/{mealTime}")
+    public ResponseEntity<ApiResponse<List<RecipeSummaryDto>>> findRecipesByMealTime(@PathVariable("mealTime") String mealTime) {
+        List<RecipeSummaryDto> recipeSummaryDtoList = recipeService.findRecipesByMealTime(mealTime);
+        if (recipeSummaryDtoList.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        ApiResponse<List<RecipeSummaryDto>> response = new ApiResponse<>(recipeSummaryDtoList);
+        return ResponseEntity.ok(response);
+    }
 }

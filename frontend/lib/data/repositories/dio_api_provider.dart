@@ -149,7 +149,7 @@ class DioApiProvider extends HttpProvider with ApiConfig {
       }
 
       await head(
-          endPoint: queryParameters != null ? endPoint : 'health',
+          endPoint: queryParameters != null ? endPoint : '/health',
           queryParameters: queryParameters);
 
       final data = await sendRequest(
@@ -193,7 +193,18 @@ class DioApiProvider extends HttpProvider with ApiConfig {
       var files,
       T Function(dynamic)? fromJson}) {
     // TODO: implement post
-    throw UnimplementedError();
+    // throw UnimplementedError();
+    try {
+      return sendRequest(
+        method: 'POST',
+        endPoint: endPoint,
+        data: data,
+      ).then(
+          (response) => fromJson != null ? fromJson(response) : response as T);
+    } catch (e) {
+      handleError(e as Exception);
+      rethrow;
+    }
   }
 
   @override

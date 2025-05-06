@@ -8,6 +8,8 @@ import com.uth.nutriai.model.BaseEntity;
 import com.uth.nutriai.model.enumeration.ActivityLevel;
 import com.uth.nutriai.model.enumeration.HealthGoal;
 
+import java.util.Date;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -20,6 +22,8 @@ public class User extends BaseEntity {
     private String email;
     private String pictureUrl;
     private String authProvider;
+    private String gender;
+    private Date dateOfBirth;
     private ActivityLevel activityLevel;
     private HealthGoal healthGoal;
     private int currentWeight;

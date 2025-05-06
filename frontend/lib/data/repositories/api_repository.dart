@@ -30,16 +30,24 @@ class ApiRepository {
     }
   }
 
-  Future<ApiResponse> sendData({
+  Future<T?> sendData<T>({
     required String endPoint,
     var data,
     var files,
+    T Function(dynamic data)? fromJson,
   }) async {
     try {
-      return await apiProvider.post<ApiResponse>(
+      final response = await apiProvider.post<dynamic>(
           endPoint: endPoint, data: data, files: files);
+
+      final apiResponse = ApiResponse.fromResponse(response);
+      if (apiResponse.message == null) {
+        return fromJson?.call(apiResponse.data);
+      } else {
+        throw UnnamedException(apiResponse.message!);
+      }
     } catch (e) {
-      return ApiResponse.withError(e.toString());
+      throw UnnamedException(e.toString());
     }
   }
 

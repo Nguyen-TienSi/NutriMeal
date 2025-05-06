@@ -108,6 +108,14 @@ public class GlobalExceptionHandler {
                 .addProperty("errors", errors)
                 .build();
     }
+    
+    @ExceptionHandler(InvalidPatchException.class)
+    public ProblemDetail handleInvalidPatchException(InvalidPatchException ex, HttpServletRequest request) {
+        return problemDetailFactory
+                .builder(HttpStatus.BAD_REQUEST, "Invalid Patch", ex.getMessage(), request)
+                .addProperty("exceptionType", ex.getClass().getName())
+                .build();
+    }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ProblemDetail handleHttpMessageNotReadableException(HttpMessageNotReadableException ex,

@@ -11,6 +11,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ProblemDetail;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
@@ -28,15 +30,8 @@ import java.util.stream.Stream;
 @Component
 public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
-    @Autowired
-    private ObjectMapper objectMapper;
-
-    @Autowired
-    private GoogleTokenVerifier googleTokenVerifier;
-
     private static final String AUTHORIZATION_HEADER = "Authorization";
     private static final String BEARER_PREFIX = "Bearer ";
-
     private final List<RequestMatcher> skipMatchers = Stream.of(
             "/api/auth/**",
             "/api/health",
@@ -47,8 +42,14 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
             "/v3/api-docs",
             "/webjars/**",
             "/openapi.yaml",
-            "/api/recipes/**"
+            "/api/recipes/**",
+            "/api/health-tracking/*",
+            "/api/meal-logs/*"
     ).map(AntPathRequestMatcher::new).collect(Collectors.toList());
+    @Autowired
+    private ObjectMapper objectMapper;
+    @Autowired
+    private GoogleTokenVerifier googleTokenVerifier;
 
     @Override
     protected boolean shouldNotFilter(@NonNull HttpServletRequest request) {
@@ -62,23 +63,27 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
             @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
 
+        if (shouldNotFilter(request)) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         Optional<String> token = extractTokenFromRequest(request);
 
         if (token.isPresent() && !token.get().isEmpty()) {
 
-            String userId = extractUserIdFromToken(token.get());
+            String sub = extractUserIdFromToken(token.get());
 
-            var authentication = new UsernamePasswordAuthenticationToken(userId, null, Collections.emptyList());
+            List<GrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
+            var authentication = new UsernamePasswordAuthenticationToken(sub, null, authorities);
             authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
+            filterChain.doFilter(request, response);
         } else {
             SecurityContextHolder.clearContext();
             setAuthErrorDetails(response);
-            return;
         }
-
-        filterChain.doFilter(request, response);
     }
 
     private String extractUserIdFromToken(String token) {

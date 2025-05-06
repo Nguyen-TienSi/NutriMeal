@@ -23,10 +23,10 @@ mixin ApiConfig {
 
   Uri buildUri(String endPoint, {Map<String, dynamic>? queryParameters}) {
     return apiUri.replace(
-      path: '${apiUri.path}/$endPoint',
+      path: '${apiUri.path}$endPoint',
       queryParameters: queryParameters,
     );
   }
 
-  String get apiBaseUrl => '$_httpScheme://$_apiHost:$_apiPort/$_apiPath/';
+  String get apiBaseUrl => '$_httpScheme://$_apiHost:$_apiPort/$_apiPath';
 }

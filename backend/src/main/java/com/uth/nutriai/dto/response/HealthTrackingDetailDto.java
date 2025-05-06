@@ -15,6 +15,6 @@ public record HealthTrackingDetailDto(
         Date trackingDate,
         double totalCalories,
         double consumedCalories,
-        List<Map<NutrientDto, Double>> consumedNutrients
+        List<NutrientDto> consumedNutrients
 ) {
 }

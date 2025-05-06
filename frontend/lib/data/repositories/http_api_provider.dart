@@ -34,9 +34,12 @@ class HttpApiProvider extends HttpProvider with ApiConfig {
     http.Response response = switch (method.toUpperCase()) {
       'HEAD' => await http.head(uri, headers: requestHeaders),
       'GET' => await http.get(uri, headers: requestHeaders),
-      'POST' => await http.post(uri, headers: requestHeaders, body: data),
-      'PUT' => await http.put(uri, headers: requestHeaders, body: data),
-      'PATCH' => await http.patch(uri, headers: requestHeaders, body: data),
+      'POST' =>
+        await http.post(uri, headers: requestHeaders, body: jsonEncode(data)),
+      'PUT' =>
+        await http.put(uri, headers: requestHeaders, body: jsonEncode(data)),
+      'PATCH' =>
+        await http.patch(uri, headers: requestHeaders, body: jsonEncode(data)),
       'DELETE' => await http.delete(uri, headers: requestHeaders),
       _ => throw UnimplementedError('HTTP method $method not supported'),
     };
@@ -91,7 +94,7 @@ class HttpApiProvider extends HttpProvider with ApiConfig {
       }
 
       await head(
-          endPoint: queryParameters != null ? endPoint : 'health',
+          endPoint: queryParameters != null ? endPoint : '/health',
           queryParameters: queryParameters);
 
       final data = await sendRequest(

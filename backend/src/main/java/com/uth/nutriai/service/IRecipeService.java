@@ -22,5 +22,11 @@ public interface IRecipeService {
 
     void deleteRecipe(UUID id);
 
+    List<RecipeSummaryDto> findRecipesByMealTime(String mealTime);
+
+    boolean isRecipeAvailable(String fieldName, Object fieldValue);
+
+    List<RecipeSummaryDto> findRecipesByField(String fieldName, Object fieldValue);
+
     String currentEtag(UUID id);
 }

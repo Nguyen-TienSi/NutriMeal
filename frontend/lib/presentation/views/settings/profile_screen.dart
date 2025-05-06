@@ -33,7 +33,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   void _logInfo() {
+    final userInfo = AuthManager.getGoogleAuthService().currentUser;
     final idToken = TokenManager.getValidToken();
+    debugPrint('👤 User Info: $userInfo');
     debugPrint('🔑 Token: $idToken');
   }
 

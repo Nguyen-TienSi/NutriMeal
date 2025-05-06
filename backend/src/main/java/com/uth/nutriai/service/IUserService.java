@@ -12,7 +12,7 @@ public interface IUserService {
 
     UserDetailDto findUserById(UUID id);
 
-    UserDetailDto createUser(UserCreateDto userCreateDto);
+    UserDetailDto createUser(String token, UserCreateDto userCreateDto);
 
     void deleteUser(UUID id);
 

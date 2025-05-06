@@ -1,8 +1,10 @@
 package com.uth.nutriai.dao.impl;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import com.uth.nutriai.dao.IUserDao;
+import com.uth.nutriai.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Component;
 
 import com.uth.nutriai.model.domain.User;
@@ -20,7 +22,17 @@ public class UserDaoImpl extends GenericDaoImpl<User, UUID> implements IUserDao 
     }
 
     @Override
-    public User findByEmail(String email) {
-        return findByField("email", email, User.class).get(0);
+    public Optional<User> findByEmail(String email) {
+        return ((IUserRepository) repository).findByEmail(email);
+    }
+
+    @Override
+    public Optional<User> findByUserId(String userId) {
+        return ((IUserRepository) repository).findByUserId(userId);
+    }
+
+    @Override
+    public boolean existsByUserId(String userId) {
+        return ((IUserRepository) repository).existsByUserId(userId);
     }
 }

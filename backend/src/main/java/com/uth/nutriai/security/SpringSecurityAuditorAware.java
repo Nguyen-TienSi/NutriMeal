@@ -1,30 +1,36 @@
 package com.uth.nutriai.security;
 
-import java.util.Optional;
-import java.util.UUID;
-
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.lang.NonNull;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Component;
+import org.springframework.security.oauth2.jwt.Jwt;
 
-import com.uth.nutriai.model.domain.User;
+import java.util.Optional;
 
-@Component("auditingProvider")
-public class SpringSecurityAuditorAware implements AuditorAware<UUID> {
+public class SpringSecurityAuditorAware implements AuditorAware<String> {
 
     @Override
     @NonNull
-    public Optional<UUID> getCurrentAuditor() {
-        return Optional.ofNullable(SecurityContextHolder.getContext())
-                .map(SecurityContext::getAuthentication)
-                .filter(Authentication::isAuthenticated)
-                .map(Authentication::getPrincipal)
-                .filter(User.class::isInstance)
-                .map(User.class::cast)
-                .map(User::getId);
-    }
+    public Optional<String> getCurrentAuditor() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
+        if (authentication == null || !authentication.isAuthenticated() || authentication instanceof AnonymousAuthenticationToken) {
+            return Optional.of("SYSTEM");
+        }
+
+        Object principal = authentication.getPrincipal();
+
+        if (principal instanceof Jwt jwt) {
+            // Extract the subject/user ID from the JWT
+            return Optional.of(jwt.getSubject());
+        }
+
+        if (principal != null) {
+            return Optional.of(principal.toString());
+        }
+
+        return Optional.of("SYSTEM");
+    }
 }

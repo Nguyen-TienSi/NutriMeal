@@ -65,30 +65,12 @@ public interface IRecipeMapper extends INutritionCalculator<Recipe> {
         return duration == null ? null : duration.toMinutes();
     }
 
-    @Override
-    default double calculateCalories(Recipe entity) {
-        double protein = 0;
-        double carbs = 0;
-        double fat = 0;
-
-        for (Nutrient nutrient : entity.getNutrients()) {
-            String name = nutrient.getName().toLowerCase();
-            switch (name) {
-                case "protein" -> protein = nutrient.getValue();
-                case "carbohydrates", "carbs" -> carbs = nutrient.getValue();
-                case "fat" -> fat = nutrient.getValue();
-            }
-        }
-
-        return protein * 4 + carbs * 4 + fat * 9;
-    }
-
     default String getCalories(Recipe recipe) {
         return String.format("%.2f kcal", calculateCalories(recipe));
     }
 
     @Override
-    default List<Map<Nutrient, Double>> getConsumedNutrients(Recipe entity) {
-        return null;
+    default List<Nutrient> getConsumedNutrients(Recipe entity) {
+        return entity.getNutrients();
     };
 }

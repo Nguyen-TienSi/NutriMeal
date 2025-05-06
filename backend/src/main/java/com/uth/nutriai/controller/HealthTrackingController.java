@@ -4,6 +4,7 @@ import com.uth.nutriai.dto.response.ApiResponse;
 import com.uth.nutriai.dto.response.HealthTrackingDetailDto;
 import com.uth.nutriai.service.IHealthTrackingService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,27 +18,24 @@ public class HealthTrackingController {
     @Autowired
     private IHealthTrackingService healthTrackingService;
 
-    @GetMapping("/date")
+    @GetMapping("/{date}")
     public ResponseEntity<ApiResponse<HealthTrackingDetailDto>> findHealthTrackingByDate(
-            @RequestParam Date trackingDate,
+            @PathVariable("date") @DateTimeFormat(pattern = "yyyy-MM-dd") Date trackingDate,
             @RequestHeader(value = "If-None-Match", required = false) String eTag
     ) {
-        if(!healthTrackingService.isHealthTrackingAvailable(trackingDate)) {
-            return ResponseEntity.notFound().build();
-        }
-
-        String currentEtag = healthTrackingService.currentEtag(trackingDate);
-
-        if(eTag != null && eTag.equals(currentEtag)) {
+        if (eTag != null && eTag.equals(healthTrackingService.currentEtag(trackingDate))) {
             return ResponseEntity.status(HttpStatus.NOT_MODIFIED).build();
         }
 
         HealthTrackingDetailDto healthTrackingDetailDto = healthTrackingService.findHealthTrackingByDate(trackingDate);
 
-        ApiResponse<HealthTrackingDetailDto> response = new ApiResponse<>(healthTrackingDetailDto);
+        if (healthTrackingDetailDto == null) {
+            return ResponseEntity.noContent().build();
+        }
+
         return ResponseEntity.ok()
-                .eTag(currentEtag)
-                .body(response);
+                .eTag(healthTrackingService.currentEtag(trackingDate))
+                .body(new ApiResponse<>(healthTrackingDetailDto));
     }
 
 }

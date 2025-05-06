@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:nutriai_app/presentation/views/settings/profile_screen.dart'
-    show ProfileScreen;
+import 'package:nutriai_app/presentation/layout/main_screen_layout.dart';
 import 'package:nutriai_app/service/external-service/auth_manager.dart'
     show AuthManager;
 import 'package:nutriai_app/service/external-service/auth_provider.dart'
@@ -17,7 +16,7 @@ class LoginBottomSheetButton extends StatelessWidget {
       if (!context.mounted) return;
       if (AuthManager.isLoggedIn()) {
         Navigator.of(context).pushReplacement(MaterialPageRoute(
-          builder: (context) => const ProfileScreen(),
+          builder: (context) => MainScreenLayout(),
         ));
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -70,7 +69,7 @@ class LoginBottomSheetButton extends StatelessWidget {
                 buttonText: 'Continue with Google',
                 imagePath: 'assets/images/google_branding_logo.png',
                 onPressed: () async {
-                  _login(AuthProvider.google, context);
+                  await _login(AuthProvider.google, context);
                 },
               ),
               SizedBox(height: 10),
@@ -78,7 +77,7 @@ class LoginBottomSheetButton extends StatelessWidget {
                 buttonText: 'Continue with Facebook',
                 imagePath: 'assets/images/facebook_branding_logo.png',
                 onPressed: () async {
-                  _login(AuthProvider.facebook, context);
+                  await _login(AuthProvider.facebook, context);
                 },
               ),
               SizedBox(height: 20),

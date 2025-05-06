@@ -10,5 +10,5 @@ import java.util.UUID;
 @Repository
 public interface ICommentRepository extends MongoRepository<Comment, UUID> {
 
-    List<Comment> findCommentsByUserPostId(UUID postId);
+    List<Comment> findByUserPostId(UUID postId);
 }

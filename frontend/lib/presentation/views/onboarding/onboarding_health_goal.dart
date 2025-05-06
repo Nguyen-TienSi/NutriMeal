@@ -1,27 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:nutriai_app/data/models/user_create_data.dart';
+import 'package:nutriai_app/utils/enums.dart';
 
 class OnboardingHealthGoal extends StatefulWidget {
-  const OnboardingHealthGoal({super.key});
+  final UserCreateData userCreateData;
+
+  const OnboardingHealthGoal({super.key, required this.userCreateData});
 
   @override
-  State<OnboardingHealthGoal> createState() => _State();
+  State<OnboardingHealthGoal> createState() => _OnboardingHealthGoalState();
 }
 
-class _State extends State<OnboardingHealthGoal> {
-  late bool _isSelectedGoal;
-  String? _goalName;
+class _OnboardingHealthGoalState extends State<OnboardingHealthGoal> {
+  HealthGoal? _selectedGoal;
 
-  void _selectGoal(String goalName) {
+  void _selectGoal(HealthGoal goal) {
     setState(() {
-      _isSelectedGoal = true;
-      _goalName = goalName;
+      _selectedGoal = goal;
+      widget.userCreateData.healthGoal = goal;
     });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _isSelectedGoal = false;
   }
 
   @override
@@ -35,20 +32,20 @@ class _State extends State<OnboardingHealthGoal> {
           style: TextStyle(fontWeight: FontWeight.bold),
           textAlign: TextAlign.center,
         ),
-        _goalCard('Lose Weight'),
-        _goalCard('Maintain Weight'),
-        _goalCard('Gain Weight'),
+        const SizedBox(height: 16),
+        ...HealthGoal.values.map((goal) => _goalCard(goal)),
       ],
     );
   }
 
-  Widget _goalCard(String goalName) {
+  Widget _goalCard(HealthGoal goal) {
+    final isSelected = _selectedGoal == goal;
+    final goalName = _getGoalName(goal);
+
     return GestureDetector(
-      onTap: () => _selectGoal(goalName),
+      onTap: () => _selectGoal(goal),
       child: Card(
-        color: _isSelectedGoal && _goalName == goalName
-            ? Colors.green
-            : Colors.white,
+        color: isSelected ? Colors.green : Colors.white,
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Text(
@@ -56,13 +53,19 @@ class _State extends State<OnboardingHealthGoal> {
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: _isSelectedGoal && _goalName == goalName
-                  ? Colors.white
-                  : Colors.black,
+              color: isSelected ? Colors.white : Colors.black,
             ),
           ),
         ),
       ),
     );
+  }
+
+  String _getGoalName(HealthGoal goal) {
+    return switch (goal) {
+      HealthGoal.weightLoss => 'Lose Weight',
+      HealthGoal.maintain => 'Maintain Weight',
+      HealthGoal.weightGain => 'Gain Weight',
+    };
   }
 }

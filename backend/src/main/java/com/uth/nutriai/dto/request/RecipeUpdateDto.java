@@ -60,7 +60,7 @@ public record RecipeUpdateDto(
         @Valid
         List<@AllowedEnum(
                 enumClass = TimeOfDayDto.class,
-                allowed = { "MORNING", "NOON", "AFTERNOON", "EVENING", "NIGHT" }
+                allowed = { "morning", "noon", "afternoon", "evening", "night" }
         ) @Valid TimeOfDayDto> timeOfDayDtoList
 
 ) {

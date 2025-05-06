@@ -1,14 +1,14 @@
 package com.uth.nutriai.aspect;
 
+import com.uth.nutriai.exception.BusinessException;
+import com.uth.nutriai.exception.InvalidPatchException;
+import com.uth.nutriai.exception.ResourceNotFoundException;
 import lombok.extern.slf4j.Slf4j;
-
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterThrowing;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
-
-import com.uth.nutriai.exception.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -27,6 +27,8 @@ public class ExceptionHandlingAspect {
                 ex -> new BusinessException(ex.getMessage(), HttpStatus.BAD_REQUEST));
         exceptionHandlers.put(ResourceNotFoundException.class,
                 ex -> new ResourceNotFoundException(ex.getMessage(), HttpStatus.NOT_FOUND));
+        exceptionHandlers.put(InvalidPatchException.class,
+                ex -> new InvalidPatchException(ex.getMessage(), ex));
     }
 
     @AfterThrowing(pointcut = "execution(* com.uth.nutriai.service.*.*(..)) || execution(* com.uth.nutriai.controller.*.*(..)) || execution(* com.uth.nutriai.dao.*.*(..))", throwing = "ex")
@@ -34,8 +36,7 @@ public class ExceptionHandlingAspect {
         Class<?> exceptionClass = ex.getClass();
 
         if (exceptionHandlers.containsKey(exceptionClass)) {
-            System.out.println("Caught " + exceptionClass.getSimpleName() + ": " + ex.getMessage());
-            // log.warn("Caught {}: {}", exceptionClass.getSimpleName(), ex.getMessage());
+            log.warn("Caught {}: {}", exceptionClass.getSimpleName(), ex.getMessage());
             throw exceptionHandlers.get(exceptionClass).apply(ex);
         } else {
             log.error("Unhandled exception in {}.{}: {}",

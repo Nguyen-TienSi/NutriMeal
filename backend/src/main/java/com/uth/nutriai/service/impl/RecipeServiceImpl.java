@@ -15,6 +15,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @Service
@@ -36,7 +37,7 @@ public class RecipeServiceImpl implements IRecipeService {
 
     @Override
     public RecipeDetailDto findRecipeById(UUID id) {
-        Recipe recipe = recipeDao.findById(id);
+        Recipe recipe = recipeDao.findById(id).orElse(null);
         return recipeMapper.mapToRecipeDetailDto(recipe);
     }
 
@@ -58,8 +59,25 @@ public class RecipeServiceImpl implements IRecipeService {
     }
 
     @Override
+    public List<RecipeSummaryDto> findRecipesByMealTime(String mealTime) {
+        List<Recipe> recipeList = recipeDao.findByTimeOfDay(mealTime);
+        return recipeMapper.mapToRecipeSummaryDtoList(recipeList);
+    }
+
+    @Override
+    public boolean isRecipeAvailable(String fieldName, Object fieldValue) {
+        return recipeDao.existsByField(fieldName, fieldValue);
+    }
+
+    @Override
+    public List<RecipeSummaryDto> findRecipesByField(String fieldName, Object fieldValue) {
+        List<Recipe> recipeList = recipeDao.findByField(fieldName, fieldValue);
+        return recipeMapper.mapToRecipeSummaryDtoList(recipeList);
+    }
+
+    @Override
     public String currentEtag(UUID id) {
-        Recipe recipe = recipeDao.findById(id);
-        return EtagUtil.generateEtag(recipe);
+        Recipe recipe = recipeDao.findById(id).orElse(null);
+        return EtagUtil.generateEtag(Objects.requireNonNull(recipe));
     }
 }

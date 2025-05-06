@@ -5,28 +5,30 @@ import com.uth.nutriai.annotation.AllowedEnum;
 import com.uth.nutriai.dto.shared.ActivityLevelDto;
 import com.uth.nutriai.dto.shared.HealthGoalDto;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.*;
+
+import java.util.Date;
 
 public record UserCreateDto(
 
-        String userId,
-        String name,
-        String email,
-        String pictureUrl,
-        String authProvider,
+        @NotNull(message = "Gender is required")
+        @Pattern(regexp = "^(male|female|other)$", message = "Gender must be male, female or other")
+        String gender,
 
+        @NotNull(message = "Date of birth is required")
+        @Past(message = "Date of birth must be in the past")
+        Date dateOfBirth,
+        
         @JsonProperty("activityLevel")
         @NotNull(message = "Activity level is required")
         @Valid
-        @AllowedEnum(enumClass = ActivityLevelDto.class, allowed = {"INACTIVE", "NORMAL", "ACTIVE"})
+        @AllowedEnum(enumClass = ActivityLevelDto.class, allowed = {"inactive", "normal", "active"})
         ActivityLevelDto activityLevelDto,
 
         @JsonProperty("healthGoal")
         @NotNull(message = "Health goal is required")
         @Valid
-        @AllowedEnum(enumClass = HealthGoalDto.class, allowed = {"WEIGHT_LOSS", "WEIGHT_GAIN", "MAINTAIN"})
+        @AllowedEnum(enumClass = HealthGoalDto.class, allowed = {"weight_loss", "weight_gain", "maintain"})
         HealthGoalDto healthGoalDto,
 
         @Min(value = 20, message = "Current weight must be at least 20kg")

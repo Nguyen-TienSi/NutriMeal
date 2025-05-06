@@ -13,11 +13,11 @@ public record MealLogDetailDto(
         UUID id,
         @JsonProperty("meta") AuditMetadataDto auditMetadataDto,
         UUID userId,
-        List<UUID> recipeIdList,
+        @JsonProperty("recipeIds") List<UUID> recipeIdList,
         @JsonProperty("timeOfDay") TimeOfDayDto timeOfDayDto,
-        Date mealDate,
+        Date trackingDate,
         double totalCalories,
         double consumedCalories,
-        List<Map<NutrientDto, Double>> consumedNutrients
+        List<NutrientDto> consumedNutrientDtoList
 ) {
 }
