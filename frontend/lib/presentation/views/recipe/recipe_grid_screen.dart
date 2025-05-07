@@ -6,7 +6,9 @@ import 'package:nutriai_app/service/api-service/recipe_service.dart'
 import 'recipe_card.dart' show RecipeCard;
 
 class DishGridScreen extends StatefulWidget {
-  const DishGridScreen({super.key});
+  final String title;
+
+  const DishGridScreen({super.key, required this.title});
 
   @override
   State<DishGridScreen> createState() => _DishGridScreenState();
@@ -25,7 +27,8 @@ class _DishGridScreenState extends State<DishGridScreen> {
 
   Future<void> fetchRecipes() async {
     try {
-      final fetchedData = await recipeService.fetchRecipeSummaryList();
+      final fetchedData =
+          await recipeService.fetchRecipeSummaryListByMealTime(widget.title);
       _updateState(fetchedData, false);
     } catch (e) {
       debugPrint('❌ Error fetching recipes: $e');
@@ -53,6 +56,9 @@ class _DishGridScreenState extends State<DishGridScreen> {
     }
 
     return Scaffold(
+      appBar: AppBar(
+        title: Text(widget.title),
+      ),
       body: SafeArea(
         child: GridView.builder(
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(

@@ -13,9 +13,9 @@ class NutrientData {
 
   factory NutrientData.fromJson(Map<String, dynamic> json) {
     return NutrientData(
-      name: json['name'],
-      unit: json['unit'],
-      value: json['value'],
+      name: json['name'] as String,
+      unit: json['unit'] as String,
+      value: json['value'] as double,
     );
   }
 

@@ -31,20 +31,16 @@ class _RecipeSectionState extends State<RecipeSection> {
 
   Future<void> fetchRecipes() async {
     try {
-      final fetchedData = await recipeService.fetchRecipeSummaryList();
-      _updateState(fetchedData, false);
+      setState(() => isLoading = true);
+      final fetchedData =
+          await recipeService.fetchRecipeSummaryListByMealTime(widget.title);
+      setState(() {
+        fetchedRecipeSummaryList = fetchedData;
+        isLoading = false;
+      });
     } catch (e) {
       debugPrint('❌ Error fetching recipes: $e');
-      _updateState([], false);
-    }
-  }
-
-  void _updateState(List<RecipeSummaryData> recipes, bool loading) {
-    if (mounted) {
-      setState(() {
-        fetchedRecipeSummaryList = recipes;
-        isLoading = loading;
-      });
+      setState(() => isLoading = false);
     }
   }
 

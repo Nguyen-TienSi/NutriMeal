@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:nutriai_app/data/models/user_create_data.dart';
 import 'package:nutriai_app/data/repositories/api_repository.dart'
     show ApiRepository;
@@ -9,6 +10,11 @@ class UserService {
       ApiRepository(apiProvider: DioApiProvider());
 
   Future<void> createUser(UserCreateData userCreateData) async {
-    await apiRepository.sendData(endPoint: '/users', data: userCreateData);
+    try {
+      await apiRepository.sendData(endPoint: '/users', data: userCreateData);
+    } catch (e) {
+      debugPrint("Error creating user: $e");
+      rethrow;
+    }
   }
 }

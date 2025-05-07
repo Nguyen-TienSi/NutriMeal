@@ -36,6 +36,7 @@ public interface IRecipeMapper extends INutritionCalculator<Recipe> {
     @Mapping(target = "cookingTime", expression = "java(mapToLong(recipe.getCookingTime()))")
     @Mapping(target = "ingredientDtoList", source = "ingredients")
     @Mapping(target = "foodTagDtoList", source = "foodTags")
+    @Mapping(target = "nutrientDtoList", source = "nutrients")
     RecipeDetailDto mapToRecipeDetailDto(Recipe recipe);
 
     @Mapping(target = "timesOfDay", source = "timeOfDayDtoList")

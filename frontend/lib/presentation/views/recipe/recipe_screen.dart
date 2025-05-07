@@ -18,7 +18,7 @@ class RecipeScreen extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => DishGridScreen(),
+                      builder: (context) => DishGridScreen(title: 'Breakfast'),
                     ),
                   );
                 },
@@ -30,7 +30,7 @@ class RecipeScreen extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => DishGridScreen(),
+                      builder: (context) => DishGridScreen(title: 'Lunch'),
                     ),
                   );
                 },
@@ -42,7 +42,7 @@ class RecipeScreen extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => DishGridScreen(),
+                      builder: (context) => DishGridScreen(title: 'Dinner'),
                     ),
                   );
                 },
@@ -54,7 +54,7 @@ class RecipeScreen extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => DishGridScreen(),
+                      builder: (context) => DishGridScreen(title: 'Snacks'),
                     ),
                   );
                 },

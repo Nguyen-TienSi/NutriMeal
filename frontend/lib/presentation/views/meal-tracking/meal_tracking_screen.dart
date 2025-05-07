@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid_value.dart';
+import 'package:nutriai_app/data/models/recipe_summary_data.dart';
 import 'barcode_scan_icon.dart';
 import 'nutritional_info_section.dart';
 import 'recipe_search_bar.dart';
@@ -19,11 +20,30 @@ class MealTrackingScreen extends StatefulWidget {
 
 class _MealTrackingScreenState extends State<MealTrackingScreen> {
   bool _isSearching = false;
+  String _searchText = '';
+  final GlobalKey<NutritionalInfoSectionState> _nutritionalInfoKey =
+      GlobalKey();
 
   void _handleSearchFocusChanged(bool hasFocus) {
     setState(() {
       _isSearching = hasFocus;
     });
+  }
+
+  void _handleSearchTextChanged(String text) {
+    setState(() {
+      _searchText = text;
+    });
+  }
+
+  void _handleRecipeSelected(RecipeSummaryData recipe) {
+    // TODO: Handle recipe selection
+    debugPrint('Selected recipe: ${recipe.recipeName}');
+    setState(() {
+      _isSearching = false;
+    });
+    // Refresh nutritional info section after recipe selection
+    _nutritionalInfoKey.currentState?.fetchData();
   }
 
   @override
@@ -55,6 +75,7 @@ class _MealTrackingScreenState extends State<MealTrackingScreen> {
                   Expanded(
                     child: RecipeSearchBar(
                       onSearchFocusChanged: _handleSearchFocusChanged,
+                      onSearchTextChanged: _handleSearchTextChanged,
                     ),
                   ),
                   const SizedBox(width: 8),
@@ -68,8 +89,14 @@ class _MealTrackingScreenState extends State<MealTrackingScreen> {
             ),
             Expanded(
               child: _isSearching
-                  ? const SearchRecipeSection()
-                  : NutritionalInfoSection(mealLogId: widget.mealLogId),
+                  ? SearchRecipeSection(
+                      value: _searchText,
+                      onRecipeSelected: _handleRecipeSelected,
+                    )
+                  : NutritionalInfoSection(
+                      key: _nutritionalInfoKey,
+                      mealLogId: widget.mealLogId,
+                    ),
             ),
             if (!_isSearching)
               Padding(

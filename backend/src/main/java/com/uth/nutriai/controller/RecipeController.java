@@ -61,19 +61,19 @@ public class RecipeController {
 
     @RequestMapping(value = "/search/{keyword}/{value}", method = {RequestMethod.GET})
     public ResponseEntity<ApiResponse<List<RecipeSummaryDto>>> findRecipesByKeyword(
-            @PathVariable("keyword") String keyword,
-            @PathVariable("value") String value
+            @PathVariable("keyword") String fieldName,
+            @PathVariable("value") String fieldValue
     ) {
-        if (keyword == null || keyword.isBlank()) {
+        if (fieldName == null || fieldName.isBlank()) {
             return ResponseEntity.badRequest().build();
         }
 
-        Object parsedValue = ObjectDataTypeParser.parse(value);
-        if (!recipeService.isRecipeAvailable(keyword, parsedValue)) {
+        Object parsedValue = ObjectDataTypeParser.parse(fieldValue);
+        if (!recipeService.isRecipeAvailable(fieldName, parsedValue)) {
             return ResponseEntity.notFound().build();
         }
 
-        List<RecipeSummaryDto> recipeSummaryDtoList = recipeService.findRecipesByField(keyword, parsedValue);
+        List<RecipeSummaryDto> recipeSummaryDtoList = recipeService.findRecipesByField(fieldName, parsedValue);
         if (recipeSummaryDtoList.isEmpty()) {
             return ResponseEntity.noContent().build();
         }

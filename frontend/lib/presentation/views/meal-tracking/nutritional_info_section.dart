@@ -12,10 +12,10 @@ class NutritionalInfoSection extends StatefulWidget {
   const NutritionalInfoSection({super.key, required this.mealLogId});
 
   @override
-  State<NutritionalInfoSection> createState() => _NutritionalInfoSectionState();
+  State<NutritionalInfoSection> createState() => NutritionalInfoSectionState();
 }
 
-class _NutritionalInfoSectionState extends State<NutritionalInfoSection> {
+class NutritionalInfoSectionState extends State<NutritionalInfoSection> {
   MealLogDetailData? mealLogDetailData;
   bool isLoading = true;
   List<RecipeSummaryData>? recipeSummaryDataList;
@@ -41,6 +41,32 @@ class _NutritionalInfoSectionState extends State<NutritionalInfoSection> {
       debugPrint(e.toString());
     } finally {
       setState(() => isLoading = false);
+    }
+  }
+
+  Future<void> _handleRemoveRecipe(RecipeSummaryData recipe) async {
+    try {
+      // TODO: Implement recipe removal API call
+      debugPrint('Removing recipe: ${recipe.recipeName}');
+
+      // Update local state
+      setState(() {
+        recipeSummaryDataList?.remove(recipe);
+      });
+
+      // Refresh data to ensure consistency
+      await fetchData();
+    } catch (e) {
+      debugPrint('Error removing recipe: $e');
+      // Show error message to user
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Failed to remove recipe. Please try again.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     }
   }
 
@@ -80,7 +106,10 @@ class _NutritionalInfoSectionState extends State<NutritionalInfoSection> {
                       itemCount: recipeSummaryDataList!.length,
                       itemBuilder: (context, index) {
                         final recipe = recipeSummaryDataList![index];
-                        return RecipeItemCard(recipe: recipe);
+                        return RecipeItemCard(
+                          recipe: recipe,
+                          onRemove: () => _handleRemoveRecipe(recipe),
+                        );
                       },
                     )
                   : const Center(
