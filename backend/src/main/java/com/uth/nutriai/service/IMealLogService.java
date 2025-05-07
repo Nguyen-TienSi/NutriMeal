@@ -4,6 +4,7 @@ import com.github.fge.jsonpatch.JsonPatch;
 import com.github.fge.jsonpatch.JsonPatchException;
 import com.uth.nutriai.dto.response.MealLogDetailDto;
 import com.uth.nutriai.dto.response.MealLogSummaryDto;
+import com.uth.nutriai.dto.response.RecipeSummaryDto;
 
 import java.io.IOException;
 import java.util.Date;
@@ -21,4 +22,6 @@ public interface IMealLogService {
     boolean isMealLogAvailable(UUID id);
 
     String currentEtag(UUID id);
+
+    List<RecipeSummaryDto> findRecipesByMealLogId(UUID id);
 }

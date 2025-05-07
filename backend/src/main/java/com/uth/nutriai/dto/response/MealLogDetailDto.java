@@ -6,7 +6,6 @@ import com.uth.nutriai.dto.shared.TimeOfDayDto;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 public record MealLogDetailDto(
@@ -18,6 +17,7 @@ public record MealLogDetailDto(
         Date trackingDate,
         double totalCalories,
         double consumedCalories,
-        List<NutrientDto> consumedNutrientDtoList
+        @JsonProperty("consumedNutrients") List<NutrientDto> consumedNutrientDtoList,
+        @JsonProperty("totalNutrients") List<NutrientDto> totalNutrientDtoList
 ) {
 }

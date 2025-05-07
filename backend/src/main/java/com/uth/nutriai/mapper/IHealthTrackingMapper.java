@@ -17,6 +17,8 @@ public interface IHealthTrackingMapper extends INutritionCalculator<HealthTracki
     @Mapping(target = "auditMetadataDto", expression = "java(new AuditMetadataDto(healthTracking))")
     @Mapping(target = "userId", source = "user.id")
     @Mapping(target = "consumedCalories", expression = "java(calculateCalories(healthTracking))")
+    @Mapping(target = "consumedNutrientDtoList", source = "consumedNutrients")
+    @Mapping(target = "totalNutrientDtoList", source = "totalNutrients")
     HealthTrackingDetailDto mapToHealthTrackingDetailDto(HealthTracking healthTracking);
 
     @Override

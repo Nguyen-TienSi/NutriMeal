@@ -4,6 +4,7 @@ import com.github.fge.jsonpatch.JsonPatch;
 import com.uth.nutriai.dto.response.ApiResponse;
 import com.uth.nutriai.dto.response.MealLogDetailDto;
 import com.uth.nutriai.dto.response.MealLogSummaryDto;
+import com.uth.nutriai.dto.response.RecipeSummaryDto;
 import com.uth.nutriai.service.IMealLogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -76,5 +77,17 @@ public class MealLogController {
         return ResponseEntity.ok()
                 .eTag(mealLogService.currentEtag(id))
                 .body(response);
+    }
+
+    @GetMapping("/{id}/recipes")
+    public ResponseEntity<ApiResponse<List<RecipeSummaryDto>>> findRecipesByMealLogId(
+            @PathVariable("id") UUID id
+    ) {
+        List<RecipeSummaryDto> recipeSummaryDtoList = mealLogService.findRecipesByMealLogId(id);
+        if (recipeSummaryDtoList.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        ApiResponse<List<RecipeSummaryDto>> response = new ApiResponse<>(recipeSummaryDtoList);
+        return ResponseEntity.ok(response);
     }
 }

@@ -32,4 +32,3 @@ public class UniqueValueServiceImpl implements UniqueValueService {
         return !mongoTemplate.exists(query, entityClass);
     }
 }
-

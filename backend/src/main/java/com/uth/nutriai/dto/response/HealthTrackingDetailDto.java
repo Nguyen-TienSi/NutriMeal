@@ -15,6 +15,7 @@ public record HealthTrackingDetailDto(
         Date trackingDate,
         double totalCalories,
         double consumedCalories,
-        List<NutrientDto> consumedNutrients
+        @JsonProperty("consumedNutrients") List<NutrientDto> consumedNutrientDtoList,
+        @JsonProperty("totalNutrients") List<NutrientDto> totalNutrientDtoList
 ) {
 }

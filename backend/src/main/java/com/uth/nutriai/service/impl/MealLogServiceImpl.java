@@ -8,11 +8,14 @@ import com.uth.nutriai.dao.IUserDao;
 import com.uth.nutriai.dto.internal.MealLogUpdateDto;
 import com.uth.nutriai.dto.response.MealLogDetailDto;
 import com.uth.nutriai.dto.response.MealLogSummaryDto;
+import com.uth.nutriai.dto.response.RecipeSummaryDto;
 import com.uth.nutriai.event.model.HealthTrackingUpdateEvent;
 import com.uth.nutriai.exception.ResourceNotFoundException;
 import com.uth.nutriai.mapper.IMealLogMapper;
+import com.uth.nutriai.mapper.IRecipeMapper;
 import com.uth.nutriai.model.domain.MealLog;
 import com.uth.nutriai.model.domain.Nutrient;
+import com.uth.nutriai.model.domain.Recipe;
 import com.uth.nutriai.model.domain.User;
 import com.uth.nutriai.model.enumeration.TimeOfDay;
 import com.uth.nutriai.service.IJsonPatchService;
@@ -37,6 +40,7 @@ public class MealLogServiceImpl implements IMealLogService {
     private IUserDao userDao;
     private IRecipeDao recipeDao;
     private IMealLogMapper mealLogMapper;
+    private IRecipeMapper recipeMapper;
     private IJsonPatchService jsonPatchService;
     private ApplicationEventPublisher applicationEventPublisher;
 
@@ -57,7 +61,7 @@ public class MealLogServiceImpl implements IMealLogService {
 
         if (mealLogList.isEmpty()) {
             mealLogList = Arrays.stream(TimeOfDay.values())
-                    .filter(tod -> List.of(TimeOfDay.MORNING, TimeOfDay.NOON, TimeOfDay.EVENING).contains(tod))
+                    .filter(tod -> List.of(TimeOfDay.MORNING, TimeOfDay.NOON, TimeOfDay.EVENING, TimeOfDay.NIGHT).contains(tod))
                     .map(timeOfDay -> {
                         MealLog mealLog = new MealLog();
                         mealLog.setUser(user);
@@ -119,7 +123,17 @@ public class MealLogServiceImpl implements IMealLogService {
                         )
                 ));
 
-        mealLog.setConsumedNutrients(new ArrayList<>(nutrientMap.values()));
+        List<Nutrient> consumedNutrients = new ArrayList<>(nutrientMap.values());
+        List<Nutrient> totalNutrients = consumedNutrients.stream()
+                .map(n -> Nutrient.builder()
+                        .name(n.getName())
+                        .unit(n.getUnit())
+                        .value(0.0)
+                        .build())
+                .collect(Collectors.toList());
+
+        mealLog.setConsumedNutrients(consumedNutrients);
+        mealLog.setTotalNutrients(totalNutrients);
     }
 
     private void publishHealthTrackingUpdate(MealLog mealLog) {
@@ -136,5 +150,12 @@ public class MealLogServiceImpl implements IMealLogService {
     public String currentEtag(UUID id) {
         MealLog mealLog = mealLogDao.findById(id).orElse(null);
         return EtagUtil.generateEtag(Objects.requireNonNull(mealLog));
+    }
+
+    @Override
+    public List<RecipeSummaryDto> findRecipesByMealLogId(UUID id) {
+        MealLog mealLog = mealLogDao.findById(id).orElseThrow(() -> new ResourceNotFoundException("MealLog not found with id: " + id));
+        List<Recipe> recipeList = mealLog.getRecipeList();
+        return recipeMapper.mapToRecipeSummaryDtoList(recipeList);
     }
 }

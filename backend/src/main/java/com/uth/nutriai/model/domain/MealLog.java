@@ -26,7 +26,6 @@ public class MealLog extends BaseEntity {
     private User user;
 
     @DBRef
-    @Unique(entity = MealLog.class, fieldName = "recipeList", message = "Recipe list cannot contain duplicates")
     private List<Recipe> recipeList;
 
     private TimeOfDay timeOfDay;
@@ -35,6 +34,7 @@ public class MealLog extends BaseEntity {
 
     private double totalCalories;
 
-    @Unique(entity = MealLog.class, fieldName = "consumedNutrients", message = "Nutrient already exists")
     private List<Nutrient> consumedNutrients;
+
+    private List<Nutrient> totalNutrients;
 }

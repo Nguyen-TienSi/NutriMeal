@@ -12,6 +12,7 @@ public record MealLogUpdateDto(
         List<UUID> recipeIdList,
         Date trackingDate,
         double totalCalories,
-        List<NutrientDto> consumedNutrientDtoList
+        List<NutrientDto> consumedNutrientDtoList,
+        List<NutrientDto> totalNutrientDtoList
 ) {
 }

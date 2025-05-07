@@ -5,8 +5,6 @@ import com.uth.nutriai.dao.IUserDao;
 import com.uth.nutriai.dto.response.HealthTrackingDetailDto;
 import com.uth.nutriai.mapper.IHealthTrackingMapper;
 import com.uth.nutriai.model.domain.HealthTracking;
-import com.uth.nutriai.model.domain.MealLog;
-import com.uth.nutriai.model.domain.User;
 import com.uth.nutriai.service.IHealthTrackingService;
 import com.uth.nutriai.utils.EtagUtil;
 import lombok.AllArgsConstructor;
@@ -14,7 +12,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Optional;
 
 @AllArgsConstructor
 @Service
@@ -41,6 +41,7 @@ public class HealthTrackingServiceImpl implements IHealthTrackingService {
                                 .trackingDate(trackingDate)
                                 .totalCalories(0.0)
                                 .consumedNutrients(new ArrayList<>())
+                                .totalNutrients(new ArrayList<>())
                                 .build())))
                 .map(healthTrackingMapper::mapToHealthTrackingDetailDto)
                 .orElse(null);

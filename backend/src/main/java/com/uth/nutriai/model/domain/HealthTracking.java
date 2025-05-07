@@ -29,4 +29,6 @@ public class HealthTracking extends BaseEntity {
     private double totalCalories;
 
     private List<Nutrient> consumedNutrients;
+
+    private List<Nutrient> totalNutrients;
 }
