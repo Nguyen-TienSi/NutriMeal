@@ -1,14 +1,35 @@
 import 'package:flutter/material.dart';
 
 class DateSelector extends StatefulWidget {
-  const DateSelector({super.key});
+  final Function(DateTime) onDateChanged;
+  final DateTime initialDate;
+
+  const DateSelector({
+    super.key,
+    required this.onDateChanged,
+    required this.initialDate,
+  });
 
   @override
-  State<DateSelector> createState() => _State();
+  State<DateSelector> createState() => _DateSelectorState();
 }
 
-class _State extends State<DateSelector> {
-  DateTime _selectedDate = DateTime.now();
+class _DateSelectorState extends State<DateSelector> {
+  late DateTime _selectedDate;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedDate = widget.initialDate;
+  }
+
+  @override
+  void didUpdateWidget(DateSelector oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.initialDate != widget.initialDate) {
+      _selectedDate = widget.initialDate;
+    }
+  }
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
@@ -18,9 +39,16 @@ class _State extends State<DateSelector> {
       lastDate: DateTime(2100),
     );
     if (picked != null && picked != _selectedDate) {
+      _updateState(picked);
+    }
+  }
+
+  void _updateState(DateTime date) {
+    if (mounted) {
       setState(() {
-        _selectedDate = picked;
+        _selectedDate = date;
       });
+      widget.onDateChanged(date);
     }
   }
 
@@ -55,11 +83,7 @@ class _State extends State<DateSelector> {
               DateTime day = _selectedDate
                   .add(Duration(days: index - (_selectedDate.weekday - 1)));
               return GestureDetector(
-                onTap: () {
-                  setState(() {
-                    _selectedDate = day;
-                  });
-                },
+                onTap: () => _updateState(day),
                 child: Column(
                   children: [
                     Text(

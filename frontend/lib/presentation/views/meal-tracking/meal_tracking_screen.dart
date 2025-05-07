@@ -1,44 +1,31 @@
 import 'package:flutter/material.dart';
-import 'barcode_scan_icon.dart' show BarcodeScanIcon;
-import 'food_search_bar.dart' show FoodSearchBar;
-import 'macronutrients_progress_section.dart'
-    show MacronutrientsProgressSection;
-
-import 'food_item_card.dart' show FoodItemCard;
+import 'package:uuid/uuid_value.dart';
+import 'barcode_scan_icon.dart';
+import 'nutritional_info_section.dart';
+import 'recipe_search_bar.dart';
+import 'search_recipe_section.dart';
 
 class MealTrackingScreen extends StatefulWidget {
   final String title;
-  final List<Map<String, dynamic>> trackedFoods = [
-    {
-      'title': 'Banana',
-      'calories': 93,
-      'carbs': 24,
-      'protein': 1,
-      'fat': 0,
-    },
-    {
-      'title': 'Oatmeal',
-      'calories': 227,
-      'carbs': 32,
-      'protein': 5,
-      'fat': 2,
-    },
-    {
-      'title': 'Apple',
-      'calories': 80,
-      'carbs': 22,
-      'protein': 0,
-      'fat': 0,
-    },
-  ];
 
-  MealTrackingScreen({super.key, required this.title});
+  final UuidValue mealLogId;
+
+  const MealTrackingScreen(
+      {super.key, required this.title, required this.mealLogId});
 
   @override
-  State<MealTrackingScreen> createState() => _State();
+  State<MealTrackingScreen> createState() => _MealTrackingScreenState();
 }
 
-class _State extends State<MealTrackingScreen> {
+class _MealTrackingScreenState extends State<MealTrackingScreen> {
+  bool _isSearching = false;
+
+  void _handleSearchFocusChanged(bool hasFocus) {
+    setState(() {
+      _isSearching = hasFocus;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -65,7 +52,11 @@ class _State extends State<MealTrackingScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Expanded(child: FoodSearchBar()),
+                  Expanded(
+                    child: RecipeSearchBar(
+                      onSearchFocusChanged: _handleSearchFocusChanged,
+                    ),
+                  ),
                   const SizedBox(width: 8),
                   BarcodeScanIcon(
                     onScanPressed: () {
@@ -75,62 +66,37 @@ class _State extends State<MealTrackingScreen> {
                 ],
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: MacronutrientsProgressSection(),
-            ),
-            const SizedBox(height: 12),
-            const Padding(
-              padding: EdgeInsets.all(16.0),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'YOU HAVE TRACKED',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black54,
-                    fontSize: 14,
-                  ),
-                ),
-              ),
-            ),
             Expanded(
-              child: ListView.builder(
-                itemCount: widget.trackedFoods.length,
-                itemBuilder: (context, index) {
-                  final food = widget.trackedFoods[index];
-                  return FoodItemCard(
-                    title: food['title'],
-                    calories: food['calories'],
-                  );
-                },
-              ),
+              child: _isSearching
+                  ? const SearchRecipeSection()
+                  : NutritionalInfoSection(mealLogId: widget.mealLogId),
             ),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: SizedBox(
-                width: double.infinity,
-                height: 56,
-                child: ElevatedButton(
-                  onPressed: () {},
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+            if (!_isSearching)
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: SizedBox(
+                  width: double.infinity,
+                  height: 56,
+                  child: ElevatedButton(
+                    onPressed: () {},
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                     ),
-                  ),
-                  child: const Text(
-                    'DONE',
-                    style: TextStyle(
-                      fontSize: 18,
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 1.2,
+                    child: const Text(
+                      'DONE',
+                      style: TextStyle(
+                        fontSize: 18,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 1.2,
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
           ],
         ),
       ),

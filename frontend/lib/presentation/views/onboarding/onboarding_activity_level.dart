@@ -65,7 +65,7 @@ class _OnboardingActivityLevelState extends State<OnboardingActivityLevel> {
     return Column(
       children: [
         _buildActivityLevelCard(
-          level: ActivityLevel.unActive,
+          level: ActivityLevel.inActive,
           title: "Not Very Active",
           description: "Little to no exercise, desk job",
           icon: Icons.sentiment_dissatisfied,

@@ -15,10 +15,10 @@ class RecipeSection extends StatefulWidget {
   });
 
   @override
-  State<RecipeSection> createState() => _State();
+  State<RecipeSection> createState() => _RecipeSectionState();
 }
 
-class _State extends State<RecipeSection> {
+class _RecipeSectionState extends State<RecipeSection> {
   final RecipeService recipeService = RecipeService();
   List<RecipeSummaryData> fetchedRecipeSummaryList = [];
   bool isLoading = true;

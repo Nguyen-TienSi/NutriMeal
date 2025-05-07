@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:uuid/uuid.dart';
 
 class RecipeSummaryData {
@@ -27,4 +29,18 @@ class RecipeSummaryData {
       calories: json['calories'] as String,
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'recipeName': recipeName,
+      'imageUrl': imageUrl,
+      // 'serving': serving,
+      // 'servingUnit': servingUnit,
+      'calories': calories,
+    };
+  }
+
+  @override
+  String toString() => jsonEncode(toJson());
 }

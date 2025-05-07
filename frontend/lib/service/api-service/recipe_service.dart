@@ -8,11 +8,11 @@ import 'package:nutriai_app/exception/unnamed_exception.dart'
     show UnnamedException;
 
 class RecipeService {
-  final ApiRepository apiRepository =
+  final ApiRepository _apiRepository =
       ApiRepository(apiProvider: HttpApiProvider());
 
   Future<List<RecipeSummaryData>> fetchRecipeSummaryList() async {
-    return await apiRepository.fetchData<List<RecipeSummaryData>>(
+    return await _apiRepository.fetchData<List<RecipeSummaryData>>(
       endPoint: '/recipes',
       fromJson: (data) {
         if (data is List) {

@@ -2,18 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 
 class CaloriesChart extends StatelessWidget {
-  final int calories;
-  final int goalCalories;
+  final double consumedCalories;
+  final double totalCalories;
 
   const CaloriesChart({
     super.key,
-    required this.calories,
-    this.goalCalories = 2000,
+    required this.consumedCalories,
+    required this.totalCalories,
   });
 
   @override
   Widget build(BuildContext context) {
-    double percent = (calories / goalCalories).clamp(0.0, 1.0);
+    double percent = (consumedCalories / totalCalories).clamp(0.0, 1.0);
 
     return Center(
       child: CircularPercentIndicator(
@@ -24,7 +24,7 @@ class CaloriesChart extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              "$calories / $goalCalories",
+              "$consumedCalories / $totalCalories",
               style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
             ),
             const Text("Kcal",

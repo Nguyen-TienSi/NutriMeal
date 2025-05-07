@@ -14,14 +14,14 @@ enum Gender {
 }
 
 enum ActivityLevel {
-  unActive,
+  inActive,
   normal,
   active;
 
   @override
   String toString() {
     return switch (this) {
-      ActivityLevel.unActive => 'inactive',
+      ActivityLevel.inActive => 'inactive',
       ActivityLevel.normal => 'normal',
       ActivityLevel.active => 'active',
     };
@@ -41,6 +41,25 @@ enum HealthGoal {
       HealthGoal.weightLoss => 'weight_loss',
       HealthGoal.weightGain => 'weight_gain',
       HealthGoal.maintain => 'maintain',
+    };
+  }
+}
+
+enum TimeOfDay {
+  morning,
+  noon,
+  afternoon,
+  evening,
+  night;
+
+  @override
+  String toString() {
+    return switch (this) {
+      TimeOfDay.morning => 'morning',
+      TimeOfDay.noon => 'noon',
+      TimeOfDay.afternoon => 'afternoon',
+      TimeOfDay.evening => 'evening',
+      TimeOfDay.night => 'night',
     };
   }
 }

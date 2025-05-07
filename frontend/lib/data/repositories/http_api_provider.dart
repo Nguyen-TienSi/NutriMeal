@@ -21,14 +21,14 @@ class HttpApiProvider extends HttpProvider with ApiConfig {
     var data,
   }) async {
     final uri = buildUri(endPoint, queryParameters: queryParameters);
-    final prefs = await SharedPreferences.getInstance();
-    final storedEtag = prefs.getString('etag_$uri');
+    // final prefs = await SharedPreferences.getInstance();
+    // final storedEtag = prefs.getString('etag_$uri');
     final token = TokenManager.getValidToken();
     final requestHeaders = Map<String, String>.from(headers);
-    if (storedEtag != null) {
-      requestHeaders['If-None-Match'] = storedEtag;
-      requestHeaders['If-Match'] = storedEtag;
-    }
+    // if (storedEtag != null) {
+    //   requestHeaders['If-None-Match'] = storedEtag;
+    //   requestHeaders['If-Match'] = storedEtag;
+    // }
     if (token != null) requestHeaders['Authorization'] = 'Bearer $token';
 
     http.Response response = switch (method.toUpperCase()) {
@@ -50,9 +50,9 @@ class HttpApiProvider extends HttpProvider with ApiConfig {
           message: '⚠️ Server respond error!', statusCode: response.statusCode);
     }
 
-    if (response.headers.containsKey('etag')) {
-      await prefs.setString('etag_$uri', response.headers['etag']!);
-    }
+    // if (response.headers.containsKey('etag')) {
+    //   await prefs.setString('etag_$uri', response.headers['etag']!);
+    // }
 
     return _processResponse(response);
   }
@@ -84,9 +84,9 @@ class HttpApiProvider extends HttpProvider with ApiConfig {
       Map<String, dynamic>? queryParameters,
       T Function(dynamic)? fromJson}) async {
     final uri = buildUri(endPoint, queryParameters: queryParameters);
-    final prefs = await SharedPreferences.getInstance();
-    final cacheKey = 'cache_${uri.toString()}';
-    const cacheDuration = Duration(minutes: 0);
+    // final prefs = await SharedPreferences.getInstance();
+    // final cacheKey = 'cache_${uri.toString()}';
+    // const cacheDuration = Duration(minutes: 0);
 
     try {
       if (!await isInternetAvailable()) {
@@ -103,7 +103,7 @@ class HttpApiProvider extends HttpProvider with ApiConfig {
         queryParameters: queryParameters,
       );
 
-      await _cacheData(prefs, cacheKey, data);
+      // await _cacheData(prefs, cacheKey, data);
       return fromJson != null ? fromJson(data) : data as T;
     } catch (e, stackTrace) {
       if (e is Exception) {
@@ -111,12 +111,12 @@ class HttpApiProvider extends HttpProvider with ApiConfig {
       } else {
         debugPrint('Unknown error: $e\n$stackTrace');
       }
-      final cachedData = await _getCachedData(prefs, cacheKey, cacheDuration);
-      if (cachedData != null) {
-        return fromJson?.call(cachedData) ?? cachedData as T;
-      } else {
-        debugPrint('🔴 No cached data available for $cacheKey');
-      }
+      // final cachedData = await _getCachedData(prefs, cacheKey, cacheDuration);
+      // if (cachedData != null) {
+      //   return fromJson?.call(cachedData) ?? cachedData as T;
+      // } else {
+      //   debugPrint('🔴 No cached data available for $cacheKey');
+      // }
       rethrow;
     }
   }
@@ -172,13 +172,14 @@ class HttpApiProvider extends HttpProvider with ApiConfig {
   }
 
   dynamic _processResponse(http.Response response) {
-    if ([204, 304, 404].contains(response.statusCode) &&
+    if ([204, 304, 404].contains(response.statusCode) ||
         response.body.isEmpty) {
       return null;
     }
     try {
       return jsonDecode(response.body);
     } catch (e) {
+      debugPrint('Response body: ${response.body}');
       throw ServerException(
           message: '⚠️ Invalid JSON format: $e',
           statusCode: response.statusCode);
