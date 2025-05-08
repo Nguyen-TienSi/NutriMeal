@@ -2,16 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:nutriai_app/data/models/recipe_summary_data.dart';
 import 'package:nutriai_app/service/api-service/recipe_service.dart';
 import 'package:nutriai_app/presentation/views/recipe/recipe_detail_screen.dart';
+import 'package:uuid/uuid_value.dart';
 import 'recipe_item_card.dart';
 
 class SearchRecipeSection extends StatefulWidget {
   final String? value;
   final Function(RecipeSummaryData)? onRecipeSelected;
+  final UuidValue mealLogId;
 
   const SearchRecipeSection({
     super.key,
     this.value,
     this.onRecipeSelected,
+    required this.mealLogId,
   });
 
   @override
@@ -60,7 +63,10 @@ class _SearchRecipeSectionState extends State<SearchRecipeSection> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => RecipeDetailScreen(id: recipe.id!),
+        builder: (context) => RecipeDetailScreen(
+          id: recipe.id!,
+          mealLogId: widget.mealLogId,
+        ),
       ),
     );
   }

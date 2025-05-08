@@ -1,5 +1,6 @@
 import 'package:intl/intl.dart';
 import 'package:nutriai_app/data/models/recipe_summary_data.dart';
+import 'package:nutriai_app/data/repositories/json_patch.dart';
 import 'package:uuid/uuid_value.dart';
 
 import 'package:nutriai_app/data/models/meal_log_detail_data.dart';
@@ -18,7 +19,7 @@ class MealLogService {
     try {
       final formattedDate = DateFormat('yyyy-MM-dd').format(date);
       return await _apiRepository.fetchData<dynamic>(
-        endPoint: '/meal-logs/$formattedDate',
+        endPoint: '/meal-logs/date/$formattedDate',
         fromJson: (data) {
           if (data is List) {
             return data.map((e) => MealLogSummaryData.fromJson(e)).toList();
@@ -35,12 +36,10 @@ class MealLogService {
 
   Future<MealLogDetailData?> getMealLogDetailData(UuidValue id) async {
     try {
-      final data = await _apiRepository.fetchData<dynamic>(
-        endPoint: '/meal-logs/search',
-        params: {'id': id.toString()},
+      return await _apiRepository.fetchData<dynamic>(
+        endPoint: '/meal-logs/$id',
         fromJson: (data) => MealLogDetailData.fromJson(data),
       );
-      return data;
     } catch (e) {
       debugPrint('Error fetching meal log detail: $e');
       return null;
@@ -65,6 +64,20 @@ class MealLogService {
     } catch (e) {
       debugPrint('Error fetching recipe summary list: $e');
       return [];
+    }
+  }
+
+  Future<MealLogDetailData?> patchMealLogDetailData(
+      UuidValue id, JsonPatch patch) async {
+    try {
+      return await _apiRepository.patchData<dynamic>(
+        endPoint: '/meal-logs/$id',
+        data: patch.operations,
+        fromJson: (data) => MealLogDetailData.fromJson(data),
+      );
+    } catch (e) {
+      debugPrint('Error patching meal log detail: $e');
+      return null;
     }
   }
 }

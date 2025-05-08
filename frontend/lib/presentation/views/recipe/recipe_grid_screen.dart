@@ -15,33 +15,27 @@ class DishGridScreen extends StatefulWidget {
 }
 
 class _DishGridScreenState extends State<DishGridScreen> {
-  final RecipeService recipeService = RecipeService();
-  List<RecipeSummaryData> fetchedRecipeSummaryList = [];
+  List<RecipeSummaryData> recipeSummaryList = [];
   bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    fetchRecipes();
+    fetchData();
   }
 
-  Future<void> fetchRecipes() async {
+  Future<void> fetchData() async {
     try {
-      final fetchedData =
-          await recipeService.fetchRecipeSummaryListByMealTime(widget.title);
-      _updateState(fetchedData, false);
+      setState(() => isLoading = true);
+      final recipeSummaryList = await RecipeService()
+          .fetchRecipeSummaryListByMealTime(mealTime: widget.title);
+      setState(() {
+        this.recipeSummaryList = recipeSummaryList;
+        isLoading = false;
+      });
     } catch (e) {
       debugPrint('❌ Error fetching recipes: $e');
-      _updateState([], false);
-    }
-  }
-
-  void _updateState(List<RecipeSummaryData> recipes, bool loading) {
-    if (mounted) {
-      setState(() {
-        fetchedRecipeSummaryList = recipes;
-        isLoading = loading;
-      });
+      setState(() => isLoading = false);
     }
   }
 
@@ -51,7 +45,7 @@ class _DishGridScreenState extends State<DishGridScreen> {
       return const Center(child: CircularProgressIndicator());
     }
 
-    if (fetchedRecipeSummaryList.isEmpty) {
+    if (recipeSummaryList.isEmpty) {
       return const Center(child: Text('No recipes available.'));
     }
 
@@ -68,10 +62,9 @@ class _DishGridScreenState extends State<DishGridScreen> {
             mainAxisSpacing: 4.0,
           ),
           padding: const EdgeInsets.all(4.0),
-          itemCount: fetchedRecipeSummaryList.length,
+          itemCount: recipeSummaryList.length,
           itemBuilder: (context, index) {
-            return RecipeCard(
-                recipeSummaryData: fetchedRecipeSummaryList[index]);
+            return RecipeCard(recipeSummaryData: recipeSummaryList[index]);
           },
         ),
       ),

@@ -21,14 +21,22 @@ class HttpApiProvider extends HttpProvider with ApiConfig {
     var data,
   }) async {
     final uri = buildUri(endPoint, queryParameters: queryParameters);
-    // final prefs = await SharedPreferences.getInstance();
-    // final storedEtag = prefs.getString('etag_$uri');
+    final prefs = await SharedPreferences.getInstance();
+    final storedEtag = prefs.getString('etag_$uri');
     final token = TokenManager.getValidToken();
     final requestHeaders = Map<String, String>.from(headers);
-    // if (storedEtag != null) {
-    //   requestHeaders['If-None-Match'] = storedEtag;
-    //   requestHeaders['If-Match'] = storedEtag;
-    // }
+
+    if (storedEtag != null) {
+      if (method.toUpperCase() == 'GET') {
+        // requestHeaders['If-None-Match'] = storedEtag;
+      } else if (method.toUpperCase() == 'PATCH') {
+        requestHeaders['If-Match'] = storedEtag;
+      }
+    }
+
+    if (method.toUpperCase() == 'PATCH') {
+      requestHeaders['Content-Type'] = 'application/json-patch+json';
+    }
     if (token != null) requestHeaders['Authorization'] = 'Bearer $token';
 
     http.Response response = switch (method.toUpperCase()) {
@@ -50,9 +58,9 @@ class HttpApiProvider extends HttpProvider with ApiConfig {
           message: '⚠️ Server respond error!', statusCode: response.statusCode);
     }
 
-    // if (response.headers.containsKey('etag')) {
-    //   await prefs.setString('etag_$uri', response.headers['etag']!);
-    // }
+    // Store ETag from response, checking both cases
+    final etag = response.headers['etag'] ?? response.headers['ETag'];
+    if (etag != null) await prefs.setString('etag_$uri', etag);
 
     return _processResponse(response);
   }
@@ -126,9 +134,21 @@ class HttpApiProvider extends HttpProvider with ApiConfig {
       {required String endPoint,
       var data,
       var files,
-      T Function(dynamic)? fromJson}) {
-    // TODO: implement patch
-    throw UnimplementedError();
+      T Function(dynamic)? fromJson}) async {
+    try {
+      return await sendRequest(
+        method: 'PATCH',
+        endPoint: endPoint,
+        data: data,
+      );
+    } catch (e, stackTrace) {
+      if (e is Exception) {
+        handleError(e);
+      } else {
+        debugPrint('Unknown error: $e\n$stackTrace');
+      }
+      rethrow;
+    }
   }
 
   @override
@@ -138,18 +158,7 @@ class HttpApiProvider extends HttpProvider with ApiConfig {
       var files,
       T Function(dynamic)? fromJson}) {
     // TODO: implement post
-    // throw UnimplementedError();
-    try {
-      return sendRequest(
-        method: 'POST',
-        endPoint: endPoint,
-        data: data,
-      ).then(
-          (response) => fromJson != null ? fromJson(response) : response as T);
-    } catch (e) {
-      handleError(e as Exception);
-      rethrow;
-    }
+    throw UnimplementedError();
   }
 
   @override
@@ -166,9 +175,21 @@ class HttpApiProvider extends HttpProvider with ApiConfig {
   Future<T> delete<T>({
     required String endPoint,
     Map<String, dynamic>? queryParameters,
-  }) {
-    // TODO: implement delete
-    throw UnimplementedError();
+  }) async {
+    try {
+      return await sendRequest(
+        method: 'DELETE',
+        endPoint: endPoint,
+        queryParameters: queryParameters,
+      );
+    } catch (e, stackTrace) {
+      if (e is Exception) {
+        handleError(e);
+      } else {
+        debugPrint('Unknown error: $e\n$stackTrace');
+      }
+      rethrow;
+    }
   }
 
   dynamic _processResponse(http.Response response) {

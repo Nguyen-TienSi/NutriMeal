@@ -24,7 +24,7 @@ public interface IMealLogMapper extends INutritionCalculator<MealLog> {
     @Mapping(target = "userId", source = "user.id")
     @Mapping(target = "timeOfDayDto", source = "timeOfDay")
     @Mapping(target = "trackingDate", source = "trackingDate")
-    @Mapping(target = "recipeIdList", expression = "java(mapToRecipeIdList(mealLog.getRecipeList()))")
+    @Mapping(target = "recipeIdList", expression = "java(mapToRecipeIdList(mealLog.getRecipes()))")
     @Mapping(target = "consumedCalories", expression = "java(calculateCalories(mealLog))")
     @Mapping(target = "consumedNutrientDtoList", source = "consumedNutrients")
     @Mapping(target = "totalNutrientDtoList", source = "totalNutrients")
@@ -39,7 +39,7 @@ public interface IMealLogMapper extends INutritionCalculator<MealLog> {
 
     @Mapping(target = "userId", source = "user.id")
     @Mapping(target = "trackingDate", source = "trackingDate")
-    @Mapping(target = "recipeIdList", expression = "java(mapToRecipeIdList(mealLog.getRecipeList()))")
+    @Mapping(target = "recipeIdList", expression = "java(mapToRecipeIdList(mealLog.getRecipes()))")
     @Mapping(target = "consumedNutrientDtoList", source = "consumedNutrients")
     @Mapping(target = "totalNutrientDtoList", source = "totalNutrients")
     MealLogUpdateDto mapToMealLogUpdateDto(MealLog mealLog);

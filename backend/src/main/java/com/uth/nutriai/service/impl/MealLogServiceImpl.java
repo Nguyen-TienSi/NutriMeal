@@ -68,7 +68,7 @@ public class MealLogServiceImpl implements IMealLogService {
                         mealLog.setTrackingDate(trackingDate);
                         mealLog.setTimeOfDay(timeOfDay);
                         mealLog.setTotalCalories(0.0);
-                        mealLog.setRecipeList(new ArrayList<>());
+                        mealLog.setRecipes(new ArrayList<>());
                         mealLog.setConsumedNutrients(new ArrayList<>());
                         return mealLogDao.save(mealLog);
                     })
@@ -102,7 +102,7 @@ public class MealLogServiceImpl implements IMealLogService {
     }
 
     private void updateConsumedNutrients(MealLog mealLog) {
-        Map<String, Nutrient> nutrientMap = mealLog.getRecipeList().stream()
+        Map<String, Nutrient> nutrientMap = mealLog.getRecipes().stream()
                 .map(recipe -> recipeDao.findById(recipe.getId())
                         .orElseThrow(() -> new ResourceNotFoundException("Recipe not found: " + recipe.getId())))
                 .flatMap(recipe -> recipe.getNutrients().stream())
@@ -155,7 +155,7 @@ public class MealLogServiceImpl implements IMealLogService {
     @Override
     public List<RecipeSummaryDto> findRecipesByMealLogId(UUID id) {
         MealLog mealLog = mealLogDao.findById(id).orElseThrow(() -> new ResourceNotFoundException("MealLog not found with id: " + id));
-        List<Recipe> recipeList = mealLog.getRecipeList();
+        List<Recipe> recipeList = mealLog.getRecipes();
         return recipeMapper.mapToRecipeSummaryDtoList(recipeList);
     }
 }

@@ -10,11 +10,18 @@ class RecipeService {
   final ApiRepository _apiRepository =
       ApiRepository(apiProvider: HttpApiProvider());
 
-  Future<List<RecipeSummaryData>> fetchRecipeSummaryListByMealTime(
-      String mealTime) async {
+  Future<List<RecipeSummaryData>> fetchRecipeSummaryListByMealTime({
+    required String mealTime,
+    int pageNumber = 0,
+    int pageSize = -1,
+  }) async {
     try {
       return await _apiRepository.fetchData<dynamic>(
         endPoint: '/recipes/meal-time/$mealTime',
+        params: {
+          'pageNumber': pageNumber.toString(),
+          'pageSize': pageSize.toString()
+        },
         fromJson: (data) {
           if (data is List) {
             return data
@@ -56,16 +63,13 @@ class RecipeService {
 
   Future<RecipeDetailData?> getRecipeDetail(UuidValue id) async {
     try {
-      debugPrint('Fetching recipe detail for ID: $id');
-      final result = await _apiRepository.fetchData<dynamic>(
+      return await _apiRepository.fetchData<dynamic>(
         endPoint: '/recipes/${id.toString()}',
         fromJson: (data) {
           debugPrint('Received data: $data');
           return RecipeDetailData.fromJson(data);
         },
       );
-      debugPrint('Recipe detail result: $result');
-      return result;
     } catch (e) {
       debugPrint('Error fetching recipe detail: $e');
       return null;

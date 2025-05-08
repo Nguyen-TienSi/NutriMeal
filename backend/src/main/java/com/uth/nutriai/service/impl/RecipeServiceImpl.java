@@ -59,9 +59,16 @@ public class RecipeServiceImpl implements IRecipeService {
     }
 
     @Override
-    public List<RecipeSummaryDto> findRecipesByMealTime(String mealTime) {
-        List<Recipe> recipeList = recipeDao.findByTimeOfDay(mealTime);
-        return recipeMapper.mapToRecipeSummaryDtoList(recipeList);
+    public List<RecipeSummaryDto> findRecipesByMealTime(String mealTime, int pageNumber, int pageSize) {
+
+        if (pageSize <= 0) {
+            List<Recipe> recipeList = recipeDao.findByTimesOfDay(mealTime);
+            return recipeMapper.mapToRecipeSummaryDtoList(recipeList);
+        }
+
+        PageRequest pageRequest = PageRequest.of(pageNumber, pageSize);
+        Page<Recipe> recipePage = recipeDao.findByTimeOfDay(mealTime, pageRequest);
+        return recipeMapper.mapToRecipeSummaryDtoList(recipePage.getContent());
     }
 
     @Override

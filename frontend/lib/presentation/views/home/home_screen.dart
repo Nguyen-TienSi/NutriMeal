@@ -119,9 +119,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       children: [
                         NutritionInfo(
                             nutrient: "Carbs",
-                            value: _getConsumedNutrientValue("Carbohydrates"),
-                            goal: _getTotalNutrientValue("Carbohydrates"),
-                            unit: _getNutrientUnit("Carbohydrates")),
+                            value: _getConsumedNutrientValue("Carbohydrate"),
+                            goal: _getTotalNutrientValue("Carbohydrate"),
+                            unit: _getNutrientUnit("Carbohydrate")),
                         NutritionInfo(
                             nutrient: "Protein",
                             value: _getConsumedNutrientValue("Protein"),

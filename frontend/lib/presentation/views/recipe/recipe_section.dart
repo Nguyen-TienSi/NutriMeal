@@ -19,23 +19,23 @@ class RecipeSection extends StatefulWidget {
 }
 
 class _RecipeSectionState extends State<RecipeSection> {
-  final RecipeService recipeService = RecipeService();
-  List<RecipeSummaryData> fetchedRecipeSummaryList = [];
+  List<RecipeSummaryData> recipeSummaryList = [];
   bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    fetchRecipes();
+    fetchData();
   }
 
-  Future<void> fetchRecipes() async {
+  Future<void> fetchData() async {
     try {
       setState(() => isLoading = true);
-      final fetchedData =
-          await recipeService.fetchRecipeSummaryListByMealTime(widget.title);
+      final recipeSummaryList = await RecipeService()
+          .fetchRecipeSummaryListByMealTime(
+              mealTime: widget.title, pageNumber: 0, pageSize: 5);
       setState(() {
-        fetchedRecipeSummaryList = fetchedData;
+        this.recipeSummaryList = recipeSummaryList;
         isLoading = false;
       });
     } catch (e) {
@@ -50,15 +50,9 @@ class _RecipeSectionState extends State<RecipeSection> {
       return const Center(child: CircularProgressIndicator());
     }
 
-    if (fetchedRecipeSummaryList.isEmpty) {
+    if (recipeSummaryList.isEmpty) {
       return const Center(child: Text('No recipes available.'));
     }
-
-    final List<Widget> renderedRecipeCards = fetchedRecipeSummaryList
-        .map((recipe) => RecipeCard(
-              recipeSummaryData: recipe,
-            ))
-        .toList();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -91,8 +85,10 @@ class _RecipeSectionState extends State<RecipeSection> {
           child: ListView.separated(
             scrollDirection: Axis.horizontal,
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            itemCount: renderedRecipeCards.length,
-            itemBuilder: (context, index) => renderedRecipeCards[index],
+            itemCount: recipeSummaryList.length,
+            itemBuilder: (context, index) => RecipeCard(
+              recipeSummaryData: recipeSummaryList[index],
+            ),
             separatorBuilder: (context, index) => const SizedBox(width: 4.0),
             shrinkWrap: true,
             physics: const ClampingScrollPhysics(),

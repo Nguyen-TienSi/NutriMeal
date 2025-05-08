@@ -132,8 +132,12 @@ public class RecipeController {
     }
 
     @GetMapping("/meal-time/{mealTime}")
-    public ResponseEntity<ApiResponse<List<RecipeSummaryDto>>> findRecipesByMealTime(@PathVariable("mealTime") String mealTime) {
-        List<RecipeSummaryDto> recipeSummaryDtoList = recipeService.findRecipesByMealTime(mealTime);
+    public ResponseEntity<ApiResponse<List<RecipeSummaryDto>>> findRecipesByMealTime(
+            @PathVariable("mealTime") String mealTime,
+            @RequestParam(defaultValue = "0") int pageNumber,
+            @RequestParam(defaultValue = "5") int pageSize
+    ) {
+        List<RecipeSummaryDto> recipeSummaryDtoList = recipeService.findRecipesByMealTime(mealTime, pageNumber, pageSize);
         if (recipeSummaryDtoList.isEmpty()) {
             return ResponseEntity.noContent().build();
         }

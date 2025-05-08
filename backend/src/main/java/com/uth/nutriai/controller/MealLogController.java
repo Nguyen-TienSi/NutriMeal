@@ -23,7 +23,7 @@ public class MealLogController {
     @Autowired
     private IMealLogService mealLogService;
 
-    @GetMapping("/{date}")
+    @GetMapping("/date/{date}")
     public ResponseEntity<ApiResponse<List<MealLogSummaryDto>>> findMealLogsByDate(
             @PathVariable("date") @DateTimeFormat(pattern = "yyyy-MM-dd") Date trackingDate
     ) {
@@ -35,9 +35,9 @@ public class MealLogController {
         return ResponseEntity.ok(response);
     }
 
-    @RequestMapping(value = "/search", method = {RequestMethod.GET, RequestMethod.HEAD})
+    @RequestMapping(value = "/{id}", method = {RequestMethod.GET, RequestMethod.HEAD})
     public ResponseEntity<ApiResponse<MealLogDetailDto>> findMealLogById(
-            @RequestParam UUID id,
+            @PathVariable("id") UUID id,
             @RequestHeader(value = "If-None-Match", required = false) String eTag
     ) {
 
@@ -57,7 +57,7 @@ public class MealLogController {
                 .body(response);
     }
 
-    @PatchMapping(path = "/{id}", consumes = "application/json-patch+json")
+    @PatchMapping(value = "/{id}", consumes = "application/json-patch+json")
     public ResponseEntity<ApiResponse<MealLogDetailDto>> patchMealLog(
             @PathVariable("id") UUID id,
             @RequestBody JsonPatch patch,

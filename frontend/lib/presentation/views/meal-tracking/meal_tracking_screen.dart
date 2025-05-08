@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:nutriai_app/presentation/views/recipe/recipe_detail_screen.dart';
 import 'package:uuid/uuid_value.dart';
 import 'package:nutriai_app/data/models/recipe_summary_data.dart';
 import 'barcode_scan_icon.dart';
@@ -37,13 +38,21 @@ class _MealTrackingScreenState extends State<MealTrackingScreen> {
   }
 
   void _handleRecipeSelected(RecipeSummaryData recipe) {
-    // TODO: Handle recipe selection
-    debugPrint('Selected recipe: ${recipe.recipeName}');
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => RecipeDetailScreen(
+          id: recipe.id!,
+          mealLogId: widget.mealLogId,
+        ),
+      ),
+    ).then((_) {
+      // Refresh nutritional info section after returning from recipe detail
+      _nutritionalInfoKey.currentState?.fetchData();
+    });
     setState(() {
       _isSearching = false;
     });
-    // Refresh nutritional info section after recipe selection
-    _nutritionalInfoKey.currentState?.fetchData();
   }
 
   @override
@@ -92,6 +101,7 @@ class _MealTrackingScreenState extends State<MealTrackingScreen> {
                   ? SearchRecipeSection(
                       value: _searchText,
                       onRecipeSelected: _handleRecipeSelected,
+                      mealLogId: widget.mealLogId,
                     )
                   : NutritionalInfoSection(
                       key: _nutritionalInfoKey,

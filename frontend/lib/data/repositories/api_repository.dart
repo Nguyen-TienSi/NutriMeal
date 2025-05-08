@@ -51,40 +51,62 @@ class ApiRepository {
     }
   }
 
-  Future<ApiResponse> updateData({
+  Future<T?> updateData<T>({
     required String endPoint,
     var data,
     var files,
+    T Function(dynamic data)? fromJson,
   }) async {
     try {
-      return await apiProvider.put<ApiResponse>(
+      final response = await apiProvider.put<dynamic>(
           endPoint: endPoint, data: data, files: files);
+      final apiResponse = ApiResponse.fromResponse(response);
+      if (apiResponse.message == null) {
+        return fromJson?.call(apiResponse.data);
+      } else {
+        throw UnnamedException(apiResponse.message!);
+      }
     } catch (e) {
-      return ApiResponse.withError(e.toString());
+      throw UnnamedException(e.toString());
     }
   }
 
-  Future<ApiResponse> patchData({
+  Future<T?> patchData<T>({
     required String endPoint,
     var data,
     var files,
+    T Function(dynamic data)? fromJson,
   }) async {
     try {
-      return await apiProvider.patch<ApiResponse>(
+      final response = await apiProvider.patch<dynamic>(
           endPoint: endPoint, data: data, files: files);
+      final apiResponse = ApiResponse.fromResponse(response);
+      if (apiResponse.message == null) {
+        return fromJson?.call(apiResponse.data);
+      } else {
+        throw UnnamedException(apiResponse.message!);
+      }
     } catch (e) {
-      return ApiResponse.withError(e.toString());
+      throw UnnamedException(e.toString());
     }
   }
 
-  Future deleteData({
+  Future<T?> deleteData<T>({
     required String endPoint,
     Map<String, dynamic>? params,
+    T Function(dynamic data)? fromJson,
   }) async {
     try {
-      await apiProvider.delete(endPoint: endPoint, queryParameters: params);
+      final response = await apiProvider.delete<dynamic>(
+          endPoint: endPoint, queryParameters: params);
+      final apiResponse = ApiResponse.fromResponse(response);
+      if (apiResponse.message == null) {
+        return fromJson?.call(apiResponse.data);
+      } else {
+        throw UnnamedException(apiResponse.message!);
+      }
     } catch (e) {
-      return ApiResponse.withError(e.toString());
+      throw UnnamedException(e.toString());
     }
   }
 }

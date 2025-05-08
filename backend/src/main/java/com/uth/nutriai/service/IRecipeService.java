@@ -22,7 +22,7 @@ public interface IRecipeService {
 
     void deleteRecipe(UUID id);
 
-    List<RecipeSummaryDto> findRecipesByMealTime(String mealTime);
+    List<RecipeSummaryDto> findRecipesByMealTime(String mealTime, int pageNumber, int pageSize);
 
     boolean isRecipeAvailable(String fieldName, Object fieldValue);
 

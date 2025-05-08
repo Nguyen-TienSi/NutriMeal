@@ -5,9 +5,11 @@ import com.uth.nutriai.model.domain.Recipe;
 import com.uth.nutriai.model.enumeration.TimeOfDay;
 import com.uth.nutriai.repository.IRecipeRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Component;
+import org.springframework.data.domain.Pageable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,9 +22,7 @@ public class RecipeDaoImpl extends GenericDaoImpl<Recipe, UUID> implements IReci
         super(repository);
     }
 
-    @Override
-    public List<Recipe> findByTimeOfDay(String mealTime) {
-
+    private List<TimeOfDay> getTimeOfDayList(String mealTime) {
         List<TimeOfDay> timeOfDayList = new ArrayList<>();
 
         switch (mealTime.toLowerCase()) {
@@ -39,7 +39,17 @@ public class RecipeDaoImpl extends GenericDaoImpl<Recipe, UUID> implements IReci
                 break;
         }
 
-        return  ((IRecipeRepository) repository).findByTimesOfDayIsLike(timeOfDayList);
+        return timeOfDayList;
+    }
+
+    @Override
+    public List<Recipe> findByTimesOfDay(String mealTime) {
+        return ((IRecipeRepository) repository).findByTimesOfDayIsLike(getTimeOfDayList(mealTime));
+    }
+
+    @Override
+    public Page<Recipe> findByTimeOfDay(String mealTime, Pageable pageable) {
+        return ((IRecipeRepository) repository).findByTimesOfDayIsLike(getTimeOfDayList(mealTime), pageable);
     }
 
     @Override

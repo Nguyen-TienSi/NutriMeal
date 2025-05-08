@@ -1,6 +1,5 @@
 package com.uth.nutriai.model.domain;
 
-import com.uth.nutriai.annotation.Unique;
 import com.uth.nutriai.model.BaseEntity;
 import com.uth.nutriai.model.enumeration.TimeOfDay;
 import lombok.AllArgsConstructor;
@@ -26,7 +25,7 @@ public class MealLog extends BaseEntity {
     private User user;
 
     @DBRef
-    private List<Recipe> recipeList;
+    private List<Recipe> recipes;
 
     private TimeOfDay timeOfDay;
 

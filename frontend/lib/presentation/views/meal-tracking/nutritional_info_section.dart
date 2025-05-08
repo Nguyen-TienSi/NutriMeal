@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:nutriai_app/data/models/meal_log_detail_data.dart';
 import 'package:nutriai_app/data/models/recipe_summary_data.dart';
+import 'package:nutriai_app/data/repositories/json_patch.dart';
 import 'nutrients_progress_section.dart';
 import 'recipe_item_card.dart';
 import 'package:nutriai_app/service/api-service/meal_log_service.dart';
@@ -46,19 +47,28 @@ class NutritionalInfoSectionState extends State<NutritionalInfoSection> {
 
   Future<void> _handleRemoveRecipe(RecipeSummaryData recipe) async {
     try {
-      // TODO: Implement recipe removal API call
-      debugPrint('Removing recipe: ${recipe.recipeName}');
+      if (recipeSummaryDataList == null) return;
 
-      // Update local state
-      setState(() {
-        recipeSummaryDataList?.remove(recipe);
-      });
+      final index = recipeSummaryDataList!.indexOf(recipe);
+      if (index == -1) {
+        throw Exception('Recipe not found in list');
+      }
 
-      // Refresh data to ensure consistency
-      await fetchData();
+      final jsonPatch = JsonPatch().remove('/recipes/$index');
+
+      final updatedMealLog = await MealLogService()
+          .patchMealLogDetailData(widget.mealLogId, jsonPatch);
+
+      if (updatedMealLog != null) {
+        setState(() {
+          mealLogDetailData = updatedMealLog;
+          recipeSummaryDataList?.removeAt(index);
+        });
+      } else {
+        throw Exception('Failed to update meal log');
+      }
     } catch (e) {
       debugPrint('Error removing recipe: $e');
-      // Show error message to user
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -75,20 +85,20 @@ class NutritionalInfoSectionState extends State<NutritionalInfoSection> {
     if (isLoading) {
       return const Center(child: CircularProgressIndicator());
     }
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: mealLogDetailData != null
-              ? NutrientsProgressSection(mealLogDetailData: mealLogDetailData!)
-              : const SizedBox.shrink(),
-        ),
-        const SizedBox(height: 12),
-        const Padding(
-          padding: EdgeInsets.all(16.0),
-          child: Align(
-            alignment: Alignment.centerLeft,
+
+    return SafeArea(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (mealLogDetailData != null)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: NutrientsProgressSection(
+                  mealLogDetailData: mealLogDetailData!),
+            ),
+          const SizedBox(height: 12),
+          const Padding(
+            padding: EdgeInsets.all(16.0),
             child: Text(
               'YOU HAVE TRACKED',
               style: TextStyle(
@@ -98,31 +108,33 @@ class NutritionalInfoSectionState extends State<NutritionalInfoSection> {
               ),
             ),
           ),
-        ),
-        Flexible(
-          child:
-              recipeSummaryDataList != null && recipeSummaryDataList!.isNotEmpty
-                  ? ListView.builder(
-                      itemCount: recipeSummaryDataList!.length,
-                      itemBuilder: (context, index) {
-                        final recipe = recipeSummaryDataList![index];
-                        return RecipeItemCard(
-                          recipe: recipe,
-                          onRemove: () => _handleRemoveRecipe(recipe),
-                        );
-                      },
-                    )
-                  : const Center(
-                      child: Text(
-                        'No recipes tracked yet',
-                        style: TextStyle(
-                          color: Colors.grey,
-                          fontSize: 16,
-                        ),
+          Expanded(
+            child: recipeSummaryDataList != null &&
+                    recipeSummaryDataList!.isNotEmpty
+                ? ListView.builder(
+                    shrinkWrap: true,
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    itemCount: recipeSummaryDataList!.length,
+                    itemBuilder: (context, index) {
+                      final recipe = recipeSummaryDataList![index];
+                      return RecipeItemCard(
+                        recipe: recipe,
+                        onRemove: () => _handleRemoveRecipe(recipe),
+                      );
+                    },
+                  )
+                : const Center(
+                    child: Text(
+                      'No recipes tracked yet',
+                      style: TextStyle(
+                        color: Colors.grey,
+                        fontSize: 16,
                       ),
                     ),
-        ),
-      ],
+                  ),
+          ),
+        ],
+      ),
     );
   }
 }

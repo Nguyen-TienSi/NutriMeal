@@ -13,7 +13,9 @@ class CaloriesChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double percent = (consumedCalories / totalCalories).clamp(0.0, 1.0);
+    double percent = totalCalories != 0
+        ? (consumedCalories / totalCalories).clamp(0.0, 1.0)
+        : 0.0;
 
     return Center(
       child: CircularPercentIndicator(

@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:nutriai_app/data/models/recipe_detail_data.dart';
 import 'package:nutriai_app/service/api-service/recipe_service.dart';
+import 'package:nutriai_app/service/api-service/meal_log_service.dart';
+import 'package:nutriai_app/data/repositories/json_patch.dart';
 import 'package:uuid/uuid_value.dart';
 
 class RecipeDetailScreen extends StatefulWidget {
   final UuidValue id;
+  final UuidValue? mealLogId;
 
   const RecipeDetailScreen({
     super.key,
     required this.id,
+    this.mealLogId,
   });
 
   @override
@@ -18,6 +22,7 @@ class RecipeDetailScreen extends StatefulWidget {
 class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
   RecipeDetailData? recipeDetailData;
   bool isLoading = true;
+  bool isSaving = false;
 
   @override
   void initState() {
@@ -36,6 +41,49 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
     } catch (e) {
       debugPrint('Error fetching recipe detail data: $e');
       setState(() => isLoading = false);
+    }
+  }
+
+  Future<void> _saveToMealLog() async {
+    if (recipeDetailData == null) return;
+
+    setState(() => isSaving = true);
+    try {
+      final jsonPatch = JsonPatch()
+        ..add('/recipes/-', {'id': widget.id.toString()});
+
+      final result = await MealLogService().patchMealLogDetailData(
+        widget.mealLogId!,
+        jsonPatch,
+      );
+
+      if (result != null) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Recipe added to meal log successfully'),
+              backgroundColor: Colors.green,
+            ),
+          );
+          Navigator.pop(context);
+        }
+      } else {
+        throw Exception('Failed to save recipe to meal log');
+      }
+    } catch (e) {
+      debugPrint('Error saving recipe to meal log: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to add recipe: ${e.toString()}'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => isSaving = false);
+      }
     }
   }
 
@@ -67,7 +115,7 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: Colors.green.withOpacity(0.1),
+        color: Colors.green.withAlpha(100),
         borderRadius: BorderRadius.circular(20),
       ),
       child: Text(
@@ -289,6 +337,28 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
           icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () => Navigator.pop(context),
         ),
+        actions: [
+          if (!isLoading &&
+              recipeDetailData != null &&
+              widget.mealLogId != null)
+            TextButton.icon(
+              onPressed: isSaving ? null : _saveToMealLog,
+              icon: isSaving
+                  ? const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                      ),
+                    )
+                  : const Icon(Icons.add, color: Colors.white),
+              label: Text(
+                isSaving ? 'Saving...' : 'Add to Meal',
+                style: const TextStyle(color: Colors.white),
+              ),
+            ),
+        ],
       ),
       extendBodyBehindAppBar: true,
       body: _buildContent(),

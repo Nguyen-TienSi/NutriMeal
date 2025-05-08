@@ -8,19 +8,36 @@ class NutrientsProgressSection extends StatelessWidget {
 
   double get _totalCalories => mealLogDetailData.consumedCalories;
   double get _maxCalories => mealLogDetailData.totalCalories;
-  double _getConsumedNutrientValue(String name) =>
-      mealLogDetailData.consumedNutrients
-          .firstWhere((nutrient) => nutrient.name == name,
-              orElse: () => throw Exception('Nutrient not found: $name'))
+
+  double _getConsumedNutrientValue(String name) {
+    try {
+      return mealLogDetailData.consumedNutrients
+          .firstWhere((nutrient) => nutrient.name == name)
           .value;
-  double _getTotalNutrientValue(String name) => mealLogDetailData.totalNutrients
-      .firstWhere((nutrient) => nutrient.name == name,
-          orElse: () => throw Exception('Nutrient not found: $name'))
-      .value;
-  String _getNutrientUnit(String name) => mealLogDetailData.consumedNutrients
-      .firstWhere((nutrient) => nutrient.name == name,
-          orElse: () => throw Exception('Nutrient not found: $name'))
-      .unit;
+    } catch (e) {
+      return 0.0;
+    }
+  }
+
+  double _getTotalNutrientValue(String name) {
+    try {
+      return mealLogDetailData.totalNutrients
+          .firstWhere((nutrient) => nutrient.name == name)
+          .value;
+    } catch (e) {
+      return 0.0;
+    }
+  }
+
+  String _getNutrientUnit(String name) {
+    try {
+      return mealLogDetailData.consumedNutrients
+          .firstWhere((nutrient) => nutrient.name == name)
+          .unit;
+    } catch (e) {
+      return 'g';
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -54,8 +71,7 @@ class NutrientsProgressSection extends StatelessWidget {
             ),
             const SizedBox(height: 6),
             LinearProgressIndicator(
-              value: _totalCalories /
-                  _maxCalories, // Ensure this is between 0 and 1
+              value: _maxCalories > 0 ? _totalCalories / _maxCalories : 0,
               backgroundColor: Colors.grey[300],
               color: Colors.green,
               minHeight: 6,
@@ -66,9 +82,9 @@ class NutrientsProgressSection extends StatelessWidget {
               children: [
                 _buildMacroColumn(
                     'Carbs',
-                    _getNutrientUnit('Carbohydrates'),
-                    _getConsumedNutrientValue('Carbohydrates'),
-                    _getTotalNutrientValue('Carbohydrates'),
+                    _getNutrientUnit('Carbohydrate'),
+                    _getConsumedNutrientValue('Carbohydrate'),
+                    _getTotalNutrientValue('Carbohydrate'),
                     Colors.orange),
                 _buildMacroColumn(
                     'Protein',
