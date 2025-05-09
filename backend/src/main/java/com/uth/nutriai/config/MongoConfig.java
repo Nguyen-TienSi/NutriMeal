@@ -9,7 +9,13 @@ import com.mongodb.lang.NonNull;
 import com.uth.nutriai.converter.*;
 import com.uth.nutriai.repository.UuidIdentifiedRepositoryImpl;
 import com.uth.nutriai.security.SpringSecurityAuditorAware;
+import lombok.RequiredArgsConstructor;
+import org.bson.BsonReader;
+import org.bson.BsonWriter;
 import org.bson.UuidRepresentation;
+import org.bson.codecs.Codec;
+import org.bson.codecs.DecoderContext;
+import org.bson.codecs.EncoderContext;
 import org.bson.codecs.configuration.CodecRegistries;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.jsr310.Jsr310CodecProvider;
@@ -50,8 +56,12 @@ import java.util.concurrent.TimeUnit;
 
 @Configuration
 @EnableMongoRepositories(basePackages = "com.uth.nutriai.repository", repositoryBaseClass = UuidIdentifiedRepositoryImpl.class)
-@EnableMongoAuditing(dateTimeProviderRef = "auditingDateTimeProvider", auditorAwareRef = "auditingProvider")
 public class MongoConfig extends AbstractMongoClientConfiguration {
+
+    @Qualifier("dateTimeProvider")
+    private DateTimeProvider auditingDateTimeProvider;
+    @Qualifier("auditorProvider")
+    private AuditorAware<String> auditingProvider;
 
     @Bean(name = "mongoProperties")
     MongoProperties mongoProperties() {
@@ -71,11 +81,28 @@ public class MongoConfig extends AbstractMongoClientConfiguration {
 
     @Bean(name = "codecRegistry")
     CodecRegistry codecRegistry() {
+//        Codec<Instant> instantCodec = new Codec<Instant>() {
+//            @Override
+//            public Instant decode(BsonReader bsonReader, DecoderContext decoderContext) {
+//                return Instant.ofEpochMilli(bsonReader.readDateTime());
+//            }
+//
+//            @Override
+//            public void encode(BsonWriter bsonWriter, Instant instant, EncoderContext encoderContext) {
+//                bsonWriter.writeDateTime(instant.toEpochMilli());
+//            }
+//
+//            @Override
+//            public Class<Instant> getEncoderClass() {
+//                return Instant.class;
+//            }
+//        };
         CodecRegistry pojoCodecRegistry = CodecRegistries
                 .fromProviders(PojoCodecProvider.builder().automatic(true).build());
         CodecRegistry jsr310CodecRegistry = CodecRegistries.fromProviders(new Jsr310CodecProvider());
 
         return CodecRegistries.fromRegistries(
+//                CodecRegistries.fromCodecs(instantCodec),
                 CodecRegistries.fromCodecs(new InstantCodec()),
                 MongoClientSettings.getDefaultCodecRegistry(),
                 jsr310CodecRegistry,
@@ -181,19 +208,6 @@ public class MongoConfig extends AbstractMongoClientConfiguration {
         converter.afterPropertiesSet();
         converter.setTypeMapper(new DefaultMongoTypeMapper(null));
         return converter;
-    }
-
-    @Bean(name = "auditingDateTimeProvider")
-    DateTimeProvider dateTimeProvider() {
-        ZonedDateTime zonedDateTime = ZonedDateTime.now(); // Current time zone system
-        Instant instant = zonedDateTime.toInstant(); // Convert to (UTC)
-
-        return () -> Optional.of(instant);
-    }
-
-    @Bean(name = "auditingProvider")
-    AuditorAware<String> auditorAware() {
-        return () -> new SpringSecurityAuditorAware().getCurrentAuditor();
     }
 
     @Bean(name = "mongoCustomConversions")

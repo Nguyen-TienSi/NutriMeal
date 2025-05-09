@@ -8,7 +8,7 @@ import com.uth.nutriai.dto.response.RecipeSummaryDto;
 import com.uth.nutriai.mapper.IRecipeMapper;
 import com.uth.nutriai.model.domain.Recipe;
 import com.uth.nutriai.service.IRecipeService;
-import com.uth.nutriai.utils.EtagUtil;
+import com.uth.nutriai.utils.EtagUtils;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -85,6 +85,6 @@ public class RecipeServiceImpl implements IRecipeService {
     @Override
     public String currentEtag(UUID id) {
         Recipe recipe = recipeDao.findById(id).orElse(null);
-        return EtagUtil.generateEtag(Objects.requireNonNull(recipe));
+        return EtagUtils.generateEtag(Objects.requireNonNull(recipe));
     }
 }

@@ -16,6 +16,8 @@ class TokenManager {
 
   static String? getValidToken() => _token;
 
+  static AuthProvider? getProvider() => _provider;
+
   static void clear() {
     _token = null;
     _provider = null;

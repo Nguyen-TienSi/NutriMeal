@@ -25,16 +25,35 @@ class AuthManager {
         break;
       case AuthProvider.facebook:
         await _facebookAuthService.logIn();
-        token = await _facebookAuthService.getAccessToken();
+        // Wait for token to be available
+        int retries = 0;
+        while (token == null && retries < 3) {
+          token = await _facebookAuthService.getAccessToken();
+          if (token == null) {
+            await Future.delayed(const Duration(milliseconds: 500));
+            retries++;
+          }
+        }
+        if (token == null) {
+          throw Exception(
+              'Failed to get Facebook access token after multiple attempts');
+        }
         break;
     }
 
-    if (token != null) TokenManager.setToken(token, provider);
+    if (token != null) {
+      TokenManager.setToken(token, provider);
+    } else {
+      throw Exception('Failed to get access token');
+    }
   }
 
   static Future<void> signOut() async {
-    await _googleAuthService.signOut();
-    await _facebookAuthService.logOut();
+    if (TokenManager.getProvider() == AuthProvider.google) {
+      await _googleAuthService.signOut();
+    } else if (TokenManager.getProvider() == AuthProvider.facebook) {
+      await _facebookAuthService.logOut();
+    }
     TokenManager.clear();
   }
 

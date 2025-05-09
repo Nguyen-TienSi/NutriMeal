@@ -20,11 +20,13 @@ import com.uth.nutriai.model.domain.User;
 import com.uth.nutriai.model.enumeration.TimeOfDay;
 import com.uth.nutriai.service.IJsonPatchService;
 import com.uth.nutriai.service.IMealLogService;
-import com.uth.nutriai.utils.EtagUtil;
+import com.uth.nutriai.utils.EtagUtils;
+import com.uth.nutriai.utils.SecurityUtils;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.core.OAuth2AuthenticatedPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
@@ -46,9 +48,7 @@ public class MealLogServiceImpl implements IMealLogService {
 
     @Override
     public List<MealLogSummaryDto> findMealLogsByTrackingDate(Date trackingDate) {
-        String userId = Optional.ofNullable(SecurityContextHolder.getContext().getAuthentication())
-                .map(authentication -> authentication.getPrincipal() instanceof Jwt jwt ? jwt.getSubject() : null)
-                .orElse(null);
+        String userId = SecurityUtils.extractAccountId();
 
         if (userId == null) {
             return Collections.emptyList();
@@ -149,7 +149,7 @@ public class MealLogServiceImpl implements IMealLogService {
     @Override
     public String currentEtag(UUID id) {
         MealLog mealLog = mealLogDao.findById(id).orElse(null);
-        return EtagUtil.generateEtag(Objects.requireNonNull(mealLog));
+        return EtagUtils.generateEtag(Objects.requireNonNull(mealLog));
     }
 
     @Override

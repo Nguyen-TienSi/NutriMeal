@@ -7,7 +7,7 @@ import com.uth.nutriai.dto.response.CommentSummaryDto;
 import com.uth.nutriai.mapper.ICommentMapper;
 import com.uth.nutriai.model.domain.Comment;
 import com.uth.nutriai.service.ICommentService;
-import com.uth.nutriai.utils.EtagUtil;
+import com.uth.nutriai.utils.EtagUtils;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -36,6 +36,6 @@ public class CommentServiceImpl implements ICommentService {
     @Override
     public String currentEtag(UUID id) {
         Comment comment = commentDao.findById(id).orElse(null);
-        return EtagUtil.generateEtag(Objects.requireNonNull(comment));
+        return EtagUtils.generateEtag(Objects.requireNonNull(comment));
     }
 }

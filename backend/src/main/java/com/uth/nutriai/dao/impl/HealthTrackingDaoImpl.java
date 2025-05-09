@@ -8,6 +8,7 @@ import com.uth.nutriai.repository.IHealthTrackingRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -20,5 +21,10 @@ public class HealthTrackingDaoImpl extends GenericDaoImpl<HealthTracking, UUID> 
     @Override
     public Optional<HealthTracking> findByTrackingDateAndUser(Date trackingDate, User user) {
         return ((IHealthTrackingRepository) repository).findByTrackingDateAndUser(trackingDate, user);
+    }
+
+    @Override
+    public List<HealthTracking> findAllByUser(User user) {
+        return ((IHealthTrackingRepository) repository).findAllByUser(user);
     }
 }

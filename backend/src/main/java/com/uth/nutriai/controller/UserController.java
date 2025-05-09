@@ -4,6 +4,7 @@ import com.uth.nutriai.dto.request.UserCreateDto;
 import com.uth.nutriai.dto.response.ApiResponse;
 import com.uth.nutriai.dto.response.UserDetailDto;
 import com.uth.nutriai.service.IUserService;
+import com.uth.nutriai.utils.SecurityUtils;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -32,21 +33,22 @@ public class UserController {
     }
 
     @RequestMapping(value = "/search", method = {RequestMethod.GET, RequestMethod.HEAD})
-    public ResponseEntity<ApiResponse<UserDetailDto>> findUserById(
-            @RequestParam String email,
+    public ResponseEntity<ApiResponse<UserDetailDto>> findUserByUserId(
             @RequestHeader(value = "If-None-Match", required = false) String eTag
     ) {
-        if (!userService.isUserAvailable(email)) {
+        String userId = SecurityUtils.extractAccountId();
+
+        if (!userService.isUserAvailable(userId)) {
             return ResponseEntity.notFound().build();
         }
 
-        String currentEtag = userService.currentEtag(email);
+        String currentEtag = userService.currentEtag(userId);
 
         if (eTag != null && eTag.equals(currentEtag)) {
             return ResponseEntity.status(HttpStatus.NOT_MODIFIED).build();
         }
 
-        UserDetailDto userDetailDto = userService.findUserByEmail(email);
+        UserDetailDto userDetailDto = userService.findUserByUserId(userId);
 
         ApiResponse<UserDetailDto> response = new ApiResponse<>(userDetailDto);
         return ResponseEntity.ok()
@@ -56,18 +58,12 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<ApiResponse<UserDetailDto>> createUser(
-            @RequestHeader("Authorization") String authHeader,
             @Valid @RequestBody UserCreateDto userCreateDto
     ) {
 
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-        String token = authHeader.substring(7);
-
-        UserDetailDto createdUser = userService.createUser(token, userCreateDto);
-        URI location = URI.create("/api/users/search?email=" + createdUser.email());
-        String currentEtag = userService.currentEtag(createdUser.email());
+        UserDetailDto createdUser = userService.createUser(userCreateDto);
+        URI location = URI.create("/api/users/search");
+        String currentEtag = userService.currentEtag(createdUser.userId());
         ApiResponse<UserDetailDto> response = new ApiResponse<>(createdUser);
         return ResponseEntity.created(location).eTag(currentEtag).body(response);
     }

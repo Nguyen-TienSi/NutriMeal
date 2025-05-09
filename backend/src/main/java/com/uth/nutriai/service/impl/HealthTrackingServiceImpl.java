@@ -6,9 +6,11 @@ import com.uth.nutriai.dto.response.HealthTrackingDetailDto;
 import com.uth.nutriai.mapper.IHealthTrackingMapper;
 import com.uth.nutriai.model.domain.HealthTracking;
 import com.uth.nutriai.service.IHealthTrackingService;
-import com.uth.nutriai.utils.EtagUtil;
+import com.uth.nutriai.utils.EtagUtils;
+import com.uth.nutriai.utils.SecurityUtils;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.core.OAuth2AuthenticatedPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
@@ -26,9 +28,7 @@ public class HealthTrackingServiceImpl implements IHealthTrackingService {
 
     @Override
     public HealthTrackingDetailDto findHealthTrackingByDate(Date trackingDate) {
-        String userId = Optional.ofNullable(SecurityContextHolder.getContext().getAuthentication())
-                .map(auth -> auth.getPrincipal() instanceof Jwt jwt ? jwt.getSubject() : null)
-                .orElse(null);
+        String userId = SecurityUtils.extractAccountId();
 
         if (userId == null) {
             return null;
@@ -50,12 +50,13 @@ public class HealthTrackingServiceImpl implements IHealthTrackingService {
     @Override
     public String currentEtag(Date trackingDate) {
         var authentication = SecurityContextHolder.getContext().getAuthentication();
-        String userId = authentication.getPrincipal() instanceof Jwt jwt ? jwt.getSubject() : null;
+        String userId = authentication.getPrincipal() instanceof Jwt jwt ? jwt.getSubject() :
+                authentication.getPrincipal() instanceof OAuth2AuthenticatedPrincipal oauth2Principal ? oauth2Principal.getName() : null;
         if (userId == null) return null;
 
         return userDao.findByUserId(userId)
                 .flatMap(user -> healthTrackingDao.findByTrackingDateAndUser(trackingDate, user))
-                .map(EtagUtil::generateEtag)
+                .map(EtagUtils::generateEtag)
                 .orElse(null);
     }
 }

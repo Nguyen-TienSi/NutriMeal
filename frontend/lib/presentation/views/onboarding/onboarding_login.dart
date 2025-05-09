@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nutriai_app/data/models/user_create_data.dart';
+import 'package:nutriai_app/data/repositories/token_manager.dart';
 import 'package:nutriai_app/presentation/layout/main_screen_layout.dart';
 import 'package:nutriai_app/service/api-service/user_service.dart';
 import 'package:nutriai_app/service/external-service/auth_manager.dart';
@@ -11,7 +12,6 @@ class OnboardingLogin extends StatelessWidget {
   const OnboardingLogin({super.key, required this.userCreateData});
 
   Future<void> _login(AuthProvider provider, BuildContext context) async {
-    debugPrint(userCreateData.toString());
     try {
       await AuthManager.signIn(provider);
       if (!context.mounted) return;

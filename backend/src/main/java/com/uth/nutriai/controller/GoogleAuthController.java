@@ -94,9 +94,9 @@ public class GoogleAuthController {
         String idToken = authHeader.substring(7);
         GoogleIdToken.Payload userPayload = googleTokenVerifier.verify(idToken);
 
-        String email = userPayload.getEmail();
+        String sub = userPayload.getSubject();
 
-        if (userService.isUserAvailable(email)) {
+        if (userService.isUserAvailable(sub)) {
             return ResponseEntity.ok().build();
         } else {
             return ResponseEntity.notFound().build();

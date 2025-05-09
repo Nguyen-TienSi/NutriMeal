@@ -12,13 +12,15 @@ public interface IUserService {
 
     UserDetailDto findUserById(UUID id);
 
-    UserDetailDto createUser(String token, UserCreateDto userCreateDto);
+    UserDetailDto createUser(UserCreateDto userCreateDto);
 
     void deleteUser(UUID id);
 
-    boolean isUserAvailable(String email);
+    boolean isUserAvailable(String userId);
+
+    UserDetailDto findUserByUserId(String userId);
 
     UserDetailDto findUserByEmail(String email);
 
-    String currentEtag(String email);
+    String currentEtag(String userId);
 }

@@ -32,11 +32,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
-  void _logInfo() {
+  Future<void> _logInfo() async {
     final userInfo = AuthManager.getGoogleAuthService().currentUser;
     final idToken = TokenManager.getValidToken();
     debugPrint('👤 User Info: $userInfo');
-    debugPrint('🔑 Token: $idToken');
+    debugPrint('🔑 Token: "$idToken"');
   }
 
   @override

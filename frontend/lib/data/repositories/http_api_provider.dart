@@ -38,6 +38,7 @@ class HttpApiProvider extends HttpProvider with ApiConfig {
       requestHeaders['Content-Type'] = 'application/json-patch+json';
     }
     if (token != null) requestHeaders['Authorization'] = 'Bearer $token';
+    debugPrint('🔑 Send Token: "$token"');
 
     http.Response response = switch (method.toUpperCase()) {
       'HEAD' => await http.head(uri, headers: requestHeaders),
@@ -156,9 +157,21 @@ class HttpApiProvider extends HttpProvider with ApiConfig {
       {required String endPoint,
       var data,
       var files,
-      T Function(dynamic)? fromJson}) {
-    // TODO: implement post
-    throw UnimplementedError();
+      T Function(dynamic)? fromJson}) async {
+    try {
+      return await sendRequest(
+        method: 'POST',
+        endPoint: endPoint,
+        data: data,
+      );
+    } catch (e, stackTrace) {
+      if (e is Exception) {
+        handleError(e);
+      } else {
+        debugPrint('Unknown error: $e\n$stackTrace');
+      }
+      rethrow;
+    }
   }
 
   @override
