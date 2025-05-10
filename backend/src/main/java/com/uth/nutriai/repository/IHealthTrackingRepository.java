@@ -16,4 +16,6 @@ public interface IHealthTrackingRepository extends MongoRepository<HealthTrackin
     Optional<HealthTracking> findByTrackingDateAndUser(Date trackingDate, User user);
 
     List<HealthTracking> findAllByUser(User user);
+
+    List<HealthTracking> findByUserAndTrackingDateBetween(User user, Date startDate, Date endDate);
 }

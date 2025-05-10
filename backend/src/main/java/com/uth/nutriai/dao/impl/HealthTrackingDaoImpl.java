@@ -27,4 +27,9 @@ public class HealthTrackingDaoImpl extends GenericDaoImpl<HealthTracking, UUID> 
     public List<HealthTracking> findAllByUser(User user) {
         return ((IHealthTrackingRepository) repository).findAllByUser(user);
     }
+
+    @Override
+    public List<HealthTracking> findByUserAndTrackingDateBetween(User user, Date startDate, Date endDate) {
+        return ((IHealthTrackingRepository) repository).findByUserAndTrackingDateBetween(user, startDate, endDate);
+    }
 }

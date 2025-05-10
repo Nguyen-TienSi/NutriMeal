@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:nutriai_app/data/models/user_create_data.dart';
-import 'package:nutriai_app/data/repositories/token_manager.dart';
 import 'package:nutriai_app/presentation/layout/main_screen_layout.dart';
 import 'package:nutriai_app/service/api-service/user_service.dart';
 import 'package:nutriai_app/service/external-service/auth_manager.dart';

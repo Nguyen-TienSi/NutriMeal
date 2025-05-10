@@ -13,4 +13,6 @@ public interface IHealthTrackingDao extends IDao<HealthTracking, UUID> {
     Optional<HealthTracking> findByTrackingDateAndUser(Date trackingDate, User user);
 
     List<HealthTracking> findAllByUser(User user);
+
+    List<HealthTracking> findByUserAndTrackingDateBetween(User user, Date startDate, Date endDate);
 }

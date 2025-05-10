@@ -13,4 +13,6 @@ import java.util.UUID;
 public interface IMealLogRepository extends MongoRepository<MealLog, UUID> {
 
     List<MealLog> findByTrackingDateAndUser(Date trackingDate, User user);
+
+    List<MealLog> findAllByUser(User user);
 }

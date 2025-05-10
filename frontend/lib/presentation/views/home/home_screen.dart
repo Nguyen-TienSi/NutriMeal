@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:nutriai_app/data/models/health_tracking_detail_data.dart';
 import 'package:nutriai_app/data/models/meal_log_summary_data.dart';
+import 'package:nutriai_app/presentation/views/home/calories_circular_chart.dart';
+import 'package:nutriai_app/presentation/views/home/date_selector.dart';
+import 'package:nutriai_app/presentation/views/home/meal_card.dart';
+import 'package:nutriai_app/presentation/views/home/nutrition_info.dart';
 import 'package:nutriai_app/presentation/views/meal-tracking/meal_tracking_screen.dart';
 import 'package:nutriai_app/service/api-service/health_tracking_service.dart';
 import 'package:nutriai_app/service/api-service/meal_log_service.dart';
-import 'package:nutriai_app/utils/enums.dart' as app_enums;
-
-import 'calories_chart.dart' show CaloriesChart;
-import 'date_selector.dart' show DateSelector;
-import 'meal_card.dart' show MealCard;
-import 'nutrition_info.dart' show NutritionInfo;
+import 'package:nutriai_app/utils/enums.dart' as enums;
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -106,7 +105,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 10),
-                CaloriesChart(
+                CaloriesCircularChart(
                   consumedCalories:
                       healthTrackingDetailData?.consumedCalories ?? 0,
                   totalCalories: healthTrackingDetailData?.totalCalories ?? 0,
@@ -140,11 +139,11 @@ class _HomeScreenState extends State<HomeScreen> {
                       if (mealLogSummaryData != null)
                         ...mealLogSummaryData!.map((mealLog) {
                           String mealName = switch (mealLog.timeOfDay) {
-                            app_enums.TimeOfDay.morning => "Breakfast",
-                            app_enums.TimeOfDay.noon => "Lunch",
-                            app_enums.TimeOfDay.evening => "Dinner",
-                            app_enums.TimeOfDay.afternoon ||
-                            app_enums.TimeOfDay.night =>
+                            enums.TimeOfDay.morning => "Breakfast",
+                            enums.TimeOfDay.noon => "Lunch",
+                            enums.TimeOfDay.evening => "Dinner",
+                            enums.TimeOfDay.afternoon ||
+                            enums.TimeOfDay.night =>
                               "Snacks",
                           };
                           return MealCard(

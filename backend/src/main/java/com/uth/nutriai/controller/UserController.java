@@ -1,5 +1,6 @@
 package com.uth.nutriai.controller;
 
+import com.github.fge.jsonpatch.JsonPatch;
 import com.uth.nutriai.dto.request.UserCreateDto;
 import com.uth.nutriai.dto.response.ApiResponse;
 import com.uth.nutriai.dto.response.UserDetailDto;
@@ -77,5 +78,16 @@ public class UserController {
     public ResponseEntity<Void> deleteUser(@RequestParam UUID id) {
         userService.deleteUser(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping
+    public ResponseEntity<ApiResponse<UserDetailDto>> patchUser(@RequestBody JsonPatch jsonPatch) {
+
+        UserDetailDto userDetailDto = userService.patchUser(jsonPatch);
+
+        ApiResponse<UserDetailDto> response = new ApiResponse<>(userDetailDto);
+        return ResponseEntity.ok()
+                .eTag(userService.currentEtag(userDetailDto.userId()))
+                .body(response);
     }
 }

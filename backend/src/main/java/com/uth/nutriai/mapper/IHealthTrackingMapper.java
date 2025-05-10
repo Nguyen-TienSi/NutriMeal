@@ -21,6 +21,8 @@ public interface IHealthTrackingMapper extends INutritionCalculator<HealthTracki
     @Mapping(target = "totalNutrientDtoList", source = "totalNutrients")
     HealthTrackingDetailDto mapToHealthTrackingDetailDto(HealthTracking healthTracking);
 
+    List<HealthTrackingDetailDto> mapToHealthTrackingDetailDtoList(List<HealthTracking> healthTrackingList);
+
     @Override
     default List<Nutrient> getConsumedNutrients(HealthTracking entity) {
         return entity.getConsumedNutrients();

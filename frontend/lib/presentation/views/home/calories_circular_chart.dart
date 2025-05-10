@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 
-class CaloriesChart extends StatelessWidget {
+class CaloriesCircularChart extends StatelessWidget {
   final double consumedCalories;
   final double totalCalories;
 
-  const CaloriesChart({
+  const CaloriesCircularChart({
     super.key,
     required this.consumedCalories,
     required this.totalCalories,

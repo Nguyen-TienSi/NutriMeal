@@ -20,4 +20,9 @@ public class MealLogDaoImpl extends GenericDaoImpl<MealLog, UUID> implements IMe
     public List<MealLog> findByTrackingDateAndUser(Date trackingDate, User user) {
         return ((IMealLogRepository) repository).findByTrackingDateAndUser(trackingDate, user);
     }
+
+    @Override
+    public List<MealLog> findAllByUser(User user) {
+        return ((IMealLogRepository) repository).findAllByUser(user);
+    }
 }

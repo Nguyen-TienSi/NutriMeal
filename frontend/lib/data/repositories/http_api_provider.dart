@@ -4,13 +4,11 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:nutriai_app/data/repositories/api_config.dart';
 import 'package:nutriai_app/exception/server_exception.dart';
-import 'package:shared_preferences/shared_preferences.dart'
-    show SharedPreferences;
-
-import 'api_config.dart';
-import 'http_provider.dart';
-import 'token_manager.dart' show TokenManager;
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:nutriai_app/data/repositories/http_provider.dart';
+import 'package:nutriai_app/data/repositories/token_manager.dart';
 
 class HttpApiProvider extends HttpProvider with ApiConfig {
   @override

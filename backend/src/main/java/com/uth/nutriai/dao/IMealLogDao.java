@@ -11,4 +11,6 @@ import java.util.Optional;
 public interface IMealLogDao extends IDao<MealLog, UUID> {
 
     List<MealLog> findByTrackingDateAndUser(Date date, User user);
+
+    List<MealLog> findAllByUser(User user);
 }

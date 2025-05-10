@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nutriai_app/core/app_config.dart';
-import 'package:nutriai_app/presentation/views/settings/profile_screen.dart'
-    show ProfileScreen;
+import 'package:nutriai_app/presentation/views/personal/profile_screen.dart';
 
 class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
   const MainAppBar({super.key});
