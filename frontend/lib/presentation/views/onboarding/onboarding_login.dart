@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:nutriai_app/data/models/user_create_data.dart';
 import 'package:nutriai_app/presentation/layout/main_screen_layout.dart';
 import 'package:nutriai_app/service/api-service/user_service.dart';
@@ -59,24 +60,25 @@ class OnboardingLogin extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const SizedBox(height: 48),
+                SizedBox(height: 48.h),
                 _buildLogo(context),
-                const SizedBox(height: 48),
+                SizedBox(height: 48.h),
                 _buildSocialButton(
-                    context,
-                    'assets/images/google_branding_logo.png',
-                    'Continue with Google',
-                    AuthProvider.google),
-                const SizedBox(height: 16),
+                  context,
+                  'assets/images/google_branding_logo.png',
+                  'Continue with Google',
+                  AuthProvider.google,
+                ),
+                SizedBox(height: 16.h),
                 _buildSocialButton(
                     context,
                     'assets/images/facebook_branding_logo.png',
                     'Continue with Facebook',
                     AuthProvider.facebook),
-                const SizedBox(height: 24),
-                const Text(
+                SizedBox(height: 24.h),
+                Text(
                   'By continuing, you agree to our Terms of Service and Privacy Policy',
-                  style: TextStyle(fontSize: 12, color: Colors.black54),
+                  style: TextStyle(fontSize: 12.sp, color: Colors.black54),
                   textAlign: TextAlign.center,
                 ),
               ],
@@ -99,22 +101,23 @@ class OnboardingLogin extends StatelessWidget {
               shape: BoxShape.circle,
             ),
             child: Center(
-              child: Icon(Icons.restaurant_menu, size: 60, color: Colors.white),
+              child:
+                  Icon(Icons.restaurant_menu, size: 60.h, color: Colors.white),
             ),
           ),
-          const SizedBox(height: 24),
-          const Text(
+          SizedBox(height: 24.h),
+          Text(
             "Welcome to NutriAI",
             style: TextStyle(
-                fontSize: 28,
+                fontSize: 28.sp,
                 fontWeight: FontWeight.bold,
                 color: Colors.black87,
                 letterSpacing: -0.5),
           ),
-          const SizedBox(height: 8),
-          const Text(
+          SizedBox(height: 8.h),
+          Text(
             "Your personal nutrition companion",
-            style: TextStyle(fontSize: 16, color: Colors.black54),
+            style: TextStyle(fontSize: 16.sp, color: Colors.black54),
           ),
         ],
       ),
@@ -128,20 +131,20 @@ class OnboardingLogin extends StatelessWidget {
       style: ElevatedButton.styleFrom(
         backgroundColor: Colors.white,
         foregroundColor: Colors.black87,
-        padding: const EdgeInsets.symmetric(vertical: 16),
+        padding: EdgeInsets.symmetric(vertical: 16.h),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(12.r),
           side: BorderSide(color: Colors.grey.shade300),
         ),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Image.asset(imageAsset, width: 24, height: 24),
-          const SizedBox(width: 12),
+          Image.asset(imageAsset, width: 24.w, height: 24.h),
+          SizedBox(width: 12.w),
           Text(
             label,
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+            style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w600),
           ),
         ],
       ),

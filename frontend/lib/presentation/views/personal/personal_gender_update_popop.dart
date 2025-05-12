@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:nutriai_app/utils/enums.dart';
 
 class PersonalGenderUpdatePopup extends StatefulWidget {
@@ -35,7 +36,10 @@ class _PersonalGenderUpdatePopupState extends State<PersonalGenderUpdatePopup> {
           return RadioListTile<Gender>(
             value: gender,
             groupValue: _selectedGender,
-            title: Text(_genderString(gender)),
+            title: Text(
+              _genderString(gender),
+              style: TextStyle(fontSize: 16.sp),
+            ),
             onChanged: (value) {
               setState(() {
                 _selectedGender = value;
@@ -46,15 +50,18 @@ class _PersonalGenderUpdatePopupState extends State<PersonalGenderUpdatePopup> {
       ),
       actions: [
         TextButton(
-          onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Cancel'),
+          onPressed: () => Navigator.pop(context),
+          child: Text(
+            'Cancel',
+            style: TextStyle(fontSize: 16.sp),
+          ),
         ),
         ElevatedButton(
           onPressed: _selectedGender == null
               ? null
               : () {
                   widget.onSave(_selectedGender!);
-                  Navigator.of(context).pop();
+                  Navigator.pop(context);
                 },
           child: const Text('Save'),
         ),

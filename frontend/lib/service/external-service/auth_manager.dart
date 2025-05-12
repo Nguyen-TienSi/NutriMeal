@@ -49,11 +49,13 @@ class AuthManager {
   }
 
   static Future<void> signOut() async {
-    if (TokenManager.getProvider() == AuthProvider.google) {
-      await _googleAuthService.signOut();
-    } else if (TokenManager.getProvider() == AuthProvider.facebook) {
-      await _facebookAuthService.logOut();
-    }
+    // if (TokenManager.getProvider() == AuthProvider.google) {
+    //   await _googleAuthService.signOut();
+    // } else if (TokenManager.getProvider() == AuthProvider.facebook) {
+    //   await _facebookAuthService.logOut();
+    // }
+    await _googleAuthService.signOut();
+    await _facebookAuthService.logOut();
     TokenManager.clear();
   }
 

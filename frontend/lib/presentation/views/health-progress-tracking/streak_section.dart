@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:nutriai_app/data/models/streak_data.dart';
 
 class StreakSection extends StatelessWidget {
@@ -10,10 +11,10 @@ class StreakSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       elevation: 2,
-      margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      margin: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14.r)),
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+        padding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 16.w),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
@@ -22,9 +23,9 @@ class StreakSection extends StatelessWidget {
               value: streakData.currentStreak ?? 0,
             ),
             Container(
-              width: 1,
-              height: 40,
-              color: Colors.grey.withValues(),
+              width: 1.w,
+              height: 40.h,
+              color: Colors.grey,
             ),
             _StreakItem(
               label: 'Longest Streak',
@@ -49,20 +50,30 @@ class _StreakItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Text(
-          '$value days',
-          style: const TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-            color: Colors.black87,
-          ),
+        Row(
+          children: [
+            Text(
+              '$value ${value == 1 ? 'day' : 'days'}',
+              style: TextStyle(
+                fontSize: 24.sp,
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
+              ),
+            ),
+            Icon(
+              Icons.local_fire_department,
+              size: 30.h,
+              color: Colors.orangeAccent,
+            ),
+          ],
         ),
-        const SizedBox(height: 2),
+        SizedBox(height: 2.h),
         Text(
           label,
-          style: const TextStyle(
-            fontSize: 14,
+          style: TextStyle(
+            fontSize: 14.sp,
             color: Colors.grey,
             fontWeight: FontWeight.w500,
           ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:nutriai_app/core/app_config.dart';
 import 'package:nutriai_app/presentation/views/auth/login_bottom_sheet_button.dart';
 
@@ -11,10 +12,10 @@ class OnboardingWelcome extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        const Text(
+        Text(
           "Welcome to $appName",
           style: TextStyle(
-            fontSize: 24,
+            fontSize: 24.sp,
             fontWeight: FontWeight.bold,
           ),
           textAlign: TextAlign.center,
@@ -22,8 +23,8 @@ class OnboardingWelcome extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text("Already have an account?"),
-            const SizedBox(width: 4),
+            Text("Already have an account?"),
+            SizedBox(width: 4.w),
             LoginBottomSheetButton(),
           ],
         ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:nutriai_app/data/models/recipe_summary_data.dart';
 import 'package:nutriai_app/presentation/views/meal-tracking/recipe_item_card.dart';
 import 'package:nutriai_app/service/api-service/statistic_service.dart';
@@ -44,35 +45,21 @@ class _FavoriteRecipeScreenState extends State<FavoriteRecipeScreen> {
       body: SafeArea(
         child: isLoading
             ? const Center(child: CircularProgressIndicator())
-            : Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    if (recipeSummaryDataList!.isEmpty)
-                      const Padding(
-                        padding: EdgeInsets.all(16.0),
-                        child: Center(
-                          child: Text(
-                            'No favorite recipes yet.',
-                            style: TextStyle(color: Colors.grey, fontSize: 16),
-                          ),
-                        ),
-                      )
-                    else
-                      ListView.builder(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemCount: recipeSummaryDataList!.length,
-                        itemBuilder: (_, index) {
-                          final recipe = recipeSummaryDataList![index];
-                          return RecipeItemCard(recipe: recipe);
-                        },
-                      ),
-                  ],
-                ),
-              ),
+            : recipeSummaryDataList == null || recipeSummaryDataList!.isEmpty
+                ? Center(
+                    child: Text(
+                      'No favorite recipes yet.',
+                      style: TextStyle(color: Colors.grey, fontSize: 16.sp),
+                    ),
+                  )
+                : ListView.builder(
+                    padding: EdgeInsets.symmetric(vertical: 8.h),
+                    itemCount: recipeSummaryDataList!.length,
+                    itemBuilder: (_, index) {
+                      final recipe = recipeSummaryDataList![index];
+                      return RecipeItemCard(recipe: recipe);
+                    },
+                  ),
       ),
     );
   }

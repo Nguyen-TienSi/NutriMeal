@@ -67,6 +67,8 @@ spring:
   mvc:
     path match:
       matching-strategy: ant_path_matcher
+    problem-details:
+      enabled: true
 
 server:
   port: ${PORT:8080}
@@ -76,6 +78,10 @@ server:
   servlet:
     session:
       timeout: 30m
+    encoding:
+      charset: UTF-8
+      force: true
+      enabled: true
 
 logging:
   config: classpath:logback-${spring.profiles.active}.xml

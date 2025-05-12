@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class DateSelector extends StatefulWidget {
   final Function(DateTime) onDateChanged;
@@ -55,10 +56,13 @@ class _DateSelectorState extends State<DateSelector> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
-        color: Colors.grey[200],
-        borderRadius: BorderRadius.circular(12),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12.r),
+        boxShadow: [
+          BoxShadow(blurRadius: 2, color: Colors.grey.shade300, spreadRadius: 1)
+        ],
       ),
       child: Column(
         children: [
@@ -67,8 +71,7 @@ class _DateSelectorState extends State<DateSelector> {
             children: [
               Text(
                 "${_selectedDate.day}/${_selectedDate.month}/${_selectedDate.year}",
-                style:
-                    const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold),
               ),
               IconButton(
                 icon: const Icon(Icons.calendar_today),
@@ -76,7 +79,7 @@ class _DateSelectorState extends State<DateSelector> {
               ),
             ],
           ),
-          const SizedBox(height: 10),
+          SizedBox(height: 10.h),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: List.generate(7, (index) {
@@ -88,7 +91,7 @@ class _DateSelectorState extends State<DateSelector> {
                   children: [
                     Text(
                       ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"][index],
-                      style: const TextStyle(fontSize: 14),
+                      style: TextStyle(fontSize: 14.sp, color: Colors.black),
                     ),
                     CircleAvatar(
                       backgroundColor: day.day == _selectedDate.day &&
@@ -96,7 +99,15 @@ class _DateSelectorState extends State<DateSelector> {
                               day.year == _selectedDate.year
                           ? Colors.green
                           : Colors.transparent,
-                      child: Text("${day.day}"),
+                      child: Text(
+                        "${day.day}",
+                        style: TextStyle(
+                            color: day.day == _selectedDate.day &&
+                                    day.month == _selectedDate.month &&
+                                    day.year == _selectedDate.year
+                                ? Colors.white
+                                : Colors.black),
+                      ),
                     ),
                   ],
                 ),

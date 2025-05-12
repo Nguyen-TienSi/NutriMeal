@@ -1,5 +1,6 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:nutriai_app/data/models/health_tracking_detail_data.dart';
 
 class NutrientsPieChart extends StatelessWidget {
@@ -34,11 +35,11 @@ class NutrientsPieChart extends StatelessWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        const Text(
-          'Nutrient Breakdown',
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        Text(
+          'Nutrient Breakdown', // Nutrient Breakdown
+          style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold),
         ),
-        const SizedBox(height: 12),
+        SizedBox(height: 12.h),
         SizedBox(
           height: 220,
           child: PieChart(
@@ -49,38 +50,39 @@ class NutrientsPieChart extends StatelessWidget {
                     color: colors[i % colors.length],
                     value: nutrients[i].value,
                     title:
-                        '${((nutrients[i].value / total) * 100).toStringAsFixed(0)}%',
-                    radius: 60,
-                    titleStyle: const TextStyle(
-                      fontSize: 14,
+                        '${((nutrients[i].value / total) * 100).toStringAsFixed(1)}%',
+                    radius: 60.r,
+                    titleStyle: TextStyle(
+                      fontSize: 14.sp,
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
                     ),
                   ),
               ],
-              sectionsSpace: 2,
-              centerSpaceRadius: 40,
+              sectionsSpace: 2.h,
+              centerSpaceRadius: 40.r,
             ),
           ),
         ),
-        const SizedBox(height: 16),
+        SizedBox(height: 16.h),
         // Legend
         Wrap(
-          spacing: 16,
+          spacing: 16.w,
           children: [
             for (int i = 0; i < nutrients.length; i++)
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Container(
-                    width: 14,
-                    height: 14,
-                    color: colors[i % colors.length],
+                    // Color indicator
+                    width: 14.w,
+                    height: 14.h,
+                    color: colors[i % colors.length], // Color
                   ),
-                  const SizedBox(width: 6),
+                  SizedBox(width: 6.w),
                   Text(
                     '${nutrients[i].name} (${nutrients[i].value.toStringAsFixed(1)} ${nutrients[i].unit})',
-                    style: const TextStyle(fontSize: 13),
+                    style: TextStyle(fontSize: 13.sp),
                   ),
                 ],
               ),

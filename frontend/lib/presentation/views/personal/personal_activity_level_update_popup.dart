@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:nutriai_app/utils/enums.dart';
 
 class PersonalActivityLevelUpdatePopup extends StatefulWidget {
@@ -36,7 +37,8 @@ class _PersonalActivityLevelUpdatePopupState
           return RadioListTile<ActivityLevel>(
             value: level,
             groupValue: _selectedLevel,
-            title: Text(_activityLevelString(level)),
+            title: Text(_activityLevelString(level),
+                style: TextStyle(fontSize: 16.sp)),
             onChanged: (value) {
               setState(() {
                 _selectedLevel = value;
@@ -47,15 +49,15 @@ class _PersonalActivityLevelUpdatePopupState
       ),
       actions: [
         TextButton(
-          onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Cancel'),
+          onPressed: () => Navigator.pop(context),
+          child: Text('Cancel', style: TextStyle(fontSize: 16.sp)),
         ),
         ElevatedButton(
           onPressed: _selectedLevel == null
               ? null
               : () {
                   widget.onSave(_selectedLevel!);
-                  Navigator.of(context).pop();
+                  Navigator.pop(context);
                 },
           child: const Text('Save'),
         ),

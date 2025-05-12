@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:nutriai_app/data/models/user_create_data.dart';
 import 'package:nutriai_app/utils/enums.dart';
 
@@ -24,18 +25,18 @@ class _OnboardingGenderState extends State<OnboardingGender> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(16.0),
+      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 24.h),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           const _TitleText(),
-          const SizedBox(height: 20),
+          SizedBox(height: 20.h),
           _GenderOptions(
             selectedGender: _selectedGender,
             onGenderSelected: _selectGender,
           ),
-          const SizedBox(height: 20),
+          SizedBox(height: 20.h),
           const _DescriptionText(),
         ],
       ),
@@ -48,9 +49,9 @@ class _TitleText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Text(
+    return Text(
       "What's your gender?",
-      style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+      style: TextStyle(fontSize: 24.sp, fontWeight: FontWeight.bold),
       textAlign: TextAlign.center,
     );
   }
@@ -88,7 +89,7 @@ class _GenderOptions extends StatelessWidget {
           isSelected: selectedGender == Gender.male,
           onTap: () => onGenderSelected(Gender.male),
         ),
-        const SizedBox(width: 20),
+        SizedBox(width: 20.w),
         _GenderOption(
           gender: Gender.female,
           imagePath: "assets/images/female.png",
@@ -118,14 +119,14 @@ class _GenderOption extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: 100.0,
-        height: 100.0,
+        width: 100.w,
+        height: 100.h,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           color: isSelected ? Colors.green : Colors.white,
           border: Border.all(
             color: isSelected ? Colors.transparent : Colors.grey,
-            width: 2.0,
+            width: 2.0.w,
           ),
         ),
         child: Center(

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'chat_bubble.dart';
 import 'chat_input_field.dart';
 import 'question_suggestion.dart';
@@ -17,8 +17,8 @@ class AskAIScreen extends StatelessWidget {
           children: [
             Expanded(
               child: ListView(
-                padding: const EdgeInsets.only(top: 10),
-                children: const [
+                padding: EdgeInsets.only(top: 10.h),
+                children: [
                   ChatBubble(
                     message:
                         "Hi Tien Si Nguyen, I am your smart dietitian assistant. "

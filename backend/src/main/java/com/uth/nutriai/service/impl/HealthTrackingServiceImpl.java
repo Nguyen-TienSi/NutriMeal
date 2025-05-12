@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Optional;
 
 @AllArgsConstructor
 @Service
@@ -36,13 +35,20 @@ public class HealthTrackingServiceImpl implements IHealthTrackingService {
 
         return userDao.findByUserId(userId)
                 .map(user -> healthTrackingDao.findByTrackingDateAndUser(trackingDate, user)
-                        .orElseGet(() -> healthTrackingDao.save(HealthTracking.builder()
-                                .user(user)
-                                .trackingDate(trackingDate)
-                                .totalCalories(0.0)
-                                .consumedNutrients(new ArrayList<>())
-                                .totalNutrients(new ArrayList<>())
-                                .build())))
+                        .orElseGet(() -> {
+                            Date today = new Date();
+                            if (!trackingDate.toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDate()
+                                    .isEqual(today.toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDate())) {
+                                return null;
+                            }
+                            return healthTrackingDao.save(HealthTracking.builder()
+                                    .user(user)
+                                    .trackingDate(trackingDate)
+                                    .totalCalories(2000.0)
+                                    .consumedNutrients(new ArrayList<>())
+                                    .totalNutrients(new ArrayList<>())
+                                    .build());
+                        }))
                 .map(healthTrackingMapper::mapToHealthTrackingDetailDto)
                 .orElse(null);
     }

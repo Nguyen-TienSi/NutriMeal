@@ -10,6 +10,6 @@ import java.time.Duration;
 public class LongToDurationReadConverter implements Converter<Long, Duration> {
     @Override
     public Duration convert(@NonNull Long source) {
-        return Duration.ofMillis(source);
+        return Duration.ofMinutes(source);
     }
 }

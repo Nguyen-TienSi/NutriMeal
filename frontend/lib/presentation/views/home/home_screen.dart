@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:nutriai_app/data/models/health_tracking_detail_data.dart';
 import 'package:nutriai_app/data/models/meal_log_summary_data.dart';
+import 'package:nutriai_app/data/models/nutrient_data.dart';
 import 'package:nutriai_app/presentation/views/home/calories_circular_chart.dart';
 import 'package:nutriai_app/presentation/views/home/date_selector.dart';
-import 'package:nutriai_app/presentation/views/home/meal_card.dart';
+import 'package:nutriai_app/presentation/views/home/meal_log_card.dart';
 import 'package:nutriai_app/presentation/views/home/nutrition_info.dart';
 import 'package:nutriai_app/presentation/views/meal-tracking/meal_tracking_screen.dart';
 import 'package:nutriai_app/service/api-service/health_tracking_service.dart';
@@ -11,7 +13,9 @@ import 'package:nutriai_app/service/api-service/meal_log_service.dart';
 import 'package:nutriai_app/utils/enums.dart' as enums;
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  const HomeScreen({super.key, this.refreshKey});
+
+  final GlobalKey<RefreshIndicatorState>? refreshKey;
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -26,19 +30,19 @@ class _HomeScreenState extends State<HomeScreen> {
   double _getConsumedNutrientValue(String name) =>
       healthTrackingDetailData?.consumedNutrients
           .firstWhere((nutrient) => nutrient.name == name,
-              orElse: () => throw Exception('Nutrient not found: $name'))
+              orElse: () => NutrientData(name: name, value: 0, unit: 'grams'))
           .value ??
       0;
   double _getTotalNutrientValue(String name) =>
       healthTrackingDetailData?.totalNutrients
           .firstWhere((nutrient) => nutrient.name == name,
-              orElse: () => throw Exception('Nutrient not found: $name'))
+              orElse: () => NutrientData(name: name, value: 0, unit: 'grams'))
           .value ??
       0;
   String _getNutrientUnit(String name) =>
       healthTrackingDetailData?.consumedNutrients
           .firstWhere((nutrient) => nutrient.name == name,
-              orElse: () => throw Exception('Nutrient not found: $name'))
+              orElse: () => NutrientData(name: name, value: 0, unit: 'grams'))
           .unit ??
       '';
 
@@ -84,57 +88,63 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Scaffold(
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                DateSelector(
-                  initialDate: selectedDate,
-                  onDateChanged: (newDate) {
-                    setState(() {
-                      selectedDate = newDate;
-                    });
-                    fetchData();
-                  },
-                ),
-                const SizedBox(height: 20),
-                Text(
-                  "Today calories",
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 10),
-                CaloriesCircularChart(
-                  consumedCalories:
-                      healthTrackingDetailData?.consumedCalories ?? 0,
-                  totalCalories: healthTrackingDetailData?.totalCalories ?? 0,
-                ),
-                const SizedBox(height: 20),
-                if (healthTrackingDetailData != null &&
-                    healthTrackingDetailData!.consumedNutrients.isNotEmpty)
-                  Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        NutritionInfo(
-                            nutrient: "Carbs",
-                            value: _getConsumedNutrientValue("Carbohydrate"),
-                            goal: _getTotalNutrientValue("Carbohydrate"),
-                            unit: _getNutrientUnit("Carbohydrate")),
-                        NutritionInfo(
-                            nutrient: "Protein",
-                            value: _getConsumedNutrientValue("Protein"),
-                            goal: _getTotalNutrientValue("Protein"),
-                            unit: _getNutrientUnit("Protein")),
-                        NutritionInfo(
-                            nutrient: "Fat",
-                            value: _getConsumedNutrientValue("Fat"),
-                            goal: _getTotalNutrientValue("Fat"),
-                            unit: _getNutrientUnit("Fat")),
-                      ]),
-                const SizedBox(height: 40),
-                IntrinsicHeight(
-                  child: Column(
+        child: RefreshIndicator(
+          key: widget.refreshKey,
+          onRefresh: fetchData,
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: EdgeInsets.all(16.w),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  DateSelector(
+                    initialDate: selectedDate,
+                    onDateChanged: (newDate) {
+                      setState(() {
+                        selectedDate = newDate;
+                      });
+                      fetchData();
+                    },
+                  ),
+                  SizedBox(height: 20.h),
+                  Text(
+                    "Today calories",
+                    style:
+                        TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(height: 20.h),
+                  CaloriesCircularChart(
+                    consumedCalories:
+                        healthTrackingDetailData?.consumedCalories ?? 0,
+                    totalCalories: healthTrackingDetailData?.totalCalories ?? 0,
+                  ),
+                  SizedBox(height: 20.h),
+                  if (healthTrackingDetailData != null &&
+                      healthTrackingDetailData!.consumedNutrients.isNotEmpty)
+                    Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          NutritionInfo(
+                              nutrient: "Carbs",
+                              value: _getConsumedNutrientValue("Carbohydrate"),
+                              goal: _getTotalNutrientValue("Carbohydrate"),
+                              unit: _getNutrientUnit("Carbohydrate")),
+                          NutritionInfo(
+                              nutrient: "Protein",
+                              value: _getConsumedNutrientValue("Protein"),
+                              goal: _getTotalNutrientValue("Protein"),
+                              unit: _getNutrientUnit("Protein")),
+                          NutritionInfo(
+                              nutrient: "Fat",
+                              value: _getConsumedNutrientValue("Fat"),
+                              goal: _getTotalNutrientValue("Fat"),
+                              unit: _getNutrientUnit("Fat")),
+                        ]),
+                  SizedBox(height: 40.h),
+                  ListView(
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
                     children: [
                       if (mealLogSummaryData != null)
                         ...mealLogSummaryData!.map((mealLog) {
@@ -146,7 +156,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             enums.TimeOfDay.night =>
                               "Snacks",
                           };
-                          return MealCard(
+                          return MealLogCard(
                             mealName: mealName,
                             kcalRange:
                                 "${mealLog.consumedCalories.toInt()} / ${mealLog.totalCalories.toInt()}",
@@ -166,8 +176,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         }),
                     ],
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),

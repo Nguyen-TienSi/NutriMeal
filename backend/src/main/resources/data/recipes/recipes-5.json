@@ -1,0 +1,240 @@
+[
+  {
+    "recipeName": "Tea",
+    "description": "A soothing hot beverage",
+    "instructions": "1. Boil water.\n2. Add tea bag.\n3. Steep for 3-5 minutes.",
+    "imageUrl": "assets/images/dishes/tea.jpg",
+    "cookingTime": 5,
+    "serving": 1,
+    "servingUnit": "cup",
+    "ingredients": [
+      {
+        "name": "Tea bag",
+        "unit": "piece",
+        "quantity": 1
+      },
+      {
+        "name": "Water",
+        "unit": "ml",
+        "quantity": 250
+      }
+    ],
+    "foodTags": [
+      {
+        "name": "Beverage"
+      },
+      {
+        "name": "Hot"
+      }
+    ],
+    "nutrients": [
+      {
+        "name": "Calories",
+        "unit": "kcal",
+        "value": 2
+      }
+    ],
+    "timesOfDay": [
+      "morning",
+      "afternoon"
+    ]
+  },
+  {
+    "recipeName": "Belgian Waffle",
+    "description": "Crispy and fluffy breakfast waffle",
+    "instructions": "1. Mix batter.\n2. Pour into waffle maker.\n3. Cook until golden brown.",
+    "imageUrl": "assets/images/dishes/waffle.jpg",
+    "cookingTime": 15,
+    "serving": 2,
+    "servingUnit": "waffles",
+    "ingredients": [
+      {
+        "name": "Flour",
+        "unit": "grams",
+        "quantity": 200
+      },
+      {
+        "name": "Milk",
+        "unit": "ml",
+        "quantity": 200
+      },
+      {
+        "name": "Eggs",
+        "unit": "pieces",
+        "quantity": 2
+      }
+    ],
+    "foodTags": [
+      {
+        "name": "Breakfast"
+      },
+      {
+        "name": "Sweet"
+      }
+    ],
+    "nutrients": [
+      {
+        "name": "Carbohydrate",
+        "unit": "grams",
+        "value": 45
+      },
+      {
+        "name": "Protein",
+        "unit": "grams",
+        "value": 8
+      }
+    ],
+    "timesOfDay": [
+      "morning"
+    ]
+  },
+  {
+    "recipeName": "Greek Yogurt Bowl",
+    "description": "Creamy yogurt with fresh fruits",
+    "instructions": "1. Add yogurt to bowl.\n2. Top with fruits.\n3. Drizzle with honey.",
+    "imageUrl": "assets/images/dishes/yogurt.jpg",
+    "cookingTime": 5,
+    "serving": 1,
+    "servingUnit": "bowl",
+    "ingredients": [
+      {
+        "name": "Greek yogurt",
+        "unit": "grams",
+        "quantity": 200
+      },
+      {
+        "name": "Mixed berries",
+        "unit": "grams",
+        "quantity": 100
+      },
+      {
+        "name": "Honey",
+        "unit": "tablespoon",
+        "quantity": 1
+      }
+    ],
+    "foodTags": [
+      {
+        "name": "Healthy"
+      },
+      {
+        "name": "Breakfast"
+      }
+    ],
+    "nutrients": [
+      {
+        "name": "Protein",
+        "unit": "grams",
+        "value": 15
+      },
+      {
+        "name": "Calcium",
+        "unit": "mg",
+        "value": 200
+      }
+    ],
+    "timesOfDay": [
+      "morning"
+    ]
+  },
+  {
+    "recipeName": "Glazed Donut",
+    "description": "Classic sweet glazed donut",
+    "instructions": "1. Prepare dough.\n2. Shape and fry.\n3. Dip in glaze.",
+    "imageUrl": "assets/images/dishes/donut.jpg",
+    "cookingTime": 45,
+    "serving": 12,
+    "servingUnit": "pieces",
+    "ingredients": [
+      {
+        "name": "Flour",
+        "unit": "grams",
+        "quantity": 500
+      },
+      {
+        "name": "Sugar",
+        "unit": "grams",
+        "quantity": 100
+      },
+      {
+        "name": "Milk",
+        "unit": "ml",
+        "quantity": 250
+      }
+    ],
+    "foodTags": [
+      {
+        "name": "Dessert"
+      },
+      {
+        "name": "Sweet"
+      }
+    ],
+    "nutrients": [
+      {
+        "name": "Carbohydrate",
+        "unit": "grams",
+        "value": 30
+      },
+      {
+        "name": "Fat",
+        "unit": "grams",
+        "value": 15
+      }
+    ],
+    "timesOfDay": [
+      "morning",
+      "afternoon"
+    ]
+  },
+  {
+    "recipeName": "Crispy Fried Chicken",
+    "description": "Crunchy and juicy fried chicken",
+    "instructions": "1. Marinate chicken.\n2. Coat with seasoned flour.\n3. Deep fry until golden.",
+    "imageUrl": "assets/images/dishes/fried-chicken.jpg",
+    "cookingTime": 40,
+    "serving": 4,
+    "servingUnit": "pieces",
+    "ingredients": [
+      {
+        "name": "Chicken",
+        "unit": "grams",
+        "quantity": 800
+      },
+      {
+        "name": "Flour",
+        "unit": "grams",
+        "quantity": 300
+      },
+      {
+        "name": "Oil",
+        "unit": "ml",
+        "quantity": 1000
+      }
+    ],
+    "foodTags": [
+      {
+        "name": "Meat"
+      },
+      {
+        "name": "Crispy"
+      }
+    ],
+    "nutrients": [
+      {
+        "name": "Protein",
+        "unit": "grams",
+        "value": 35
+      },
+      {
+        "name": "Fat",
+        "unit": "grams",
+        "value": 25
+      }
+    ],
+    "timesOfDay": [
+      "noon",
+      "evening"
+    ]
+  }
+]

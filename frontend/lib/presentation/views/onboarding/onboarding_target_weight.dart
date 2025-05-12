@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:nutriai_app/data/models/user_create_data.dart';
 
 class OnboardingTargetWeight extends StatefulWidget {
@@ -80,27 +81,28 @@ class _OnboardingTargetWeightState extends State<OnboardingTargetWeight>
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Text(
+          Text(
             "What is your target weight?",
             style: TextStyle(
-              fontSize: 32,
+              fontSize: 32.sp,
               fontWeight: FontWeight.bold,
               color: Colors.black87,
               letterSpacing: -0.5,
+              height: 1.sp,
             ),
             textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 12),
-          const Text(
+          SizedBox(height: 12.h),
+          Text(
             "Select your desired weight in kilograms",
             style: TextStyle(
-              fontSize: 16,
+              fontSize: 16.sp,
               color: Colors.black54,
               height: 1.5,
             ),
             textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 48),
+          SizedBox(height: 48.h),
           _buildWeightSelector(),
         ],
       ),
@@ -109,14 +111,14 @@ class _OnboardingTargetWeightState extends State<OnboardingTargetWeight>
 
   Widget _buildWeightSelector() {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
+      padding: EdgeInsets.symmetric(horizontal: 32.w, vertical: 24.h),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(24.r),
         boxShadow: [
           BoxShadow(
             color: Colors.black12,
-            blurRadius: 20,
+            blurRadius: 20.r,
             offset: const Offset(0, 8),
           ),
         ],
@@ -128,7 +130,7 @@ class _OnboardingTargetWeightState extends State<OnboardingTargetWeight>
             icon: Icons.remove,
             onPressed: () => _updateWeight(-1),
           ),
-          const SizedBox(width: 24),
+          SizedBox(width: 24.w),
           ScaleTransition(
             scale: _bounceAnimation,
             child: Row(
@@ -137,27 +139,29 @@ class _OnboardingTargetWeightState extends State<OnboardingTargetWeight>
               children: [
                 Text(
                   _currentWeight.toString(),
-                  style: const TextStyle(
-                    fontSize: 56,
+                  style: TextStyle(
+                    fontSize: 56.sp,
                     fontWeight: FontWeight.bold,
                     color: Colors.black87,
                     letterSpacing: -1,
+                    height: 1.sp,
                   ),
                 ),
-                const SizedBox(width: 12),
-                const Text(
+                SizedBox(width: 12.w),
+                Text(
                   "kg",
                   style: TextStyle(
-                    fontSize: 24,
+                    fontSize: 24.sp,
                     color: Colors.black54,
                     fontWeight: FontWeight.w500,
                     letterSpacing: -0.5,
+                    height: 1.sp,
                   ),
                 ),
               ],
             ),
           ),
-          const SizedBox(width: 24),
+          SizedBox(width: 24.w),
           _buildControlButton(
             icon: Icons.add,
             onPressed: () => _updateWeight(1),
@@ -177,8 +181,8 @@ class _OnboardingTargetWeightState extends State<OnboardingTargetWeight>
         onTap: onPressed,
         borderRadius: BorderRadius.circular(32),
         child: Container(
-          width: 48,
-          height: 48,
+          width: 48.w,
+          height: 48.h,
           decoration: BoxDecoration(
             color: Colors.white,
             shape: BoxShape.circle,
@@ -189,7 +193,7 @@ class _OnboardingTargetWeightState extends State<OnboardingTargetWeight>
             boxShadow: [
               BoxShadow(
                 color: Colors.grey.shade300,
-                blurRadius: 4,
+                blurRadius: 4.r,
                 offset: const Offset(0, 2),
               ),
             ],
@@ -199,7 +203,7 @@ class _OnboardingTargetWeightState extends State<OnboardingTargetWeight>
               icon == Icons.add ? "+" : "-",
               style: TextStyle(
                 color: Theme.of(context).primaryColor,
-                fontSize: 32,
+                fontSize: 32.sp,
                 fontWeight: FontWeight.w300,
                 height: 1,
               ),

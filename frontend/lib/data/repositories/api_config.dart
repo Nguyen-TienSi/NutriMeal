@@ -14,7 +14,7 @@ mixin ApiConfig {
       );
 
   Map<String, String> get headers => {
-        'Content-Type': 'application/json;charset=UTF-8',
+        'Content-Type': 'application/json; charset=UTF-8',
         'Accept': 'application/vnd.company.app-v$_apiVersion+json',
         // 'If-None-Match': '',
         // 'If-Match': '',

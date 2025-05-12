@@ -55,7 +55,7 @@ public class HealthTrackingUpdateEventListener implements ApplicationListener<He
         // Update health tracking with merged nutrients
         healthTracking.setConsumedNutrients(mergedNutrients);
         healthTracking.setTotalNutrients(mergedNutrients.stream()
-                .map(n -> new Nutrient(n.getName(), n.getUnit(), 0.0))
+                .map(n -> new Nutrient(n.getName(), n.getUnit(), 100 * n.getValue() / mealLogs.size()))
                 .toList());
 
         healthTrackingDao.save(healthTracking);

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:nutriai_app/utils/enums.dart';
 
 class PersonalHealthGoalUpdatePopup extends StatefulWidget {
@@ -29,6 +30,9 @@ class _PersonalHealthGoalUpdatePopupState
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
+      contentPadding: EdgeInsets.fromLTRB(24.w, 20.h, 24.w, 10.h),
+      titlePadding: EdgeInsets.fromLTRB(24.w, 24.h, 24.w, 0),
+      actionsPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
       title: const Text('Update Health Goal'),
       content: Column(
         mainAxisSize: MainAxisSize.min,
@@ -48,7 +52,7 @@ class _PersonalHealthGoalUpdatePopupState
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Cancel'),
+          child: Text('Cancel', style: TextStyle(fontSize: 14.sp)),
         ),
         ElevatedButton(
           onPressed: _selectedGoal == null
@@ -57,7 +61,7 @@ class _PersonalHealthGoalUpdatePopupState
                   widget.onSave(_selectedGoal!);
                   Navigator.of(context).pop();
                 },
-          child: const Text('Save'),
+          child: Text('Save', style: TextStyle(fontSize: 14.sp)),
         ),
       ],
     );

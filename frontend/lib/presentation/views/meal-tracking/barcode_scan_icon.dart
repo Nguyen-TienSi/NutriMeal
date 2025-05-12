@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class BarcodeScanIcon extends StatelessWidget {
   final void Function()? onScanPressed;
@@ -10,10 +11,10 @@ class BarcodeScanIcon extends StatelessWidget {
     return GestureDetector(
       onTap: onScanPressed,
       child: Container(
-        height: 44,
-        width: 44,
+        height: 44.h,
+        width: 44.h,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(12.r),
           border: Border.all(color: Colors.green),
         ),
         child: IconButton(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:nutriai_app/data/models/user_create_data.dart';
 
 class OnboardingHeight extends StatefulWidget {
@@ -45,27 +46,27 @@ class _OnboardingHeightState extends State<OnboardingHeight> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Text(
+          Text(
             "What is your height?",
             style: TextStyle(
-              fontSize: 32,
+              fontSize: 32.sp,
               fontWeight: FontWeight.bold,
               color: Colors.black87,
               letterSpacing: -0.5,
             ),
             textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 12),
-          const Text(
+          SizedBox(height: 12.h),
+          Text(
             "Enter your height in centimeters",
             style: TextStyle(
-              fontSize: 16,
+              fontSize: 16.sp,
               color: Colors.black54,
               height: 1.5,
             ),
             textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 48),
+          SizedBox(height: 48.h),
           _heightInputField(
             heightController: _cmController,
             heightUnit: "cm",
@@ -82,14 +83,14 @@ class _OnboardingHeightState extends State<OnboardingHeight> {
     required int maxLength,
   }) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
+      padding: EdgeInsets.symmetric(horizontal: 32.w, vertical: 24.h),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(24.r),
         boxShadow: [
           BoxShadow(
             color: Colors.black12,
-            blurRadius: 20,
+            blurRadius: 20.r,
             offset: const Offset(0, 8),
           ),
         ],
@@ -107,11 +108,12 @@ class _OnboardingHeightState extends State<OnboardingHeight> {
 
               final textWidth = _calculateTextWidth(
                 text,
-                const TextStyle(fontSize: 56, fontWeight: FontWeight.bold),
+                TextStyle(fontSize: 56.sp, fontWeight: FontWeight.bold),
               );
 
-              return SizedBox(
-                width: textWidth,
+              return ConstrainedBox(
+                constraints:
+                    BoxConstraints(minWidth: textWidth, maxWidth: 140.w),
                 child: TextField(
                   controller: heightController,
                   keyboardType: TextInputType.number,
@@ -121,8 +123,8 @@ class _OnboardingHeightState extends State<OnboardingHeight> {
                     contentPadding: EdgeInsets.zero,
                     isDense: true,
                   ),
-                  style: const TextStyle(
-                    fontSize: 56,
+                  style: TextStyle(
+                    fontSize: 56.sp,
                     fontWeight: FontWeight.bold,
                     color: Colors.black87,
                     letterSpacing: -1,
@@ -135,11 +137,11 @@ class _OnboardingHeightState extends State<OnboardingHeight> {
               );
             },
           ),
-          const SizedBox(width: 12),
+          SizedBox(width: 12.w),
           Text(
             heightUnit,
-            style: const TextStyle(
-              fontSize: 24,
+            style: TextStyle(
+              fontSize: 24.sp,
               color: Colors.black54,
               fontWeight: FontWeight.w500,
               letterSpacing: -0.5,

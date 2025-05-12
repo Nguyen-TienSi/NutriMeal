@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:nutriai_app/data/models/meal_log_detail_data.dart';
 
 class NutrientsProgressSection extends StatelessWidget {
@@ -44,39 +45,40 @@ class NutrientsProgressSection extends StatelessWidget {
     return Card(
       elevation: 1,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(12.r),
       ),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
         child: Column(
           children: [
+            SizedBox(height: 20.h),
             Row(
               children: [
-                const Text(
+                Text(
                   'Daily intake',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    fontSize: 14,
+                    fontSize: 14.sp,
                   ),
                 ),
                 const Spacer(),
                 Text(
                   '${_totalCalories.toInt()} / ${_maxCalories.toInt()} kcal',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    fontSize: 14,
+                    fontSize: 14.sp,
                   ),
                 )
               ],
             ),
-            const SizedBox(height: 6),
+            SizedBox(height: 6.h),
             LinearProgressIndicator(
               value: _maxCalories > 0 ? _totalCalories / _maxCalories : 0,
               backgroundColor: Colors.grey[300],
               color: Colors.green,
-              minHeight: 6,
+              minHeight: 6.h,
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 16.h),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -112,22 +114,29 @@ class NutrientsProgressSection extends StatelessWidget {
       children: [
         Text(
           nutrientName,
-          style: const TextStyle(fontWeight: FontWeight.bold),
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 12.sp,
+          ),
         ),
-        const SizedBox(height: 6),
+        SizedBox(height: 6.h),
         SizedBox(
-          width: 80,
+          width: 70.w,
           child: LinearProgressIndicator(
             value: max != 0 ? current / max : 0,
             color: color,
             backgroundColor: Colors.grey[300],
-            minHeight: 6,
+            minHeight: 6.h,
           ),
         ),
-        const SizedBox(height: 4),
+        SizedBox(height: 4.h),
         Text(
-          '$current $unit / $max $unit',
-          style: const TextStyle(fontSize: 12, color: Colors.grey),
+          '${current.toInt()}/${max.toInt()}',
+          style: TextStyle(fontSize: 12.sp, color: Colors.grey),
+        ),
+        Text(
+          unit,
+          style: TextStyle(fontSize: 10.sp, color: Colors.grey),
         ),
       ],
     );

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class StatisticNavigationCard extends StatelessWidget {
   final VoidCallback onTap;
@@ -15,29 +16,28 @@ class StatisticNavigationCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      elevation: 0,
-      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      elevation: 2,
+      margin: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(14.r),
       ),
-      color: const Color(0xFFFAFAF6),
       child: InkWell(
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(14.r),
         onTap: onTap,
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
+          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 18.h),
           child: Row(
             children: [
-              icon,
-              const SizedBox(width: 16),
+              SizedBox(width: 24.w, height: 24.h, child: icon),
+              SizedBox(width: 16.w),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       title,
-                      style: const TextStyle(
-                        fontSize: 18,
+                      style: TextStyle(
+                        fontSize: 18.sp,
                         fontWeight: FontWeight.w600,
                         color: Colors.black,
                       ),
@@ -45,7 +45,7 @@ class StatisticNavigationCard extends StatelessWidget {
                   ],
                 ),
               ),
-              const Icon(Icons.chevron_right, color: Colors.black38, size: 28),
+              Icon(Icons.chevron_right, color: Colors.black38, size: 28.r),
             ],
           ),
         ),

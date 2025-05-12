@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:nutriai_app/data/models/health_tracking_detail_data.dart';
 import 'package:nutriai_app/data/models/nutrient_data.dart';
 
@@ -68,18 +69,18 @@ class NutrientsDataTable extends StatelessWidget {
     ));
 
     return Card(
-      margin: const EdgeInsets.all(12),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      margin: EdgeInsets.all(12.h),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.r)),
       child: Padding(
-        padding: const EdgeInsets.all(12),
+        padding: EdgeInsets.all(12.h),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
+            Text(
               'Macronutrients',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: 8),
+            SizedBox(height: 8.h),
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: DataTable(
@@ -95,10 +96,10 @@ class NutrientsDataTable extends StatelessWidget {
                 rows: rows,
               ),
             ),
-            const SizedBox(height: 8),
-            const Text(
+            SizedBox(height: 8.h),
+            Text(
               '* Based on a daily macronutrient distribution of 50% carbohydrates, 25% protein, and 25% fat',
-              style: TextStyle(fontSize: 12, color: Colors.grey),
+              style: TextStyle(fontSize: 12.sp, color: Colors.grey),
             ),
           ],
         ),

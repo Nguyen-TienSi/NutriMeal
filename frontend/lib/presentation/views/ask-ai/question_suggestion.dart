@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'suggestion_button.dart';
 
 class QuestionSuggestions extends StatelessWidget {
@@ -8,9 +8,9 @@ class QuestionSuggestions extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
       child: Row(
-        children: const [
+        children: [
           Expanded(
             child: SuggestionButton(
                 text: "What should I do to reach my target weight fast?"),

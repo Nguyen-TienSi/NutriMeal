@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:nutriai_app/data/models/recipe_summary_data.dart';
 import 'package:nutriai_app/service/api-service/recipe_service.dart';
 import 'package:nutriai_app/presentation/views/recipe/recipe_detail_screen.dart';
@@ -78,11 +79,11 @@ class _SearchRecipeSectionState extends State<SearchRecipeSection> {
     }
 
     if (recipeSummaryList.isEmpty) {
-      return const Center(
+      return Center(
         child: Text(
           'No recipes found',
           style: TextStyle(
-            fontSize: 16,
+            fontSize: 16.sp,
             color: Colors.grey,
           ),
         ),

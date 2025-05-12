@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:nutriai_app/data/models/health_tracking_detail_data.dart';
 import 'package:nutriai_app/presentation/views/health-progress-tracking/calories_line_chart.dart';
 import 'package:nutriai_app/presentation/views/health-progress-tracking/nutrients_pie_chart.dart';
@@ -49,21 +50,21 @@ class _StatisticChartScreenState extends State<StatisticChartScreen> {
             : ListView(
                 children: [
                   Padding(
-                    padding: const EdgeInsets.all(16.0),
+                    padding: EdgeInsets.all(16.w),
                     child: CaloriesLineChart(
                       healthTrackingDetailDataList:
                           healthTrackingDetailDataList,
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.all(16.0),
+                    padding: EdgeInsets.all(16.w),
                     child: NutrientsPieChart(
                       healthTrackingDetailDataList:
                           healthTrackingDetailDataList,
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.all(16.0),
+                    padding: EdgeInsets.all(16.w),
                     child: NutrientsDataTable(
                         weekData: healthTrackingDetailDataList),
                   ),

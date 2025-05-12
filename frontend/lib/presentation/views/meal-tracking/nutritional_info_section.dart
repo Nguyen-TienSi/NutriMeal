@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:nutriai_app/data/models/meal_log_detail_data.dart';
 import 'package:nutriai_app/data/models/recipe_summary_data.dart';
 import 'package:nutriai_app/data/repositories/json_patch.dart';
@@ -92,19 +93,19 @@ class NutritionalInfoSectionState extends State<NutritionalInfoSection> {
         children: [
           if (mealLogDetailData != null)
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              padding: EdgeInsets.symmetric(horizontal: 16.w),
               child: NutrientsProgressSection(
                   mealLogDetailData: mealLogDetailData!),
             ),
-          const SizedBox(height: 12),
-          const Padding(
-            padding: EdgeInsets.all(16.0),
+          SizedBox(height: 12.h),
+          Padding(
+            padding: EdgeInsets.all(16.w),
             child: Text(
               'YOU HAVE TRACKED',
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 color: Colors.black54,
-                fontSize: 14,
+                fontSize: 14.sp,
               ),
             ),
           ),
@@ -123,12 +124,12 @@ class NutritionalInfoSectionState extends State<NutritionalInfoSection> {
                       );
                     },
                   )
-                : const Center(
+                : Center(
                     child: Text(
                       'No recipes tracked yet',
                       style: TextStyle(
                         color: Colors.grey,
-                        fontSize: 16,
+                        fontSize: 16.sp,
                       ),
                     ),
                   ),

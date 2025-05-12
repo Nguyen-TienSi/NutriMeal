@@ -1,0 +1,277 @@
+[
+  {
+    "recipeName": "Margherita Pizza",
+    "description": "Classic Italian pizza with tomatoes and mozzarella",
+    "instructions": "1. Prepare pizza dough\n2. Spread tomato sauce\n3. Add mozzarella\n4. Bake at 220°C for 15 minutes",
+    "imageUrl": "assets/images/dishes/pizza.jpg",
+    "cookingTime": 30,
+    "serving": 4,
+    "servingUnit": "slice",
+    "ingredients": [
+      {
+        "name": "Pizza dough",
+        "unit": "grams",
+        "quantity": 400
+      },
+      {
+        "name": "Mozzarella",
+        "unit": "grams",
+        "quantity": 200
+      },
+      {
+        "name": "Tomato sauce",
+        "unit": "grams",
+        "quantity": 150
+      }
+    ],
+    "foodTags": [
+      {
+        "name": "Italian"
+      },
+      {
+        "name": "Vegetarian"
+      }
+    ],
+    "nutrients": [
+      {
+        "name": "Protein",
+        "unit": "grams",
+        "value": 15
+      },
+      {
+        "name": "Carbohydrate",
+        "unit": "grams",
+        "value": 45
+      },
+      {
+        "name": "Fat",
+        "unit": "grams",
+        "value": 12
+      }
+    ],
+    "timesOfDay": [
+      "noon",
+      "evening"
+    ]
+  },
+  {
+    "recipeName": "Movie Night Popcorn",
+    "description": "Perfect buttery popcorn for movie nights",
+    "instructions": "1. Heat oil in pot\n2. Add kernels and cover\n3. Shake until popping slows\n4. Add melted butter and salt",
+    "imageUrl": "assets/images/dishes/popcorn.jpg",
+    "cookingTime": 10,
+    "serving": 4,
+    "servingUnit": "cup",
+    "ingredients": [
+      {
+        "name": "Popcorn kernels",
+        "unit": "cup",
+        "quantity": 0.5
+      },
+      {
+        "name": "Butter",
+        "unit": "tablespoon",
+        "quantity": 2
+      },
+      {
+        "name": "Salt",
+        "unit": "teaspoon",
+        "quantity": 1
+      }
+    ],
+    "foodTags": [
+      {
+        "name": "Snack"
+      },
+      {
+        "name": "Quick"
+      }
+    ],
+    "nutrients": [
+      {
+        "name": "Calories",
+        "unit": "kcal",
+        "value": 120
+      },
+      {
+        "name": "Fat",
+        "unit": "grams",
+        "value": 8
+      },
+      {
+        "name": "Fiber",
+        "unit": "grams",
+        "value": 3.6
+      }
+    ],
+    "timesOfDay": [
+      "evening",
+      "night"
+    ]
+  },
+  {
+    "recipeName": "Homemade Potato Chips",
+    "description": "Crispy, thinly sliced potato chips",
+    "instructions": "1. Slice potatoes thinly\n2. Soak in cold water\n3. Pat dry and fry until golden\n4. Season with salt",
+    "imageUrl": "assets/images/dishes/potato-chips.jpg",
+    "cookingTime": 25,
+    "serving": 6,
+    "servingUnit": "serving",
+    "ingredients": [
+      {
+        "name": "Potatoes",
+        "unit": "grams",
+        "quantity": 500
+      },
+      {
+        "name": "Oil",
+        "unit": "cup",
+        "quantity": 2
+      },
+      {
+        "name": "Salt",
+        "unit": "teaspoon",
+        "quantity": 2
+      }
+    ],
+    "foodTags": [
+      {
+        "name": "Snack"
+      },
+      {
+        "name": "Crispy"
+      }
+    ],
+    "nutrients": [
+      {
+        "name": "Carbohydrates",
+        "unit": "grams",
+        "value": 15
+      },
+      {
+        "name": "Fat",
+        "unit": "grams",
+        "value": 10
+      },
+      {
+        "name": "Sodium",
+        "unit": "mg",
+        "value": 150
+      }
+    ],
+    "timesOfDay": [
+      "afternoon",
+      "evening"
+    ]
+  },
+  {
+    "recipeName": "Garden Fresh Salad",
+    "description": "Light and refreshing mixed green salad",
+    "instructions": "1. Wash and chop vegetables\n2. Mix in a large bowl\n3. Prepare vinaigrette\n4. Toss and serve",
+    "imageUrl": "assets/images/dishes/salad.jpg",
+    "cookingTime": 15,
+    "serving": 4,
+    "servingUnit": "bowl",
+    "ingredients": [
+      {
+        "name": "Mixed greens",
+        "unit": "grams",
+        "quantity": 200
+      },
+      {
+        "name": "Cherry tomatoes",
+        "unit": "grams",
+        "quantity": 100
+      },
+      {
+        "name": "Olive oil",
+        "unit": "tablespoon",
+        "quantity": 2
+      }
+    ],
+    "foodTags": [
+      {
+        "name": "Healthy"
+      },
+      {
+        "name": "Vegetarian"
+      }
+    ],
+    "nutrients": [
+      {
+        "name": "Vitamin C",
+        "unit": "mg",
+        "value": 45
+      },
+      {
+        "name": "Fiber",
+        "unit": "grams",
+        "value": 4
+      },
+      {
+        "name": "Protein",
+        "unit": "grams",
+        "value": 3
+      }
+    ],
+    "timesOfDay": [
+      "noon",
+      "evening"
+    ]
+  },
+  {
+    "recipeName": "Club Sandwich",
+    "description": "Triple-decker sandwich with turkey and bacon",
+    "instructions": "1. Toast bread slices\n2. Layer with turkey and bacon\n3. Add lettuce and tomato\n4. Cut diagonally",
+    "imageUrl": "assets/images/dishes/sandwich.jpg",
+    "cookingTime": 15,
+    "serving": 2,
+    "servingUnit": "sandwich",
+    "ingredients": [
+      {
+        "name": "Bread",
+        "unit": "slices",
+        "quantity": 6
+      },
+      {
+        "name": "Turkey",
+        "unit": "grams",
+        "quantity": 150
+      },
+      {
+        "name": "Bacon",
+        "unit": "slices",
+        "quantity": 4
+      }
+    ],
+    "foodTags": [
+      {
+        "name": "Lunch"
+      },
+      {
+        "name": "Quick"
+      }
+    ],
+    "nutrients": [
+      {
+        "name": "Protein",
+        "unit": "grams",
+        "value": 25
+      },
+      {
+        "name": "Carbohydrates",
+        "unit": "grams",
+        "value": 30
+      },
+      {
+        "name": "Fat",
+        "unit": "grams",
+        "value": 15
+      }
+    ],
+    "timesOfDay": [
+      "morning",
+      "noon"
+    ]
+  }
+]

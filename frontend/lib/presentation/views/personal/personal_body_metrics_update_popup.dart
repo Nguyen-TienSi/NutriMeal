@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class PersonalBodyMetricsUpdatePopup extends StatefulWidget {
   final String label;
@@ -53,26 +54,35 @@ class _PersonalBodyMetricsUpdatePopupState
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text('Update ${widget.label}'),
+      title: Text(
+        'Update ${widget.label}',
+        style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.bold),
+      ),
+      contentPadding: EdgeInsets.fromLTRB(24.w, 20.h, 24.w, 10.h),
+      titlePadding: EdgeInsets.fromLTRB(24.w, 24.h, 24.w, 0),
       content: TextField(
         controller: _controller,
         keyboardType: TextInputType.number,
         decoration: InputDecoration(
           labelText: '${widget.label} (${widget.unit})',
+          labelStyle: TextStyle(fontSize: 16.sp),
           errorText: _error,
+          errorStyle: TextStyle(fontSize: 12.sp),
         ),
         autofocus: true,
+        style: TextStyle(fontSize: 16.sp),
       ),
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Cancel'),
+          child: Text('Cancel', style: TextStyle(fontSize: 14.sp)),
         ),
         ElevatedButton(
           onPressed: _handleSave,
-          child: const Text('Save'),
+          child: Text('Save', style: TextStyle(fontSize: 14.sp)),
         ),
       ],
+      actionsPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
     );
   }
 }

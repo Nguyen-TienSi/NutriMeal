@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class SocialLoginButton extends StatelessWidget {
   final String buttonText;
@@ -17,7 +18,7 @@ class SocialLoginButton extends StatelessWidget {
     return ElevatedButton(
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(
-        minimumSize: Size(double.infinity, 50),
+        minimumSize: Size(double.infinity, 50.h),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -31,7 +32,7 @@ class SocialLoginButton extends StatelessWidget {
           Text.rich(
             TextSpan(
               text: buttonText,
-              style: TextStyle(fontSize: 20),
+              style: TextStyle(fontSize: 16.sp, color: Colors.black),
             ),
           ),
         ],

@@ -65,9 +65,16 @@ public class MealLogServiceImpl implements IMealLogService {
                     .map(timeOfDay -> {
                         MealLog mealLog = new MealLog();
                         mealLog.setUser(user);
+
+                        Date today = new Date();
+                        if (!trackingDate.toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDate()
+                                .isEqual(today.toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDate())) {
+                            return null;
+                        }
+
                         mealLog.setTrackingDate(trackingDate);
                         mealLog.setTimeOfDay(timeOfDay);
-                        mealLog.setTotalCalories(0.0);
+                        mealLog.setTotalCalories(300.0);
                         mealLog.setRecipes(new ArrayList<>());
                         mealLog.setConsumedNutrients(new ArrayList<>());
                         return mealLogDao.save(mealLog);
@@ -128,7 +135,7 @@ public class MealLogServiceImpl implements IMealLogService {
                 .map(n -> Nutrient.builder()
                         .name(n.getName())
                         .unit(n.getUnit())
-                        .value(0.0)
+                        .value(100.0 * n.getValue() / mealLog.getTotalCalories())
                         .build())
                 .collect(Collectors.toList());
 

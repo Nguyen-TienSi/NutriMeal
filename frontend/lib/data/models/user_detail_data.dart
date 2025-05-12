@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:uuid/uuid.dart';
-
+import 'package:flutter/foundation.dart';
 import 'package:nutriai_app/utils/enums.dart';
 
 class UserDetailData {
@@ -35,45 +35,71 @@ class UserDetailData {
   });
 
   factory UserDetailData.fromJson(Map<String, dynamic> json) {
-    return UserDetailData(
-      id: UuidValue.fromString(json['id'] as String),
-      userId: json['userId'] as String,
-      name: json['name'] as String,
-      email: json['email'] as String,
-      pictureUrl: json['pictureUrl'] as String,
-      authProvider: json['authProvider'] as String,
-      gender: Gender.values.firstWhere(
-        (element) => element.toString() == 'Gender.${json['gender']}',
-        orElse: () => Gender.other,
-      ),
-      dateOfBirth: DateTime.parse(json['dateOfBirth']),
-      activityLevel: ActivityLevel.values.firstWhere(
-        (element) =>
-            element.toString() == 'ActivityLevel.${json['activityLevel']}',
-        orElse: () => ActivityLevel.normal,
-      ),
-      healthGoal: HealthGoal.values.firstWhere(
-        (element) => element.toString() == 'HealthGoal.${json['healthGoal']}',
-        orElse: () => HealthGoal.maintain,
-      ),
-      currentWeight: json['currentWeight'] as int,
-      targetWeight: json['targetWeight'] as int,
-      currentHeight: json['currentHeight'] as int,
-    );
+    try {
+      return UserDetailData(
+        id: json['id'] != null
+            ? UuidValue.fromString(json['id'].toString())
+            : null,
+        userId: json['userId']?.toString(),
+        name: json['name']?.toString(),
+        email: json['email']?.toString(),
+        pictureUrl: json['pictureUrl']?.toString(),
+        authProvider: json['authProvider']?.toString(),
+        gender: json['gender'] != null
+            ? Gender.values.firstWhere(
+                (element) =>
+                    element.toString().split('.').last ==
+                    json['gender'].toString(),
+                orElse: () => Gender.other,
+              )
+            : null,
+        dateOfBirth: json['dateOfBirth'] != null
+            ? DateTime.tryParse(json['dateOfBirth'].toString())
+            : null,
+        activityLevel: json['activityLevel'] != null
+            ? ActivityLevel.values.firstWhere(
+                (element) =>
+                    element.toString().split('.').last ==
+                    json['activityLevel'].toString(),
+                orElse: () => ActivityLevel.normal,
+              )
+            : null,
+        healthGoal: json['healthGoal'] != null
+            ? HealthGoal.values.firstWhere(
+                (element) =>
+                    element.toString().split('.').last ==
+                    json['healthGoal'].toString().replaceAll('_', ''),
+                orElse: () => HealthGoal.maintain,
+              )
+            : null,
+        currentWeight: json['currentWeight'] != null
+            ? int.tryParse(json['currentWeight'].toString())
+            : null,
+        targetWeight: json['targetWeight'] != null
+            ? int.tryParse(json['targetWeight'].toString())
+            : null,
+        currentHeight: json['currentHeight'] != null
+            ? int.tryParse(json['currentHeight'].toString())
+            : null,
+      );
+    } catch (e) {
+      debugPrint('Error parsing UserDetailData: $e');
+      rethrow;
+    }
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'id': id?.toString(),
-      'userId': userId,
-      'name': name,
-      'email': email,
-      'pictureUrl': pictureUrl,
-      'authProvider': authProvider,
-      'gender': gender?.toString().split('.').last,
-      'dateOfBirth': dateOfBirth?.toIso8601String(),
-      'activityLevel': activityLevel?.toString().split('.').last,
-      'healthGoal': healthGoal?.toString().split('.').last,
+      'id': id?.toString() ?? '',
+      'userId': userId ?? '',
+      'name': name ?? '',
+      'email': email ?? '',
+      'pictureUrl': pictureUrl ?? '',
+      'authProvider': authProvider ?? '',
+      'gender': gender?.toString().split('.').last ?? '',
+      'dateOfBirth': dateOfBirth?.toIso8601String() ?? '',
+      'activityLevel': activityLevel?.toString().split('.').last ?? '',
+      'healthGoal': healthGoal?.toString().split('.').last ?? '',
       'currentWeight': currentWeight,
       'targetWeight': targetWeight,
       'currentHeight': currentHeight,

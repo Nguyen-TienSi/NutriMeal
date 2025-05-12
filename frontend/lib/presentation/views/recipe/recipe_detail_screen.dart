@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nutriai_app/data/models/recipe_detail_data.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:nutriai_app/service/api-service/recipe_service.dart';
 import 'package:nutriai_app/service/api-service/meal_log_service.dart';
 import 'package:nutriai_app/data/repositories/json_patch.dart';
@@ -88,41 +89,40 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
   }
 
   Widget _buildInfoRow(IconData icon, String label, String value) {
-    return Row(
-      children: [
-        Icon(icon, size: 20, color: Colors.grey[600]),
-        const SizedBox(width: 8),
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 14,
-            color: Colors.grey[600],
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 4.h),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 20.sp, color: Colors.grey[600]),
+          SizedBox(width: 8.w),
+          Flexible(
+            child: Text(
+              '$label $value',
+              style: TextStyle(
+                fontSize: 14.sp,
+                color: Colors.grey[600],
+              ),
+              overflow: TextOverflow.ellipsis,
+            ),
           ),
-        ),
-        const SizedBox(width: 4),
-        Text(
-          value,
-          style: const TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
   Widget _buildTagChip(String label) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
       decoration: BoxDecoration(
         color: Colors.green.withAlpha(100),
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(20.r),
       ),
       child: Text(
         label,
-        style: const TextStyle(
+        style: TextStyle(
           color: Colors.green,
-          fontSize: 12,
+          fontSize: 12.sp,
           fontWeight: FontWeight.w500,
         ),
       ),
@@ -146,8 +146,8 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
             children: [
               Image.asset(
                 recipeDetailData!.imageUrl,
-                width: double.infinity,
-                height: 300,
+                width: 1.sw, // or double.infinity
+                height: 300.h,
                 fit: BoxFit.cover,
               ),
               Positioned(
@@ -155,7 +155,7 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                 left: 0,
                 right: 0,
                 child: Container(
-                  height: 100,
+                  height: 100.h,
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       begin: Alignment.bottomCenter,
@@ -171,72 +171,68 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
             ],
           ),
           Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: EdgeInsets.all(16.r),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Recipe Name
                 Text(
                   recipeDetailData!.recipeName,
-                  style: const TextStyle(
-                    fontSize: 28,
+                  style: TextStyle(
+                    fontSize: 28.sp,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: 16.h),
 
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    _buildInfoRow(
-                      Icons.timer_outlined,
-                      'Cooking Time',
-                      '${recipeDetailData!.cookingTime} mins',
-                    ),
-                    _buildInfoRow(
-                      Icons.people_outline,
-                      'Servings',
-                      '${recipeDetailData!.serving} ${recipeDetailData!.servingUnit}',
-                    ),
-                  ],
+                _buildInfoRow(
+                  Icons.timer_outlined,
+                  'Cooking Time',
+                  '${recipeDetailData!.cookingTime} mins',
                 ),
-                const SizedBox(height: 16),
+                SizedBox(width: 16.h),
+                _buildInfoRow(
+                  Icons.people_outline,
+                  'Servings',
+                  '${recipeDetailData!.serving} ${recipeDetailData!.servingUnit}',
+                ),
+                SizedBox(height: 16.h),
 
                 Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
+                  spacing: 8.w,
+                  runSpacing: 8.h,
                   children: recipeDetailData!.foodTags
                       .map((tag) => _buildTagChip(tag.name))
                       .toList(),
                 ),
-                const SizedBox(height: 24),
+                SizedBox(height: 24.h),
 
-                const Text(
+                Text(
                   'Description',
                   style: TextStyle(
-                    fontSize: 20,
+                    fontSize: 20.sp,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                const SizedBox(height: 8),
+                SizedBox(height: 8.h),
                 Text(
                   recipeDetailData!.description,
                   style: TextStyle(
-                    fontSize: 16,
+                    fontSize: 16.sp,
                     color: Colors.grey[800],
-                    height: 1.5,
+                    height: 1.5.h,
                   ),
                 ),
-                const SizedBox(height: 24),
+                SizedBox(height: 24.h),
 
-                const Text(
+                Text(
                   'Ingredients',
                   style: TextStyle(
-                    fontSize: 20,
+                    fontSize: 20.sp,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                const SizedBox(height: 8),
+                SizedBox(height: 8.h),
                 ListView.builder(
                   padding: EdgeInsets.zero,
                   shrinkWrap: true,
@@ -245,16 +241,15 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                   itemBuilder: (context, index) {
                     final ingredient = recipeDetailData!.ingredients[index];
                     return Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 4),
+                      padding: EdgeInsets.symmetric(vertical: 4.h),
                       child: Row(
                         children: [
-                          const Icon(Icons.circle,
-                              size: 8, color: Colors.green),
-                          const SizedBox(width: 12),
+                          Icon(Icons.circle, size: 8.sp, color: Colors.green),
+                          SizedBox(width: 12.w),
                           Expanded(
                             child: Text(
                               '${ingredient.name} - ${ingredient.quantity} ${ingredient.unit}',
-                              style: const TextStyle(fontSize: 16),
+                              style: TextStyle(fontSize: 16.sp),
                             ),
                           ),
                         ],
@@ -262,30 +257,30 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                     );
                   },
                 ),
-                const SizedBox(height: 24),
+                SizedBox(height: 24.h),
 
-                const Text(
+                Text(
                   'Instructions',
                   style: TextStyle(
-                    fontSize: 20,
+                    fontSize: 20.sp,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                const SizedBox(height: 8),
+                SizedBox(height: 8.h),
                 Text(
                   recipeDetailData!.instructions,
                   style: TextStyle(
-                    fontSize: 16,
+                    fontSize: 16.sp,
                     color: Colors.grey[800],
-                    height: 1.5,
+                    height: 1.5.h,
                   ),
                 ),
-                const SizedBox(height: 24),
+                SizedBox(height: 24.h),
 
-                const Text(
+                Text(
                   'Nutritional Information',
                   style: TextStyle(
-                    fontSize: 20,
+                    fontSize: 20.sp,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -298,18 +293,18 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                   itemBuilder: (context, index) {
                     final nutrient = recipeDetailData!.nutrients[index];
                     return Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 4),
+                      padding: EdgeInsets.symmetric(vertical: 4.h),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
                             nutrient.name,
-                            style: const TextStyle(fontSize: 16),
+                            style: TextStyle(fontSize: 16.sp),
                           ),
                           Text(
                             '${nutrient.value} ${nutrient.unit}',
-                            style: const TextStyle(
-                              fontSize: 16,
+                            style: TextStyle(
+                              fontSize: 16.sp,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -318,7 +313,7 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                     );
                   },
                 ),
-                const SizedBox(height: 32),
+                SizedBox(height: 32.h),
               ],
             ),
           ),
@@ -344,24 +339,26 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
             TextButton.icon(
               onPressed: isSaving ? null : _saveToMealLog,
               icon: isSaving
-                  ? const SizedBox(
-                      width: 20,
-                      height: 20,
+                  ? SizedBox(
+                      width: 20.r,
+                      height: 20.r,
                       child: CircularProgressIndicator(
                         strokeWidth: 2,
                         valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                       ),
                     )
-                  : const Icon(Icons.add, color: Colors.white),
+                  : Icon(Icons.add, color: Colors.white, size: 24.sp),
               label: Text(
                 isSaving ? 'Saving...' : 'Add to Meal',
-                style: const TextStyle(color: Colors.white),
+                style: TextStyle(color: Colors.white, fontSize: 14.sp),
               ),
             ),
         ],
       ),
       extendBodyBehindAppBar: true,
-      body: _buildContent(),
+      body: isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : _buildContent(),
     );
   }
 }

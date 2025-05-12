@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:nutriai_app/data/models/user_create_data.dart';
 import 'package:nutriai_app/utils/enums.dart';
 
@@ -30,31 +31,31 @@ class _OnboardingActivityLevelState extends State<OnboardingActivityLevel> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 24),
+      padding: EdgeInsets.symmetric(horizontal: 24.w),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Text(
+          Text(
             "How active are you?",
             style: TextStyle(
-              fontSize: 32,
+              fontSize: 32.sp,
               fontWeight: FontWeight.bold,
               color: Colors.black87,
               letterSpacing: -0.5,
             ),
             textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 12),
-          const Text(
+          SizedBox(height: 12.h),
+          Text(
             "Select your daily activity level",
             style: TextStyle(
-              fontSize: 16,
+              fontSize: 16.sp,
               color: Colors.black54,
               height: 1.5,
             ),
             textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 48),
+          SizedBox(height: 48.h),
           _buildActivityLevelOptions(),
         ],
       ),
@@ -70,14 +71,14 @@ class _OnboardingActivityLevelState extends State<OnboardingActivityLevel> {
           description: "Little to no exercise, desk job",
           icon: Icons.sentiment_dissatisfied,
         ),
-        const SizedBox(height: 16),
+        SizedBox(height: 16.h),
         _buildActivityLevelCard(
           level: ActivityLevel.normal,
           title: "Moderately Active",
           description: "Light exercise 1-3 days/week",
           icon: Icons.sentiment_neutral,
         ),
-        const SizedBox(height: 16),
+        SizedBox(height: 16.h),
         _buildActivityLevelCard(
           level: ActivityLevel.active,
           title: "Very Active",
@@ -99,12 +100,12 @@ class _OnboardingActivityLevelState extends State<OnboardingActivityLevel> {
     return GestureDetector(
       onTap: () => _onActivityLevelSelected(level),
       child: Container(
-        padding: const EdgeInsets.all(20),
+        padding: EdgeInsets.all(20.h),
         decoration: BoxDecoration(
           color: isSelected
               ? Theme.of(context).primaryColor.withValues(alpha: 26)
               : Colors.white,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(16.r),
           border: Border.all(
             color: isSelected
                 ? Theme.of(context).primaryColor
@@ -114,7 +115,7 @@ class _OnboardingActivityLevelState extends State<OnboardingActivityLevel> {
           boxShadow: [
             BoxShadow(
               color: Colors.black12,
-              blurRadius: 10,
+              blurRadius: 10.r,
               offset: const Offset(0, 4),
             ),
           ],
@@ -122,7 +123,7 @@ class _OnboardingActivityLevelState extends State<OnboardingActivityLevel> {
         child: Row(
           children: [
             Container(
-              padding: const EdgeInsets.all(12),
+              padding: EdgeInsets.all(12.h),
               decoration: BoxDecoration(
                 color: isSelected
                     ? Theme.of(context).primaryColor
@@ -135,26 +136,27 @@ class _OnboardingActivityLevelState extends State<OnboardingActivityLevel> {
                 size: 24,
               ),
             ),
-            const SizedBox(width: 16),
+            SizedBox(width: 16.w),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
+                    // Fixed typo here
                     title,
                     style: TextStyle(
-                      fontSize: 18,
+                      fontSize: 18.sp,
                       fontWeight: FontWeight.bold,
                       color: isSelected
                           ? Theme.of(context).primaryColor
                           : Colors.black87,
                     ),
                   ),
-                  const SizedBox(height: 4),
+                  SizedBox(height: 4.h),
                   Text(
                     description,
                     style: TextStyle(
-                      fontSize: 14,
+                      fontSize: 14.sp,
                       color: Colors.black54,
                     ),
                   ),
@@ -163,15 +165,15 @@ class _OnboardingActivityLevelState extends State<OnboardingActivityLevel> {
             ),
             if (isSelected)
               Container(
-                padding: const EdgeInsets.all(4),
+                padding: EdgeInsets.all(4.h),
                 decoration: BoxDecoration(
                   color: Theme.of(context).primaryColor,
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.check,
                   color: Colors.white,
-                  size: 16,
+                  size: 16.h,
                 ),
               ),
           ],

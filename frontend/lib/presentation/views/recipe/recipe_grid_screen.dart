@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:nutriai_app/data/models/recipe_summary_data.dart'
     show RecipeSummaryData;
 import 'package:nutriai_app/service/api-service/recipe_service.dart'
@@ -55,11 +56,11 @@ class _DishGridScreenState extends State<DishGridScreen> {
       ),
       body: SafeArea(
         child: GridView.builder(
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
-            childAspectRatio: 200 / 250,
-            crossAxisSpacing: 4.0,
-            mainAxisSpacing: 4.0,
+            childAspectRatio: 200.w / 250.h,
+            crossAxisSpacing: 4.w,
+            mainAxisSpacing: 4.h,
           ),
           padding: const EdgeInsets.all(4.0),
           itemCount: recipeSummaryList.length,

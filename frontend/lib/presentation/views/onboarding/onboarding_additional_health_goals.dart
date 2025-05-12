@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class OnboardingAdditionalHealthGoals extends StatefulWidget {
   const OnboardingAdditionalHealthGoals({super.key});
@@ -35,7 +36,7 @@ class _OnboardingAdditionalHealthGoalsState
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        const Text(
+        Text(
           'What additional goals do you have?',
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
@@ -66,16 +67,16 @@ class HealthGoalCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+        padding: EdgeInsets.symmetric(horizontal: 8.w),
         width: double.infinity,
         child: Card(
           color: isSelected ? Colors.green : Colors.white,
           child: Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: EdgeInsets.all(16.h),
             child: Text(
               goalName,
               style: TextStyle(
-                fontSize: 18,
+                fontSize: 18.sp,
                 fontWeight: FontWeight.bold,
                 color: isSelected ? Colors.white : Colors.black,
               ),

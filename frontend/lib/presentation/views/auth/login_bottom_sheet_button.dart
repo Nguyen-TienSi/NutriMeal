@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:nutriai_app/presentation/layout/main_screen_layout.dart';
 import 'package:nutriai_app/service/external-service/auth_manager.dart'
     show AuthManager;
@@ -50,65 +51,68 @@ class LoginBottomSheetButton extends StatelessWidget {
       context: context,
       isScrollControlled: true,
       builder: (BuildContext context) {
-        return Container(
-          padding: EdgeInsets.all(16.0),
-          height: 250,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        return Padding(
+          padding: EdgeInsets.only(
+            left: 16.0.w,
+            right: 16.0.w,
+            top: 16.0.w,
+            bottom: MediaQuery.of(context).viewInsets.bottom + 16.0.w,
           ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                'Log in',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: 20),
-              SocialLoginButton(
-                buttonText: 'Continue with Google',
-                imagePath: 'assets/images/google_branding_logo.png',
-                onPressed: () async {
-                  await _login(AuthProvider.google, context);
-                },
-              ),
-              SizedBox(height: 10),
-              SocialLoginButton(
-                buttonText: 'Continue with Facebook',
-                imagePath: 'assets/images/facebook_branding_logo.png',
-                onPressed: () async {
-                  await _login(AuthProvider.facebook, context);
-                },
-              ),
-              SizedBox(height: 20),
-              Text.rich(
-                TextSpan(
-                  text: 'By continuing, you agree to NutriAI\'s ',
-                  style: TextStyle(fontSize: 12, color: Colors.grey),
-                  children: [
-                    TextSpan(
-                      text: 'Terms & Conditions',
-                      style: TextStyle(
-                        color: Colors.blue,
-                        decoration: TextDecoration.underline,
-                      ),
-                    ),
-                    TextSpan(
-                      text: ' and ',
-                      style: TextStyle(color: Colors.grey),
-                    ),
-                    TextSpan(
-                      text: 'Privacy Policy',
-                      style: TextStyle(
-                        color: Colors.blue,
-                        decoration: TextDecoration.underline,
-                      ),
-                    ),
-                  ],
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'Log in',
+                  style:
+                      TextStyle(fontSize: 24.sp, fontWeight: FontWeight.bold),
                 ),
-                textAlign: TextAlign.center,
-              ),
-            ],
+                SizedBox(height: 20.h),
+                SocialLoginButton(
+                  buttonText: 'Continue with Google',
+                  imagePath: 'assets/images/google_branding_logo.png',
+                  onPressed: () async {
+                    await _login(AuthProvider.google, context);
+                  },
+                ),
+                SizedBox(height: 10.h),
+                SocialLoginButton(
+                  buttonText: 'Continue with Facebook',
+                  imagePath: 'assets/images/facebook_branding_logo.png',
+                  onPressed: () async {
+                    await _login(AuthProvider.facebook, context);
+                  },
+                ),
+                SizedBox(height: 20.h),
+                Text.rich(
+                  TextSpan(
+                    text: 'By continuing, you agree to NutriAI\'s ',
+                    style: TextStyle(fontSize: 12.sp, color: Colors.grey),
+                    children: [
+                      TextSpan(
+                        text: 'Terms & Conditions',
+                        style: TextStyle(
+                          color: Colors.blue,
+                          decoration: TextDecoration.underline,
+                        ),
+                      ),
+                      TextSpan(
+                        text: ' and ',
+                        style: TextStyle(color: Colors.grey),
+                      ),
+                      TextSpan(
+                        text: 'Privacy Policy',
+                        style: TextStyle(
+                          color: Colors.blue,
+                          decoration: TextDecoration.underline,
+                        ),
+                      ),
+                    ],
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
           ),
         );
       },

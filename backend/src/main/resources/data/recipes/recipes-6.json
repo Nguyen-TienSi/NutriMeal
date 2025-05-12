@@ -1,0 +1,197 @@
+[
+  {
+    "recipeName": "Classic Chocolate Chip Cookies",
+    "description": "Soft and chewy cookies with melty chocolate chips",
+    "instructions": "1. Cream butter and sugars.\n2. Add eggs and vanilla.\n3. Mix in dry ingredients.\n4. Fold in chocolate chips.\n5. Bake at 190°C for 10-12 minutes.",
+    "imageUrl": "assets/images/dishes/cookie.jpg",
+    "cookingTime": 25,
+    "serving": 24,
+    "servingUnit": "cookie",
+    "ingredients": [
+      {
+        "name": "All-purpose flour",
+        "unit": "grams",
+        "quantity": 300
+      },
+      {
+        "name": "Butter",
+        "unit": "grams",
+        "quantity": 200
+      },
+      {
+        "name": "Brown sugar",
+        "unit": "grams",
+        "quantity": 150
+      },
+      {
+        "name": "Chocolate chips",
+        "unit": "grams",
+        "quantity": 200
+      },
+      {
+        "name": "Vanilla extract",
+        "unit": "teaspoon",
+        "quantity": 2
+      }
+    ],
+    "foodTags": [
+      {
+        "name": "Dessert"
+      },
+      {
+        "name": "Classic"
+      }
+    ],
+    "nutrients": [
+      {
+        "name": "Carbohydrate",
+        "unit": "grams",
+        "value": 22
+      },
+      {
+        "name": "Sugar",
+        "unit": "grams",
+        "value": 15
+      },
+      {
+        "name": "Fat",
+        "unit": "grams",
+        "value": 9
+      }
+    ],
+    "timesOfDay": [
+      "afternoon",
+      "evening"
+    ]
+  },
+  {
+    "recipeName": "French Butter Croissants",
+    "description": "Flaky, buttery crescent-shaped pastries",
+    "instructions": "1. Prepare laminated dough with butter layers.\n2. Roll and shape into crescents.\n3. Proof for 2 hours.\n4. Bake at 200°C for 15-18 minutes until golden.",
+    "imageUrl": "assets/images/dishes/croissant.jpg",
+    "cookingTime": 240,
+    "serving": 8,
+    "servingUnit": "piece",
+    "ingredients": [
+      {
+        "name": "Bread flour",
+        "unit": "grams",
+        "quantity": 500
+      },
+      {
+        "name": "Butter",
+        "unit": "grams",
+        "quantity": 250
+      },
+      {
+        "name": "Milk",
+        "unit": "ml",
+        "quantity": 150
+      },
+      {
+        "name": "Yeast",
+        "unit": "grams",
+        "quantity": 10
+      },
+      {
+        "name": "Sugar",
+        "unit": "grams",
+        "quantity": 30
+      }
+    ],
+    "foodTags": [
+      {
+        "name": "Bakery"
+      },
+      {
+        "name": "French"
+      }
+    ],
+    "nutrients": [
+      {
+        "name": "Carbohydrate",
+        "unit": "grams",
+        "value": 35
+      },
+      {
+        "name": "Fat",
+        "unit": "grams",
+        "value": 18
+      },
+      {
+        "name": "Protein",
+        "unit": "grams",
+        "value": 6
+      }
+    ],
+    "timesOfDay": [
+      "morning",
+      "afternoon"
+    ]
+  },
+  {
+    "recipeName": "Vanilla Cupcakes",
+    "description": "Fluffy vanilla cupcakes with buttercream frosting",
+    "instructions": "1. Mix dry ingredients.\n2. Cream butter and sugar.\n3. Alternate adding dry ingredients and milk.\n4. Bake at 175°C for 18-20 minutes.\n5. Frost when cooled.",
+    "imageUrl": "assets/images/dishes/cupcake.jpg",
+    "cookingTime": 35,
+    "serving": 12,
+    "servingUnit": "cupcake",
+    "ingredients": [
+      {
+        "name": "All-purpose flour",
+        "unit": "grams",
+        "quantity": 180
+      },
+      {
+        "name": "Sugar",
+        "unit": "grams",
+        "quantity": 200
+      },
+      {
+        "name": "Butter",
+        "unit": "grams",
+        "quantity": 115
+      },
+      {
+        "name": "Eggs",
+        "unit": "pieces",
+        "quantity": 2
+      },
+      {
+        "name": "Vanilla extract",
+        "unit": "teaspoon",
+        "quantity": 2
+      }
+    ],
+    "foodTags": [
+      {
+        "name": "Dessert"
+      },
+      {
+        "name": "Party"
+      }
+    ],
+    "nutrients": [
+      {
+        "name": "Carbohydrate",
+        "unit": "grams",
+        "value": 28
+      },
+      {
+        "name": "Sugar",
+        "unit": "grams",
+        "value": 18
+      },
+      {
+        "name": "Fat",
+        "unit": "grams",
+        "value": 8
+      }
+    ],
+    "timesOfDay": [
+      "afternoon",
+      "evening"
+    ]
+  }
+]

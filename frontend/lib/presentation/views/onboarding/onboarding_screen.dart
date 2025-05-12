@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:nutriai_app/data/models/user_create_data.dart';
 import 'package:nutriai_app/presentation/layout/main_screen_layout.dart';
+import 'package:nutriai_app/service/external-service/auth_manager.dart';
 
 import 'onboarding_activity_level.dart';
 import 'onboarding_additional_health_goals.dart';
@@ -41,6 +43,16 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       setState(() {
         _currentPage = _pageController.page!.round();
       });
+    });
+
+    // Check if user is already logged in
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (AuthManager.isLoggedIn()) {
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (context) => const MainScreenLayout()),
+          (route) => false,
+        );
+      }
     });
   }
 
@@ -100,6 +112,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   AppBar _buildAppBar(bool isLastPage) {
     return AppBar(
+      automaticallyImplyLeading: false,
       leading: _currentPage > 0
           ? IconButton(
               icon: const Icon(Icons.arrow_back),
@@ -135,7 +148,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
         child: Text(
           isLastPage ? 'Get Started' : 'Next',
-          style: const TextStyle(color: Colors.white, fontSize: 18),
+          style: TextStyle(
+            fontSize: 18.sp,
+            fontWeight: FontWeight.w600,
+            color: Colors.white,
+          ),
         ),
       ),
     );

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class PersonalInfoCard extends StatelessWidget {
   final String label;
@@ -23,14 +24,14 @@ class PersonalInfoCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(14),
         onTap: onTap,
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+          padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 18.h),
           child: Row(
             children: [
               Expanded(
                 child: Text(
                   label,
-                  style: const TextStyle(
-                    fontSize: 16,
+                  style: TextStyle(
+                    fontSize: 16.sp,
                     color: Colors.black87,
                     fontWeight: FontWeight.w400,
                   ),
@@ -38,17 +39,16 @@ class PersonalInfoCard extends StatelessWidget {
               ),
               Text(
                 value,
-                style: const TextStyle(
-                  fontSize: 16,
-                  color: Colors.black87,
-                  fontWeight: FontWeight.w500,
-                ),
+                style: TextStyle(
+                    fontSize: 16.sp,
+                    color: Colors.black87,
+                    fontWeight: FontWeight.w500),
               ),
               if (showArrow)
-                const Padding(
-                  padding: EdgeInsets.only(left: 8.0),
+                Padding(
+                  padding: EdgeInsets.only(left: 8.w),
                   child: Icon(Icons.chevron_right,
-                      color: Colors.black26, size: 24),
+                      color: Colors.black26, size: 24.sp),
                 ),
             ],
           ),

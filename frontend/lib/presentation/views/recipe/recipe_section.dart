@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:nutriai_app/data/models/recipe_summary_data.dart'
-    show RecipeSummaryData;
+    // ignore: library_prefixes
+    show
+        RecipeSummaryData;
 import 'package:nutriai_app/service/api-service/recipe_service.dart';
 import 'recipe_card.dart' show RecipeCard;
 
@@ -20,7 +23,6 @@ class RecipeSection extends StatefulWidget {
 
 class _RecipeSectionState extends State<RecipeSection> {
   List<RecipeSummaryData> recipeSummaryList = [];
-  bool isLoading = true;
 
   @override
   void initState() {
@@ -30,42 +32,37 @@ class _RecipeSectionState extends State<RecipeSection> {
 
   Future<void> fetchData() async {
     try {
-      setState(() => isLoading = true);
       final recipeSummaryList = await RecipeService()
           .fetchRecipeSummaryListByMealTime(
               mealTime: widget.title, pageNumber: 0, pageSize: 5);
-      setState(() {
-        this.recipeSummaryList = recipeSummaryList;
-        isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          this.recipeSummaryList = recipeSummaryList;
+        });
+      }
     } catch (e) {
       debugPrint('❌ Error fetching recipes: $e');
-      setState(() => isLoading = false);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    if (isLoading) {
-      return const Center(child: CircularProgressIndicator());
-    }
-
     if (recipeSummaryList.isEmpty) {
-      return const Center(child: Text('No recipes available.'));
+      return const SizedBox.shrink();
     }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          padding: EdgeInsets.symmetric(horizontal: 16.w),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
                 widget.title,
-                style: const TextStyle(
-                  fontSize: 18,
+                style: TextStyle(
+                  fontSize: 18.sp,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -79,18 +76,20 @@ class _RecipeSectionState extends State<RecipeSection> {
             ],
           ),
         ),
-        const SizedBox(height: 4.0),
+        SizedBox(height: 4.w),
         SizedBox(
-          height: 250,
+          height: 220.h,
           child: ListView.separated(
             scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            padding: EdgeInsets.symmetric(horizontal: 8.w),
             itemCount: recipeSummaryList.length,
-            itemBuilder: (context, index) => RecipeCard(
-              recipeSummaryData: recipeSummaryList[index],
+            itemBuilder: (context, index) => SizedBox(
+              width: 160.w,
+              child: RecipeCard(
+                recipeSummaryData: recipeSummaryList[index],
+              ),
             ),
-            separatorBuilder: (context, index) => const SizedBox(width: 4.0),
-            shrinkWrap: true,
+            separatorBuilder: (context, index) => SizedBox(width: 8.w),
             physics: const ClampingScrollPhysics(),
           ),
         ),

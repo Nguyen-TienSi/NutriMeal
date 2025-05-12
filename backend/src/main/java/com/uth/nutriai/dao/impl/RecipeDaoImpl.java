@@ -6,10 +6,10 @@ import com.uth.nutriai.model.enumeration.TimeOfDay;
 import com.uth.nutriai.repository.IRecipeRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Component;
-import org.springframework.data.domain.Pageable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +36,11 @@ public class RecipeDaoImpl extends GenericDaoImpl<Recipe, UUID> implements IReci
             case "dinner":
                 timeOfDayList.add(TimeOfDay.EVENING);
                 timeOfDayList.add(TimeOfDay.NIGHT);
+                break;
+            case "snack":
+                timeOfDayList.add(TimeOfDay.MORNING);
+                timeOfDayList.add(TimeOfDay.AFTERNOON);
+                timeOfDayList.add(TimeOfDay.EVENING);
                 break;
         }
 

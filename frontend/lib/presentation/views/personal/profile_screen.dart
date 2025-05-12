@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nutriai_app/data/models/user_detail_data.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:nutriai_app/data/repositories/token_manager.dart';
 import 'package:nutriai_app/presentation/views/onboarding/onboarding_screen.dart';
 import 'package:nutriai_app/presentation/views/personal/personal_detail_screen.dart';
@@ -77,10 +78,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
               return Center(
                 child: ElevatedButton(
                   onPressed: () async {
+                    await AuthManager.signOut();
                     if (context.mounted) {
-                      Navigator.of(context).pushReplacement(
+                      Navigator.of(context).pushAndRemoveUntil(
                         MaterialPageRoute(
                             builder: (_) => const OnboardingScreen()),
+                        (route) => false,
                       );
                     }
                   },
@@ -95,45 +98,53 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     children: [
                       if (userDetailData != null)
                         PersonalSummaryCard(userDetailData: userDetailData!),
-                      const SizedBox(height: 16),
+                      SizedBox(height: 16.h),
                       PersonalNavigationCard(
                         icon: Icons.person,
                         title: 'Personal details',
-                        onTap: () {
-                          Navigator.of(context).push(
+                        onTap: () async {
+                          final updatedUserDetailData =
+                              await Navigator.of(context).push<UserDetailData>(
                             MaterialPageRoute(
                               builder: (_) => PersonalDetailScreen(
                                   userDetailData: userDetailData),
                             ),
                           );
+                          if (updatedUserDetailData != null) {
+                            setState(() {
+                              userDetailData = updatedUserDetailData;
+                            });
+                            await fetchData();
+                          }
                         },
                       ),
                       const Spacer(),
                       Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 24),
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 16.w, vertical: 24.h),
                         child: SizedBox(
                           width: double.infinity,
-                          height: 56,
+                          height: 56.h,
                           child: TextButton(
                             style: TextButton.styleFrom(
                               backgroundColor: const Color(0xFFF8D7DA),
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(16),
+                                borderRadius: BorderRadius.circular(16.r),
                               ),
                               foregroundColor: const Color(0xFFC0392B),
-                              textStyle: const TextStyle(
+                              textStyle: TextStyle(
                                 fontWeight: FontWeight.w600,
                                 letterSpacing: 1.1,
-                                fontSize: 16,
+                                fontSize: 16.sp,
                               ),
                             ),
                             onPressed: () async {
                               await AuthManager.signOut();
                               if (context.mounted) {
-                                Navigator.of(context).pushReplacement(
+                                Navigator.of(context).pushAndRemoveUntil(
                                   MaterialPageRoute(
                                       builder: (_) => const OnboardingScreen()),
+                                  (route) => false,
                                 );
                               }
                             },

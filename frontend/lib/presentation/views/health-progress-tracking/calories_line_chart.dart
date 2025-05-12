@@ -1,6 +1,7 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:nutriai_app/data/models/health_tracking_detail_data.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 
 class CaloriesLineChart extends StatelessWidget {
@@ -53,8 +54,7 @@ class CaloriesLineChart extends StatelessWidget {
                 getTitlesWidget: (value, meta) {
                   int idx = value.toInt();
                   if (idx >= 0 && idx < labels.length) {
-                    return Text(labels[idx],
-                        style: const TextStyle(fontSize: 10));
+                    return Text(labels[idx], style: TextStyle(fontSize: 10.sp));
                   }
                   return const SizedBox.shrink();
                 },

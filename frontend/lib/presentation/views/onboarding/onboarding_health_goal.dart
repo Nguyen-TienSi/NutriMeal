@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:nutriai_app/data/models/user_create_data.dart';
 import 'package:nutriai_app/utils/enums.dart';
 
@@ -32,7 +33,7 @@ class _OnboardingHealthGoalState extends State<OnboardingHealthGoal> {
           style: TextStyle(fontWeight: FontWeight.bold),
           textAlign: TextAlign.center,
         ),
-        const SizedBox(height: 16),
+        SizedBox(height: 16.h),
         ...HealthGoal.values.map((goal) => _goalCard(goal)),
       ],
     );
@@ -47,11 +48,11 @@ class _OnboardingHealthGoalState extends State<OnboardingHealthGoal> {
       child: Card(
         color: isSelected ? Colors.green : Colors.white,
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: EdgeInsets.all(16.h),
           child: Text(
             goalName,
             style: TextStyle(
-              fontSize: 18,
+              fontSize: 18.sp,
               fontWeight: FontWeight.bold,
               color: isSelected ? Colors.white : Colors.black,
             ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:nutriai_app/data/models/recipe_summary_data.dart';
 import 'package:nutriai_app/presentation/views/recipe/recipe_detail_screen.dart';
 
@@ -62,17 +63,18 @@ class RecipeItemCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 6),
+      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 6.h),
       child: Card(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        shape:
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.r)),
         elevation: 2,
         child: InkWell(
           onTap: () => _handleTap(context),
           onLongPress:
               onRemove != null ? () => _showDeleteConfirmation(context) : null,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(16.r),
           child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
+            padding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 12.w),
             child: Row(
               children: [
                 Expanded(
@@ -84,23 +86,22 @@ class RecipeItemCard extends StatelessWidget {
                           Expanded(
                             child: Text(
                               recipe.recipeName,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontWeight: FontWeight.bold,
-                                fontSize: 16,
+                                fontSize: 16.sp,
                               ),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),
                           ),
-                          const Icon(Icons.verified,
-                              size: 14, color: Colors.blue),
+                          Icon(Icons.verified, size: 14.h, color: Colors.blue),
                         ],
                       ),
-                      const SizedBox(height: 4),
+                      SizedBox(height: 4.h),
                       Text(
                         recipe.calories,
-                        style: const TextStyle(
-                          fontSize: 13,
+                        style: TextStyle(
+                          fontSize: 13.sp,
                           color: Colors.black87,
                         ),
                       ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class UserPost extends StatelessWidget {
   final String username;
@@ -17,16 +18,16 @@ class UserPost extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: const EdgeInsets.all(16.0),
+      margin: EdgeInsets.all(16.0.w),
       elevation: 4,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(12.r),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.all(12.0),
+            padding: EdgeInsets.all(12.0.w),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -34,9 +35,10 @@ class UserPost extends StatelessWidget {
                   children: [
                     CircleAvatar(
                       radius: 25,
-                      backgroundImage: AssetImage('assets/images/dish.jpg'),
+                      backgroundImage:
+                          const AssetImage('assets/images/dish.jpg'),
                     ),
-                    const SizedBox(width: 10),
+                    SizedBox(width: 10.w),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -64,7 +66,7 @@ class UserPost extends StatelessWidget {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12.0),
+            padding: EdgeInsets.symmetric(horizontal: 12.0.w),
             child: Image.asset(
               postImage,
               width: double.infinity,
@@ -73,15 +75,14 @@ class UserPost extends StatelessWidget {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.all(12.0),
+            padding: EdgeInsets.all(12.0.w),
             child: Text(
               caption,
               style: const TextStyle(fontSize: 16),
             ),
           ),
           Padding(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 12.0, vertical: 12.0),
+            padding: EdgeInsets.symmetric(horizontal: 12.0.w, vertical: 12.0.h),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [

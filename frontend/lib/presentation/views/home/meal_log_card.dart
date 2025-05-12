@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class MealCard extends StatelessWidget {
+class MealLogCard extends StatelessWidget {
   final String mealName;
   final String kcalRange;
   final String imagePath;
   final VoidCallback onTap;
 
-  const MealCard({
+  const MealLogCard({
     super.key,
     required this.mealName,
     required this.kcalRange,
@@ -17,26 +18,34 @@ class MealCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      color: Colors.white60,
+      color: Colors.white,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
       ),
+      shadowColor: Colors.grey.withValues(alpha: 1),
+      elevation: 2,
+      margin: EdgeInsets.symmetric(vertical: 8.h),
       child: ListTile(
-        leading:
-            Image.asset(imagePath, width: 50, height: 50, fit: BoxFit.cover),
+        leading: ClipRRect(
+          borderRadius: BorderRadius.circular(8),
+          child: Image.asset(
+            imagePath,
+            fit: BoxFit.cover,
+          ),
+        ),
         title: Text(
           mealName,
-          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold),
         ),
         subtitle: Text(
           "Recommended $kcalRange kcal",
-          style: const TextStyle(fontSize: 14, color: Colors.grey),
+          style: TextStyle(fontSize: 14.sp, color: Colors.grey),
         ),
         trailing: IconButton(
-          icon: const Icon(
+          icon: Icon(
             Icons.add_circle_outline,
             color: Colors.grey,
-            size: 30,
+            size: 30.h,
           ),
           onPressed: onTap,
         ),

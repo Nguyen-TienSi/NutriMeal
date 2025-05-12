@@ -14,7 +14,6 @@ import org.springframework.data.domain.PageImpl;
 
 import java.time.Duration;
 import java.util.List;
-import java.util.Map;
 
 @Mapper(componentModel = "spring", uses = {
         IIngredientMapper.class,
@@ -47,6 +46,7 @@ public interface IRecipeMapper extends INutritionCalculator<Recipe> {
     @Mapping(target = "id", ignore = true)
     Recipe mapToRecipe(RecipeUpdateDto recipeUpdateDto);
 
+    @Mapping(target = "cookingTime", expression = "java(mapToLong(recipe.getCookingTime()))")
     @Mapping(target = "timeOfDayDtoList", source = "timesOfDay")
     @Mapping(target = "calories", expression = "java(getCalories(recipe))")
     RecipeSummaryDto mapToRecipeSummaryDto(Recipe recipe);
@@ -59,11 +59,11 @@ public interface IRecipeMapper extends INutritionCalculator<Recipe> {
     }
 
     default Duration mapToDuration(Long minutes) {
-        return minutes == null ? null : Duration.ofMinutes(minutes);
+        return minutes == null ? Duration.ZERO : Duration.ofMinutes(minutes);
     }
 
     default Long mapToLong(Duration duration) {
-        return duration == null ? null : duration.toMinutes();
+        return duration == null ? 0L : duration.toMinutes();
     }
 
     default String getCalories(Recipe recipe) {
@@ -73,5 +73,6 @@ public interface IRecipeMapper extends INutritionCalculator<Recipe> {
     @Override
     default List<Nutrient> getConsumedNutrients(Recipe entity) {
         return entity.getNutrients();
-    };
+    }
+
 }

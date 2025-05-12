@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:nutriai_app/core/app_config.dart';
 import 'package:nutriai_app/presentation/views/personal/profile_screen.dart';
 
@@ -8,15 +9,16 @@ class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      title: const Text(appName),
+      automaticallyImplyLeading: false,
+      title: Text(appName),
       centerTitle: true,
       backgroundColor: Theme.of(context).colorScheme.primary,
       foregroundColor: Theme.of(context).colorScheme.onPrimary,
       elevation: 0,
-      actionsIconTheme: const IconThemeData(color: Colors.white, size: 28),
+      actionsIconTheme: IconThemeData(color: Colors.white, size: 28.sp),
       actions: [
         IconButton(
-          icon: const Icon(Icons.account_circle, size: 28),
+          icon: Icon(Icons.account_circle, size: 28.sp),
           onPressed: () {
             Navigator.push(
               context,
@@ -31,5 +33,5 @@ class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
   }
 
   @override
-  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
+  Size get preferredSize => Size.fromHeight(kToolbarHeight.h);
 }

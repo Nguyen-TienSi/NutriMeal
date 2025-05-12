@@ -1,0 +1,271 @@
+[
+  {
+    "recipeName": "Classic Bacon & Eggs",
+    "description": "Traditional breakfast with crispy bacon and sunny-side-up eggs",
+    "instructions": "1. Cook bacon in pan until crispy.\n2. Remove bacon and fry eggs in the bacon fat.\n3. Season eggs with salt and pepper.\n4. Serve immediately while hot.",
+    "imageUrl": "assets/images/dishes/bacon-&-eggs.jpg",
+    "cookingTime": 15,
+    "serving": 2,
+    "servingUnit": "plate",
+    "ingredients": [
+      {
+        "name": "Bacon",
+        "unit": "slices",
+        "quantity": 6
+      },
+      {
+        "name": "Eggs",
+        "unit": "pieces",
+        "quantity": 4
+      },
+      {
+        "name": "Butter",
+        "unit": "tablespoon",
+        "quantity": 1
+      },
+      {
+        "name": "Salt",
+        "unit": "pinch",
+        "quantity": 1
+      }
+    ],
+    "foodTags": [
+      {
+        "name": "Breakfast"
+      },
+      {
+        "name": "High Protein"
+      }
+    ],
+    "nutrients": [
+      {
+        "name": "Protein",
+        "unit": "grams",
+        "value": 25
+      },
+      {
+        "name": "Fat",
+        "unit": "grams",
+        "value": 22
+      },
+      {
+        "name": "Carbohydrate",
+        "unit": "grams",
+        "value": 1
+      }
+    ],
+    "timesOfDay": [
+      "morning"
+    ]
+  },
+  {
+    "recipeName": "Chocolate Brownie",
+    "description": "Rich fudgy brownies with walnuts",
+    "instructions": "1. Melt butter and chocolate together.\n2. Mix in sugar and eggs.\n3. Fold in flour and walnuts.\n4. Bake at 180°C for 25 minutes.",
+    "imageUrl": "assets/images/dishes/brownie.jpg",
+    "cookingTime": 40,
+    "serving": 12,
+    "servingUnit": "piece",
+    "ingredients": [
+      {
+        "name": "Dark chocolate",
+        "unit": "grams",
+        "quantity": 200
+      },
+      {
+        "name": "Butter",
+        "unit": "grams",
+        "quantity": 150
+      },
+      {
+        "name": "Sugar",
+        "unit": "grams",
+        "quantity": 250
+      },
+      {
+        "name": "Walnuts",
+        "unit": "grams",
+        "quantity": 100
+      }
+    ],
+    "foodTags": [
+      {
+        "name": "Dessert"
+      },
+      {
+        "name": "Chocolate"
+      }
+    ],
+    "nutrients": [
+      {
+        "name": "Carbohydrate",
+        "unit": "grams",
+        "value": 35
+      },
+      {
+        "name": "Sugar",
+        "unit": "grams",
+        "value": 28
+      },
+      {
+        "name": "Protein",
+        "unit": "grams",
+        "value": 5
+      }
+    ],
+    "timesOfDay": [
+      "afternoon",
+      "evening"
+    ]
+  },
+  {
+    "recipeName": "Hot Chocolate",
+    "description": "Creamy homemade hot chocolate",
+    "instructions": "1. Heat milk in saucepan.\n2. Whisk in chocolate until melted.\n3. Add sugar to taste.\n4. Serve with whipped cream.",
+    "imageUrl": "assets/images/dishes/chocolate.jpg",
+    "cookingTime": 10,
+    "serving": 2,
+    "servingUnit": "cup",
+    "ingredients": [
+      {
+        "name": "Milk",
+        "unit": "ml",
+        "quantity": 500
+      },
+      {
+        "name": "Dark chocolate",
+        "unit": "grams",
+        "quantity": 100
+      },
+      {
+        "name": "Sugar",
+        "unit": "teaspoon",
+        "quantity": 2
+      }
+    ],
+    "foodTags": [
+      {
+        "name": "Beverage"
+      },
+      {
+        "name": "Comfort Food"
+      }
+    ],
+    "nutrients": [
+      {
+        "name": "Carbohydrate",
+        "unit": "grams",
+        "value": 30
+      },
+      {
+        "name": "Calcium",
+        "unit": "mg",
+        "value": 300
+      },
+      {
+        "name": "Caffeine",
+        "unit": "mg",
+        "value": 20
+      }
+    ],
+    "timesOfDay": [
+      "morning",
+      "evening"
+    ]
+  },
+  {
+    "recipeName": "Black Coffee",
+    "description": "Simple brewed black coffee",
+    "instructions": "1. Boil water to 90-96°C.\n2. Pour over coffee grounds in filter.\n3. Let steep for 4 minutes.\n4. Serve hot.",
+    "imageUrl": "assets/images/dishes/coffee.jpg",
+    "cookingTime": 5,
+    "serving": 1,
+    "servingUnit": "cup",
+    "ingredients": [
+      {
+        "name": "Coffee grounds",
+        "unit": "tablespoon",
+        "quantity": 2
+      },
+      {
+        "name": "Water",
+        "unit": "ml",
+        "quantity": 200
+      }
+    ],
+    "foodTags": [
+      {
+        "name": "Beverage"
+      },
+      {
+        "name": "Energizing"
+      }
+    ],
+    "nutrients": [
+      {
+        "name": "Caffeine",
+        "unit": "mg",
+        "value": 95
+      },
+      {
+        "name": "Antioxidants",
+        "unit": "mg",
+        "value": 200
+      }
+    ],
+    "timesOfDay": [
+      "morning",
+      "afternoon"
+    ]
+  },
+  {
+    "recipeName": "Cola Float",
+    "description": "Refreshing cola with vanilla ice cream",
+    "instructions": "1. Pour cola into tall glass.\n2. Add scoops of vanilla ice cream.\n3. Serve immediately with straw.",
+    "imageUrl": "assets/images/dishes/cola.jpg",
+    "cookingTime": 5,
+    "serving": 1,
+    "servingUnit": "glass",
+    "ingredients": [
+      {
+        "name": "Cola",
+        "unit": "ml",
+        "quantity": 300
+      },
+      {
+        "name": "Vanilla ice cream",
+        "unit": "scoops",
+        "quantity": 2
+      }
+    ],
+    "foodTags": [
+      {
+        "name": "Dessert"
+      },
+      {
+        "name": "Quick"
+      }
+    ],
+    "nutrients": [
+      {
+        "name": "Carbohydrate",
+        "unit": "grams",
+        "value": 45
+      },
+      {
+        "name": "Sugar",
+        "unit": "grams",
+        "value": 40
+      },
+      {
+        "name": "Calcium",
+        "unit": "mg",
+        "value": 150
+      }
+    ],
+    "timesOfDay": [
+      "afternoon",
+      "evening"
+    ]
+  }
+]

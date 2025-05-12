@@ -10,6 +10,6 @@ import java.time.Duration;
 public class DurationToLongWriteConverter implements Converter<Duration, Long> {
     @Override
     public Long convert(@NonNull Duration source) {
-        return source.toMillis();
+        return source.toMinutes();
     }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:nutriai_app/data/models/user_detail_data.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
 
@@ -17,7 +18,7 @@ class WeightGaugeChart extends StatelessWidget {
         RadialAxis(
           minimum: minWeight.toDouble(),
           maximum: maxWeight.toDouble(),
-          radiusFactor: 0.8,
+          radiusFactor: 0.93.r,
           showTicks: false,
           showLabels: false,
           axisLineStyle: AxisLineStyle(
@@ -37,10 +38,10 @@ class WeightGaugeChart extends StatelessWidget {
             MarkerPointer(
               value: userDetailData.currentWeight!.toDouble(),
               markerType: MarkerType.circle,
-              markerHeight: 24,
-              markerWidth: 24,
+              markerHeight: 24.sp,
+              markerWidth: 24.sp,
               color: Colors.tealAccent.shade700,
-              borderWidth: 6,
+              borderWidth: 6.sp,
               borderColor: Colors.white,
               enableAnimation: true,
               animationDuration: 1200,
@@ -53,59 +54,64 @@ class WeightGaugeChart extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
+                    // Current Weight
                     'Current Weight',
                     style: TextStyle(
-                      fontSize: 20,
+                      fontSize: 20.sp,
                       color: Colors.grey,
                       fontWeight: FontWeight.w400,
                     ),
                   ),
-                  const SizedBox(height: 2),
+                  SizedBox(height: 2.h),
                   Text(
+                    // Current Weight Value
                     '${userDetailData.currentWeight} kg',
-                    style: const TextStyle(
-                      fontSize: 48,
+                    style: TextStyle(
+                      fontSize: 48.sp,
                       fontWeight: FontWeight.bold,
                       color: Color(0xFF3887FD),
                       letterSpacing: 1.2,
-                    ),
+                    ).copyWith(fontSize: 48.sp),
                   ),
-                  const SizedBox(height: 10),
+                  SizedBox(height: 10.h),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Column(
                         children: [
                           Text(
+                            // Min Weight Label
                             'Min',
                             style: TextStyle(
-                                fontSize: 18,
+                                fontSize: 18.sp,
                                 color: Colors.grey.shade600,
                                 fontWeight: FontWeight.w500),
                           ),
-                          const SizedBox(height: 2),
+                          SizedBox(height: 2.h),
                           Text(
-                            '${minWeight}kg',
-                            style: const TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.bold),
+                            '${minWeight} kg',
+                            style: TextStyle(
+                                fontSize: 18.sp, fontWeight: FontWeight.bold),
                           ),
                         ],
                       ),
-                      const SizedBox(width: 20),
+                      SizedBox(width: 20.w),
                       Column(
                         children: [
                           Text(
+                            // Max Weight Label
                             'Max',
                             style: TextStyle(
-                                fontSize: 18,
+                                // Max Weight Label
+                                fontSize: 18.sp,
                                 color: Colors.grey.shade600,
                                 fontWeight: FontWeight.w500),
                           ),
-                          const SizedBox(height: 2),
+                          SizedBox(height: 2.h),
                           Text(
-                            '${maxWeight}kg',
-                            style: const TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.bold),
+                            '${maxWeight} kg',
+                            style: TextStyle(
+                                fontSize: 18.sp, fontWeight: FontWeight.bold),
                           ),
                         ],
                       ),

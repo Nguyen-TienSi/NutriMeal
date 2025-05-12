@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:nutriai_app/data/models/user_create_data.dart';
 
 class OnboardingDob extends StatefulWidget {
@@ -61,23 +62,24 @@ class _OnboardingDobState extends State<OnboardingDob> {
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        const Text(
+        Text(
           "What is your date of birth?",
           style: TextStyle(
-            fontSize: 32,
+            fontSize: 32.sp,
             fontWeight: FontWeight.bold,
             color: Colors.black87,
             letterSpacing: -0.5,
           ),
           textAlign: TextAlign.center,
         ),
-        const SizedBox(height: 12),
-        const Text(
+        SizedBox(height: 12.h),
+        Text(
           "Select your date of birth",
-          style: TextStyle(fontSize: 16, color: Colors.black54, height: 1.5),
+          style:
+              TextStyle(fontSize: 16.sp, color: Colors.black54, height: 1.5.h),
           textAlign: TextAlign.center,
         ),
-        const SizedBox(height: 48),
+        SizedBox(height: 48.h),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -139,26 +141,26 @@ class _OnboardingDobState extends State<OnboardingDob> {
     return PopupMenuButton<String>(
       onSelected: onSelected,
       child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 8),
-        padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+        margin: EdgeInsets.symmetric(horizontal: 8.w),
+        padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 16.h),
         alignment: Alignment.center,
         decoration: BoxDecoration(
           border: Border.all(
               color: selectedValue != null ? Colors.green : Colors.grey),
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(16.r),
           color: Colors.white,
           boxShadow: [
-            const BoxShadow(
+            BoxShadow(
               color: Colors.black12,
-              blurRadius: 20,
-              offset: Offset(0, 8),
+              blurRadius: 20.r,
+              offset: const Offset(0, 8),
             ),
           ],
         ),
         child: Text(selectedValue ?? hint,
             style: TextStyle(
                 color: selectedValue != null ? Colors.black87 : Colors.black54,
-                fontSize: 18,
+                fontSize: 18.sp,
                 fontWeight: FontWeight.w500)),
       ),
       itemBuilder: (BuildContext context) {

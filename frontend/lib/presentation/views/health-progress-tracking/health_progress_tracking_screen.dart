@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:nutriai_app/data/models/streak_data.dart';
 import 'package:nutriai_app/data/models/user_detail_data.dart';
 import 'package:nutriai_app/presentation/views/health-progress-tracking/favorite_recipe_screen.dart';
@@ -10,7 +11,9 @@ import 'package:nutriai_app/service/api-service/statistic_service.dart';
 import 'package:nutriai_app/service/api-service/user_service.dart';
 
 class HealthProgressTrackingScreen extends StatefulWidget {
-  const HealthProgressTrackingScreen({super.key});
+  const HealthProgressTrackingScreen({super.key, this.refreshKey});
+
+  final GlobalKey<RefreshIndicatorState>? refreshKey;
 
   @override
   State<HealthProgressTrackingScreen> createState() =>
@@ -61,28 +64,55 @@ class _HealthProgressTrackingScreenState
             ? const Center(child: CircularProgressIndicator())
             : userDetailData == null
                 ? const Center(child: Text('No data available'))
-                : SafeArea(
-                    child: Column(
-                      children: [
-                        WeightGaugeChart(userDetailData: userDetailData!),
-                        StreakSection(streakData: streakData!),
-                        StatisticNavigationCard(
-                          onTap: () => handleNavigate(
-                            FavoriteRecipeScreen(),
-                          ),
-                          icon: const Icon(Icons.favorite,
-                              color: Colors.green, size: 32),
-                          title: 'Favorites',
+                : RefreshIndicator(
+                    key: widget.refreshKey,
+                    onRefresh: fetchData,
+                    child: SingleChildScrollView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 10.w),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 8.w),
+                              child: WeightGaugeChart(
+                                  userDetailData: userDetailData!),
+                            ),
+                            SizedBox(height: 10.h),
+                            Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 8.w),
+                              child: StreakSection(streakData: streakData!),
+                            ),
+                            SizedBox(height: 10.h),
+                            Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 8.w),
+                              child: StatisticNavigationCard(
+                                onTap: () => handleNavigate(
+                                  const FavoriteRecipeScreen(),
+                                ),
+                                icon: Icon(Icons.favorite,
+                                    color: Colors.green, size: 32.sp),
+                                title: 'Favorites',
+                              ),
+                            ),
+                            SizedBox(height: 10.h),
+                            Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 8.w),
+                              child: StatisticNavigationCard(
+                                onTap: () => handleNavigate(
+                                  const StatisticChartScreen(),
+                                ),
+                                icon: Icon(Icons.bar_chart,
+                                    color: Colors.blue, size: 32.sp),
+                                title: 'Statistic Chart',
+                              ),
+                            ),
+                            SizedBox(height: 10.h),
+                            SizedBox(height: 20.h),
+                          ],
                         ),
-                        StatisticNavigationCard(
-                          onTap: () => handleNavigate(
-                            StatisticChartScreen(),
-                          ),
-                          icon: const Icon(Icons.bar_chart,
-                              color: Colors.blue, size: 32),
-                          title: 'Statistic Chart',
-                        )
-                      ],
+                      ),
                     ),
                   ),
       ),

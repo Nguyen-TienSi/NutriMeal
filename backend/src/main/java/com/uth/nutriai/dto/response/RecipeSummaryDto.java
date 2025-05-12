@@ -12,6 +12,7 @@ public record RecipeSummaryDto(
         UUID id,
         String recipeName,
         String imageUrl,
+        Long cookingTime,
         float serving,
         String servingUnit,
         String calories,

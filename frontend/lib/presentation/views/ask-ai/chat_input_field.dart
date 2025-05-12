@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ChatInputField extends StatelessWidget {
   const ChatInputField({super.key});
@@ -6,7 +7,7 @@ class ChatInputField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(16.0),
+      padding: EdgeInsets.all(16.w),
       child: Row(
         children: [
           Expanded(
@@ -16,11 +17,11 @@ class ChatInputField extends StatelessWidget {
                 filled: true,
                 fillColor: Colors.grey[200],
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(24),
+                  borderRadius: BorderRadius.circular(24.r),
                   borderSide: BorderSide.none,
                 ),
                 contentPadding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                    EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
               ),
             ),
           ),

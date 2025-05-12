@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class PersonalNavigationCard extends StatelessWidget {
   final IconData icon;
@@ -19,30 +20,37 @@ class PersonalNavigationCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      color: backgroundColor ?? const Color(0xFFFCFBF7),
-      elevation: 0,
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.r)),
+      color: Colors.white,
+      elevation: 2,
+      margin: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
       child: InkWell(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(16.r),
         onTap: onTap,
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+          padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 18.h),
           child: Row(
             children: [
-              Icon(icon, color: iconColor, size: 26),
-              const SizedBox(width: 16),
+              Container(
+                padding: EdgeInsets.all(8.r),
+                decoration: BoxDecoration(
+                  color: iconColor.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(12.r),
+                ),
+                child: Icon(icon, color: iconColor, size: 24.sp),
+              ),
+              SizedBox(width: 16.w),
               Expanded(
                 child: Text(
                   title,
-                  style: const TextStyle(
-                    fontSize: 17,
+                  style: TextStyle(
+                    fontSize: 17.sp,
                     fontWeight: FontWeight.w500,
                     color: Colors.black87,
                   ),
                 ),
               ),
-              const Icon(Icons.chevron_right, color: Colors.black38, size: 28),
+              Icon(Icons.chevron_right, color: Colors.black38, size: 28.sp),
             ],
           ),
         ),

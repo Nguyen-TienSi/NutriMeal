@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nutriai_app/data/models/user_detail_data.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:nutriai_app/data/repositories/json_patch.dart';
 import 'package:nutriai_app/presentation/views/personal/personal_info_card.dart';
 import 'package:nutriai_app/service/api-service/user_service.dart';
@@ -44,19 +45,19 @@ class _PersonalDetailScreenState extends State<PersonalDetailScreen> {
         elevation: 0,
       ),
       body: ListView(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.all(16.r),
         children: [
           // Goal Card
           Text('YOUR GOAL',
               style: TextStyle(
-                  fontSize: 13,
+                  fontSize: 13.sp,
                   color: Colors.brown[200],
                   fontWeight: FontWeight.bold,
                   letterSpacing: 1.1)),
-          const SizedBox(height: 8),
+          SizedBox(height: 8.h),
           Material(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(14),
+            borderRadius: BorderRadius.circular(14.r),
             child: PersonalInfoCard(
               label: 'Goal',
               value: _goalString(user?.healthGoal),
@@ -81,18 +82,18 @@ class _PersonalDetailScreenState extends State<PersonalDetailScreen> {
               showArrow: true,
             ),
           ),
-          const SizedBox(height: 28),
+          SizedBox(height: 28.h),
           // Details Section
-          const Text('DETAILS',
+          Text('DETAILS',
               style: TextStyle(
-                  fontSize: 13,
-                  color: Color(0xFFB6AFA5),
+                  fontSize: 13.sp,
+                  color: const Color(0xFFB6AFA5),
                   fontWeight: FontWeight.bold,
                   letterSpacing: 1.1)),
-          const SizedBox(height: 8),
+          SizedBox(height: 8.h),
           Material(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(14),
+            borderRadius: BorderRadius.circular(14.r),
             child: Column(
               children: [
                 PersonalInfoCard(
@@ -286,12 +287,12 @@ class _PersonalDetailScreenState extends State<PersonalDetailScreen> {
     );
   }
 
-  Widget _divider() => const Divider(
+  Widget _divider() => Divider(
         height: 0,
-        thickness: 1,
-        color: Color(0xFFF7F3ED),
-        indent: 20,
-        endIndent: 20,
+        thickness: 1.h,
+        color: const Color(0xFFF7F3ED),
+        indent: 20.w,
+        endIndent: 20.w,
       );
 
   String _goalString(healthGoal) {

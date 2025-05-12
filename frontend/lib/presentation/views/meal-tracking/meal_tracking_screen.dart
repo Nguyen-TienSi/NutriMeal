@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:nutriai_app/presentation/views/recipe/recipe_detail_screen.dart';
 import 'package:uuid/uuid_value.dart';
 import 'package:nutriai_app/data/models/recipe_summary_data.dart';
@@ -47,7 +48,6 @@ class _MealTrackingScreenState extends State<MealTrackingScreen> {
         ),
       ),
     ).then((_) {
-      // Refresh nutritional info section after returning from recipe detail
       _nutritionalInfoKey.currentState?.fetchData();
     });
     setState(() {
@@ -77,7 +77,7 @@ class _MealTrackingScreenState extends State<MealTrackingScreen> {
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.all(16.0),
+              padding: EdgeInsets.all(16.w),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -87,7 +87,7 @@ class _MealTrackingScreenState extends State<MealTrackingScreen> {
                       onSearchTextChanged: _handleSearchTextChanged,
                     ),
                   ),
-                  const SizedBox(width: 8),
+                  SizedBox(width: 8.w),
                   BarcodeScanIcon(
                     onScanPressed: () {
                       debugPrint('Barcode scan pressed');
@@ -110,26 +110,23 @@ class _MealTrackingScreenState extends State<MealTrackingScreen> {
             ),
             if (!_isSearching)
               Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: SizedBox(
-                  width: double.infinity,
-                  height: 56,
-                  child: ElevatedButton(
-                    onPressed: () {},
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
+                padding: EdgeInsets.all(16.w),
+                child: ElevatedButton(
+                  onPressed: () => Navigator.pop(context),
+                  style: ElevatedButton.styleFrom(
+                    minimumSize: Size(double.infinity, 56.h),
+                    backgroundColor: Colors.green,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12.r),
                     ),
-                    child: const Text(
-                      'DONE',
-                      style: TextStyle(
-                        fontSize: 18,
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 1.2,
-                      ),
+                  ),
+                  child: Text(
+                    'DONE',
+                    style: TextStyle(
+                      fontSize: 18.sp,
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 1.2.w,
                     ),
                   ),
                 ),

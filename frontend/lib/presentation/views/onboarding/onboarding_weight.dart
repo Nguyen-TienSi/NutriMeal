@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:tape_slider/tape_slider.dart';
 import 'package:nutriai_app/data/models/user_create_data.dart';
 
@@ -34,22 +35,22 @@ class _OnboardingWeightState extends State<OnboardingWeight> {
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const Text(
+        Text(
           "What is your weight?",
-          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          style: TextStyle(fontSize: 24.sp, fontWeight: FontWeight.bold),
           textAlign: TextAlign.center,
         ),
-        Image.asset("assets/images/scale.png"),
-        const SizedBox(height: 20),
+        Image.asset("assets/images/scale.png", height: 200.h, width: 200.w),
+        SizedBox(height: 20.h),
         Text(
           "${_currentWeight.toInt()} kg",
-          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.bold),
           textAlign: TextAlign.center,
         ),
         Padding(
-          padding: const EdgeInsets.symmetric(
-            vertical: 10.0,
-            horizontal: 30.0,
+          padding: EdgeInsets.symmetric(
+            vertical: 10.h,
+            horizontal: 30.w,
           ),
           child: TapeSlider(
             initialValue: _currentWeight,
@@ -58,7 +59,7 @@ class _OnboardingWeightState extends State<OnboardingWeight> {
             onValueChanged: _updateWeight,
             activeColor: Colors.black,
             inactiveColor: Colors.black38,
-            indicatorColor: Colors.black,
+            indicatorColor: Colors.green,
             itemExtent: 15.0,
             indicatorThickness: 3.0,
           ),

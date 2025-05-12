@@ -1,0 +1,236 @@
+[
+  {
+    "recipeName": "Soda",
+    "description": "A refreshing carbonated beverage",
+    "instructions": "1. Pour chilled soda into glass.\n2. Add ice if desired.\n3. Serve immediately.",
+    "imageUrl": "assets/images/dishes/soda.jpg",
+    "cookingTime": 1,
+    "serving": 1,
+    "servingUnit": "glass",
+    "ingredients": [
+      {
+        "name": "Carbonated soda",
+        "unit": "ml",
+        "quantity": 250
+      }
+    ],
+    "foodTags": [
+      {
+        "name": "Beverage"
+      },
+      {
+        "name": "Sweet"
+      }
+    ],
+    "nutrients": [
+      {
+        "name": "Sugar",
+        "unit": "grams",
+        "value": 25
+      },
+      {
+        "name": "Carbohydrate",
+        "unit": "grams",
+        "value": 25
+      }
+    ],
+    "timesOfDay": [
+      "noon",
+      "afternoon"
+    ]
+  },
+  {
+    "recipeName": "Spaghetti Bolognese",
+    "description": "Classic Italian pasta with meat sauce",
+    "instructions": "1. Cook pasta.\n2. Prepare meat sauce.\n3. Combine and serve.",
+    "imageUrl": "assets/images/dishes/spaghetti.jpg",
+    "cookingTime": 30,
+    "serving": 4,
+    "servingUnit": "plates",
+    "ingredients": [
+      {
+        "name": "Spaghetti",
+        "unit": "grams",
+        "quantity": 400
+      },
+      {
+        "name": "Ground beef",
+        "unit": "grams",
+        "quantity": 500
+      },
+      {
+        "name": "Tomato sauce",
+        "unit": "ml",
+        "quantity": 500
+      }
+    ],
+    "foodTags": [
+      {
+        "name": "Italian"
+      },
+      {
+        "name": "Pasta"
+      }
+    ],
+    "nutrients": [
+      {
+        "name": "Protein",
+        "unit": "grams",
+        "value": 25
+      },
+      {
+        "name": "Carbohydrate",
+        "unit": "grams",
+        "value": 65
+      }
+    ],
+    "timesOfDay": [
+      "noon",
+      "evening"
+    ]
+  },
+  {
+    "recipeName": "Grilled Steak",
+    "description": "Juicy grilled beef steak",
+    "instructions": "1. Season steak.\n2. Grill to desired doneness.\n3. Rest and serve.",
+    "imageUrl": "assets/images/dishes/steak.jpg",
+    "cookingTime": 20,
+    "serving": 1,
+    "servingUnit": "steak",
+    "ingredients": [
+      {
+        "name": "Beef steak",
+        "unit": "grams",
+        "quantity": 300
+      },
+      {
+        "name": "Salt",
+        "unit": "pinch",
+        "quantity": 1
+      }
+    ],
+    "foodTags": [
+      {
+        "name": "Meat"
+      },
+      {
+        "name": "High Protein"
+      }
+    ],
+    "nutrients": [
+      {
+        "name": "Protein",
+        "unit": "grams",
+        "value": 45
+      },
+      {
+        "name": "Fat",
+        "unit": "grams",
+        "value": 30
+      }
+    ],
+    "timesOfDay": [
+      "evening"
+    ]
+  },
+  {
+    "recipeName": "Sushi Roll",
+    "description": "Fresh Japanese sushi roll",
+    "instructions": "1. Prepare sushi rice.\n2. Roll with nori and fillings.\n3. Slice and serve.",
+    "imageUrl": "assets/images/dishes/sushi.jpg",
+    "cookingTime": 45,
+    "serving": 8,
+    "servingUnit": "pieces",
+    "ingredients": [
+      {
+        "name": "Sushi rice",
+        "unit": "grams",
+        "quantity": 300
+      },
+      {
+        "name": "Nori",
+        "unit": "sheets",
+        "quantity": 2
+      },
+      {
+        "name": "Fish",
+        "unit": "grams",
+        "quantity": 150
+      }
+    ],
+    "foodTags": [
+      {
+        "name": "Japanese"
+      },
+      {
+        "name": "Seafood"
+      }
+    ],
+    "nutrients": [
+      {
+        "name": "Protein",
+        "unit": "grams",
+        "value": 20
+      },
+      {
+        "name": "Carbohydrate",
+        "unit": "grams",
+        "value": 40
+      }
+    ],
+    "timesOfDay": [
+      "noon",
+      "evening"
+    ]
+  },
+  {
+    "recipeName": "Tacos",
+    "description": "Mexican style tacos",
+    "instructions": "1. Cook meat filling.\n2. Warm tortillas.\n3. Assemble with toppings.",
+    "imageUrl": "assets/images/dishes/tacos.jpg",
+    "cookingTime": 25,
+    "serving": 4,
+    "servingUnit": "tacos",
+    "ingredients": [
+      {
+        "name": "Tortillas",
+        "unit": "pieces",
+        "quantity": 8
+      },
+      {
+        "name": "Ground meat",
+        "unit": "grams",
+        "quantity": 400
+      },
+      {
+        "name": "Cheese",
+        "unit": "grams",
+        "quantity": 200
+      }
+    ],
+    "foodTags": [
+      {
+        "name": "Mexican"
+      },
+      {
+        "name": "Spicy"
+      }
+    ],
+    "nutrients": [
+      {
+        "name": "Protein",
+        "unit": "grams",
+        "value": 25
+      },
+      {
+        "name": "Fat",
+        "unit": "grams",
+        "value": 20
+      }
+    ],
+    "timesOfDay": [
+      "noon",
+      "evening"
+    ]
+  }
+]

@@ -1,0 +1,270 @@
+[
+  {
+    "recipeName": "Hamburger",
+    "description": "Classic beef hamburger with fresh vegetables",
+    "instructions": "1. Form beef patty and season.\n2. Grill until desired doneness.\n3. Toast bun.\n4. Assemble with lettuce, tomato and condiments.",
+    "imageUrl": "assets/images/dishes/hamburger.jpg",
+    "cookingTime": 15,
+    "serving": 1,
+    "servingUnit": "burger",
+    "ingredients": [
+      {
+        "name": "Ground beef",
+        "unit": "grams",
+        "quantity": 180
+      },
+      {
+        "name": "Hamburger bun",
+        "unit": "piece",
+        "quantity": 1
+      },
+      {
+        "name": "Lettuce",
+        "unit": "leaves",
+        "quantity": 2
+      },
+      {
+        "name": "Tomato",
+        "unit": "slices",
+        "quantity": 2
+      },
+      {
+        "name": "Onion",
+        "unit": "slices",
+        "quantity": 2
+      }
+    ],
+    "foodTags": [
+      {
+        "name": "Fast Food"
+      },
+      {
+        "name": "American"
+      }
+    ],
+    "nutrients": [
+      {
+        "name": "Protein",
+        "unit": "grams",
+        "value": 25
+      },
+      {
+        "name": "Fat",
+        "unit": "grams",
+        "value": 30
+      },
+      {
+        "name": "Carbohydrate",
+        "unit": "grams",
+        "value": 35
+      }
+    ],
+    "timesOfDay": [
+      "noon",
+      "evening"
+    ]
+  },
+  {
+    "recipeName": "Hot Dog",
+    "description": "Classic hot dog with mustard and ketchup",
+    "instructions": "1. Grill or steam hot dog.\n2. Warm the bun.\n3. Add condiments and toppings.",
+    "imageUrl": "assets/images/dishes/hot-dog.jpg",
+    "cookingTime": 10,
+    "serving": 1,
+    "servingUnit": "hot dog",
+    "ingredients": [
+      {
+        "name": "Hot dog",
+        "unit": "piece",
+        "quantity": 1
+      },
+      {
+        "name": "Hot dog bun",
+        "unit": "piece",
+        "quantity": 1
+      },
+      {
+        "name": "Mustard",
+        "unit": "teaspoon",
+        "quantity": 1
+      },
+      {
+        "name": "Ketchup",
+        "unit": "teaspoon",
+        "quantity": 1
+      }
+    ],
+    "foodTags": [
+      {
+        "name": "Fast Food"
+      },
+      {
+        "name": "American"
+      }
+    ],
+    "nutrients": [
+      {
+        "name": "Protein",
+        "unit": "grams",
+        "value": 12
+      },
+      {
+        "name": "Fat",
+        "unit": "grams",
+        "value": 15
+      },
+      {
+        "name": "Carbohydrate",
+        "unit": "grams",
+        "value": 20
+      }
+    ],
+    "timesOfDay": [
+      "noon",
+      "evening"
+    ]
+  },
+  {
+    "recipeName": "Glass of Milk",
+    "description": "Fresh cold milk",
+    "instructions": "1. Pour cold milk into glass.\n2. Serve immediately.",
+    "imageUrl": "assets/images/dishes/milk.jpg",
+    "cookingTime": 1,
+    "serving": 1,
+    "servingUnit": "glass",
+    "ingredients": [
+      {
+        "name": "Milk",
+        "unit": "ml",
+        "quantity": 250
+      }
+    ],
+    "foodTags": [
+      {
+        "name": "Beverage"
+      },
+      {
+        "name": "Dairy"
+      }
+    ],
+    "nutrients": [
+      {
+        "name": "Protein",
+        "unit": "grams",
+        "value": 8
+      },
+      {
+        "name": "Fat",
+        "unit": "grams",
+        "value": 8
+      },
+      {
+        "name": "Calcium",
+        "unit": "mg",
+        "value": 300
+      }
+    ],
+    "timesOfDay": [
+      "morning",
+      "evening"
+    ]
+  },
+  {
+    "recipeName": "Cheese Omelet",
+    "description": "Fluffy omelet with melted cheese",
+    "instructions": "1. Beat eggs with salt and pepper.\n2. Cook in butter until set.\n3. Add cheese and fold.",
+    "imageUrl": "assets/images/dishes/omelet.jpg",
+    "cookingTime": 10,
+    "serving": 1,
+    "servingUnit": "omelet",
+    "ingredients": [
+      {
+        "name": "Eggs",
+        "unit": "pieces",
+        "quantity": 3
+      },
+      {
+        "name": "Cheese",
+        "unit": "grams",
+        "quantity": 50
+      },
+      {
+        "name": "Butter",
+        "unit": "tablespoon",
+        "quantity": 1
+      }
+    ],
+    "foodTags": [
+      {
+        "name": "Breakfast"
+      },
+      {
+        "name": "High Protein"
+      }
+    ],
+    "nutrients": [
+      {
+        "name": "Protein",
+        "unit": "grams",
+        "value": 20
+      },
+      {
+        "name": "Fat",
+        "unit": "grams",
+        "value": 25
+      },
+      {
+        "name": "Carbohydrate",
+        "unit": "grams",
+        "value": 2
+      }
+    ],
+    "timesOfDay": [
+      "morning"
+    ]
+  },
+  {
+    "recipeName": "Fresh Orange Juice",
+    "description": "Freshly squeezed orange juice",
+    "instructions": "1. Wash oranges.\n2. Cut and squeeze oranges.\n3. Strain pulp if desired.",
+    "imageUrl": "assets/images/dishes/orange-juice.jpg",
+    "cookingTime": 5,
+    "serving": 1,
+    "servingUnit": "glass",
+    "ingredients": [
+      {
+        "name": "Oranges",
+        "unit": "pieces",
+        "quantity": 4
+      }
+    ],
+    "foodTags": [
+      {
+        "name": "Beverage"
+      },
+      {
+        "name": "Healthy"
+      }
+    ],
+    "nutrients": [
+      {
+        "name": "Vitamin C",
+        "unit": "mg",
+        "value": 120
+      },
+      {
+        "name": "Sugar",
+        "unit": "grams",
+        "value": 25
+      },
+      {
+        "name": "Carbohydrate",
+        "unit": "grams",
+        "value": 26
+      }
+    ],
+    "timesOfDay": [
+      "morning"
+    ]
+  }
+]

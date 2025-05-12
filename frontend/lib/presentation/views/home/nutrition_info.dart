@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class NutritionInfo extends StatelessWidget {
   final String nutrient;
@@ -23,11 +24,23 @@ class NutritionInfo extends StatelessWidget {
     return Column(
       children: [
         Text(
-          "$value/$goal $unit",
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+          "${value.toInt()}/${goal.toInt()}",
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 14.sp,
+          ),
         ),
-        Text(nutrient,
-            style: const TextStyle(fontSize: 14, color: Colors.grey)),
+        Text(
+          unit,
+          style: TextStyle(
+            fontSize: 12.sp,
+            color: Colors.grey,
+          ),
+        ),
+        Text(
+          nutrient,
+          style: TextStyle(fontSize: 12.sp, color: Colors.grey),
+        ),
       ],
     );
   }
