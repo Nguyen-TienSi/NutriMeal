@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "15341852058",
+    "project_id": "nutriai-4386c",
+    "storage_bucket": "nutriai-4386c.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:15341852058:android:294f290a728b2abf1b1623",
+        "android_client_info": {
+          "package_name": "com.example.nutriai_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "15341852058-imsrfjekdr1rs1cvt2l5re7bgp4fcjld.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDfHWNpJ9KV39_2sHYaEvR6q9mwsnwUSRM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "15341852058-imsrfjekdr1rs1cvt2l5re7bgp4fcjld.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

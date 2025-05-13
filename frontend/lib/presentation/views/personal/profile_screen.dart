@@ -7,6 +7,7 @@ import 'package:nutriai_app/presentation/views/personal/personal_detail_screen.d
 import 'package:nutriai_app/service/api-service/user_service.dart';
 import 'package:nutriai_app/service/external-service/auth_manager.dart';
 import 'package:nutriai_app/service/external-service/auth_user.dart';
+import 'package:nutriai_app/service/external-service/notification_service.dart';
 import 'package:nutriai_app/presentation/views/personal/personal_summary_card.dart';
 import 'package:nutriai_app/presentation/views/personal/personal_navigation_card.dart';
 
@@ -79,6 +80,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 child: ElevatedButton(
                   onPressed: () async {
                     await AuthManager.signOut();
+                    await NotificationService().logoutUserFromOnesignal();
                     if (context.mounted) {
                       Navigator.of(context).pushAndRemoveUntil(
                         MaterialPageRoute(
@@ -140,6 +142,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ),
                             onPressed: () async {
                               await AuthManager.signOut();
+                              await NotificationService()
+                                  .logoutUserFromOnesignal();
                               if (context.mounted) {
                                 Navigator.of(context).pushAndRemoveUntil(
                                   MaterialPageRoute(

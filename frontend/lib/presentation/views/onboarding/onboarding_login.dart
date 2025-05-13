@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:nutriai_app/data/models/user_create_data.dart';
+import 'package:nutriai_app/data/models/user_detail_data.dart';
 import 'package:nutriai_app/presentation/layout/main_screen_layout.dart';
 import 'package:nutriai_app/service/api-service/user_service.dart';
 import 'package:nutriai_app/service/external-service/auth_manager.dart';
 import 'package:nutriai_app/service/external-service/auth_provider.dart';
+import 'package:nutriai_app/service/external-service/notification_service.dart';
 
 class OnboardingLogin extends StatelessWidget {
   final UserCreateData userCreateData;
@@ -17,7 +19,8 @@ class OnboardingLogin extends StatelessWidget {
       if (!context.mounted) return;
 
       if (AuthManager.isLoggedIn()) {
-        await _createUser(context);
+        final userDetailData = await _createUser(context);
+        await NotificationService().loginUserToOnesignal(userDetailData);
         if (!context.mounted) return;
         _navigateToMainScreen(context);
       } else {
@@ -28,14 +31,15 @@ class OnboardingLogin extends StatelessWidget {
     }
   }
 
-  Future<void> _createUser(BuildContext context) async {
+  Future<UserDetailData?> _createUser(BuildContext context) async {
     try {
-      await UserService().createUser(userCreateData);
+      return await UserService().createUser(userCreateData);
     } catch (error) {
-      if (!context.mounted) return;
       _showSnackBar(context, 'An error occurred: $error');
+    } finally {
+      userCreateData.clear();
     }
-    userCreateData.clear();
+    return null;
   }
 
   void _navigateToMainScreen(BuildContext context) {

@@ -12,7 +12,9 @@ class UserService {
   Future<dynamic> createUser(UserCreateData userCreateData) async {
     try {
       return await apiRepository.sendData<dynamic>(
-          endPoint: '/users', data: userCreateData);
+          endPoint: '/users',
+          data: userCreateData,
+          fromJson: (json) => UserDetailData.fromJson(json));
     } catch (e) {
       rethrow;
     }
