@@ -48,6 +48,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<void> fetchData() async {
+    if (!mounted) return;
     try {
       setState(() => isLoading = true);
       final userDetailData = await UserService().getUserDetailData();
@@ -101,25 +102,27 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       if (userDetailData != null)
                         PersonalSummaryCard(userDetailData: userDetailData!),
                       SizedBox(height: 16.h),
-                      PersonalNavigationCard(
-                        icon: Icons.person,
-                        title: 'Personal details',
-                        onTap: () async {
-                          final updatedUserDetailData =
-                              await Navigator.of(context).push<UserDetailData>(
-                            MaterialPageRoute(
-                              builder: (_) => PersonalDetailScreen(
-                                  userDetailData: userDetailData),
-                            ),
-                          );
-                          if (updatedUserDetailData != null) {
-                            setState(() {
-                              userDetailData = updatedUserDetailData;
-                            });
-                            await fetchData();
-                          }
-                        },
-                      ),
+                      if (userDetailData != null)
+                        PersonalNavigationCard(
+                          icon: Icons.person,
+                          title: 'Personal details',
+                          onTap: () async {
+                            final updatedUserDetailData =
+                                await Navigator.of(context)
+                                    .push<UserDetailData>(
+                              MaterialPageRoute(
+                                builder: (_) => PersonalDetailScreen(
+                                    userDetailData: userDetailData),
+                              ),
+                            );
+                            if (updatedUserDetailData != null) {
+                              setState(() {
+                                userDetailData = updatedUserDetailData;
+                              });
+                              await fetchData();
+                            }
+                          },
+                        ),
                       const Spacer(),
                       Padding(
                         padding: EdgeInsets.symmetric(

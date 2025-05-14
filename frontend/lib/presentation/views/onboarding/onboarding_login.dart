@@ -15,6 +15,7 @@ class OnboardingLogin extends StatelessWidget {
 
   Future<void> _login(AuthProvider provider, BuildContext context) async {
     try {
+      await AuthManager.signOut();
       await AuthManager.signIn(provider);
       if (!context.mounted) return;
 
@@ -32,6 +33,7 @@ class OnboardingLogin extends StatelessWidget {
   }
 
   Future<UserDetailData?> _createUser(BuildContext context) async {
+    if (!context.mounted) return null;
     try {
       return await UserService().createUser(userCreateData);
     } catch (error) {

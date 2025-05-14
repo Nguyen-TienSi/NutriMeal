@@ -24,4 +24,6 @@ public interface IMealLogService {
     String currentEtag(UUID id);
 
     List<RecipeSummaryDto> findRecipesByMealLogId(UUID id);
+
+    void sendMealLogNotifications();
 }

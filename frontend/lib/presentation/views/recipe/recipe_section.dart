@@ -31,6 +31,7 @@ class _RecipeSectionState extends State<RecipeSection> {
   }
 
   Future<void> fetchData() async {
+    if (!mounted) return;
     try {
       final recipeSummaryList = await RecipeService()
           .fetchRecipeSummaryListByMealTime(

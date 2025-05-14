@@ -41,7 +41,7 @@ class NutrientsPieChart extends StatelessWidget {
         ),
         SizedBox(height: 12.h),
         SizedBox(
-          height: 220,
+          height: 220.h,
           child: PieChart(
             PieChartData(
               sections: [

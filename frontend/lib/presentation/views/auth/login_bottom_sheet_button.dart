@@ -14,6 +14,7 @@ class LoginBottomSheetButton extends StatelessWidget {
 
   Future<void> _login(AuthProvider provider, BuildContext context) async {
     try {
+      await AuthManager.signOut();
       await AuthManager.signIn(provider);
       if (AuthManager.isLoggedIn()) {
         await NotificationService().loginUserToOnesignal(null);

@@ -45,6 +45,7 @@ class _SearchRecipeSectionState extends State<SearchRecipeSection> {
   }
 
   Future<void> fetchRecipeSummaryList() async {
+    if (!mounted) return;
     try {
       setState(() => isLoading = true);
       final recipeSummaryList = await RecipeService().searchRecipeSummaryList(

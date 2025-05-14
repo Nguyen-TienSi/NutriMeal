@@ -22,6 +22,7 @@ class _FavoriteRecipeScreenState extends State<FavoriteRecipeScreen> {
   }
 
   Future<void> fetchData() async {
+    if (!mounted) return;
     try {
       setState(() => isLoading = true);
       final recipeSummaryDataList =

@@ -26,6 +26,7 @@ class _DishGridScreenState extends State<DishGridScreen> {
   }
 
   Future<void> fetchData() async {
+    if (!mounted) return;
     try {
       setState(() => isLoading = true);
       final recipeSummaryList = await RecipeService()

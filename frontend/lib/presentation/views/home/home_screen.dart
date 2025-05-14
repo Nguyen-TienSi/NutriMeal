@@ -53,6 +53,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> fetchData() async {
+    if (!mounted) return;
     try {
       setState(() => isLoading = true);
       final healthTrackingData = await HealthTrackingService()

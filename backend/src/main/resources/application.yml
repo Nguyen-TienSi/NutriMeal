@@ -100,3 +100,11 @@ springdoc:
     path: /swagger-docs
     url: /openapi.yaml
   writer-with-order-by-keys: true
+
+onesignal:
+  app:
+    id: ${ONESIGNAL_APP_ID}
+  api:
+    key: ${ONESIGNAL_API_KEY}
+  url: https://api.onesignal.com/notifications
+

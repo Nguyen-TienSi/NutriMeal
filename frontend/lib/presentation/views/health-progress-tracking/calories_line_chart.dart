@@ -29,55 +29,63 @@ class CaloriesLineChart extends StatelessWidget {
       labels.add(DateFormat('MM/dd').format(sortedData[i].trackingDate));
     }
 
-    return SizedBox(
-      height: 250,
-      child: LineChart(
-        LineChartData(
-          titlesData: FlTitlesData(
-            show: true,
-            topTitles: AxisTitles(
-              axisNameWidget: Text(
-                'Calories Over Time',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
+    return Center(
+      child: SizedBox(
+        height: 250.h,
+        child: LineChart(
+          LineChartData(
+            titlesData: FlTitlesData(
+              show: true,
+              topTitles: AxisTitles(
+                axisNameWidget: Text(
+                  'Calories Over Time',
+                  style: TextStyle(
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                axisNameSize: 30.sp,
+              ),
+              leftTitles: AxisTitles(
+                sideTitles: SideTitles(showTitles: true, reservedSize: 40.sp),
+              ),
+              bottomTitles: AxisTitles(
+                sideTitles: SideTitles(
+                  showTitles: true,
+                  getTitlesWidget: (value, meta) {
+                    int idx = value.toInt();
+                    if (idx >= 0 && idx < labels.length) {
+                      return Text(labels[idx],
+                          style: TextStyle(fontSize: 10.sp));
+                    }
+                    return const SizedBox.shrink();
+                  },
+                  reservedSize: 30,
+                  interval: 1,
                 ),
               ),
-              axisNameSize: 20,
+              rightTitles:
+                  AxisTitles(sideTitles: SideTitles(showTitles: false)),
             ),
-            leftTitles: AxisTitles(
-              sideTitles: SideTitles(showTitles: true, reservedSize: 40),
-            ),
-            bottomTitles: AxisTitles(
-              sideTitles: SideTitles(
-                showTitles: true,
-                getTitlesWidget: (value, meta) {
-                  int idx = value.toInt();
-                  if (idx >= 0 && idx < labels.length) {
-                    return Text(labels[idx], style: TextStyle(fontSize: 10.sp));
-                  }
-                  return const SizedBox.shrink();
-                },
-                reservedSize: 10,
-                interval: 1,
+            borderData: FlBorderData(show: true),
+            minX: 0,
+            maxX: (spots.length - 1).toDouble(),
+            minY: 0,
+            lineBarsData: [
+              LineChartBarData(
+                spots: spots,
+                isCurved: true,
+                color: Colors.green,
+                barWidth: 3,
+                dotData: FlDotData(
+                  show: true,
+                  getDotPainter: (spot, percent, barData, index) =>
+                      FlDotCirclePainter(radius: 4.r, color: Colors.green),
+                ),
+                belowBarData: BarAreaData(show: false),
               ),
-            ),
-            rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+            ],
           ),
-          borderData: FlBorderData(show: true),
-          minX: 0,
-          maxX: (spots.length - 1).toDouble(),
-          minY: 0,
-          lineBarsData: [
-            LineChartBarData(
-              spots: spots,
-              isCurved: true,
-              color: Colors.green,
-              barWidth: 3,
-              dotData: FlDotData(show: true),
-              belowBarData: BarAreaData(show: false),
-            ),
-          ],
         ),
       ),
     );

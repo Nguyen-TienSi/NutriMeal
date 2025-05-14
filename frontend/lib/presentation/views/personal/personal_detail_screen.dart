@@ -22,6 +22,7 @@ class PersonalDetailScreen extends StatefulWidget {
 
 class _PersonalDetailScreenState extends State<PersonalDetailScreen> {
   Future<UserDetailData?> updateUserDetailData(JsonPatch jsonPatch) async {
+    if (!mounted) return null;
     try {
       final userDetailData = await UserService().patchUserDetailData(jsonPatch);
       if (userDetailData == null) {

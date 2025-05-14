@@ -33,6 +33,7 @@ class _HealthProgressTrackingScreenState
   }
 
   Future<void> fetchData() async {
+    if (!mounted) return;
     try {
       setState(() => isLoading = true);
       final userDetailData = await UserService().getUserDetailData();

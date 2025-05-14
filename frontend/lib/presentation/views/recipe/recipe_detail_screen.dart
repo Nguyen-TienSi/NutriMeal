@@ -32,6 +32,7 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
   }
 
   Future<void> _fetchRecipeDetailData() async {
+    if (!mounted) return;
     try {
       setState(() => isLoading = true);
       final recipeDetailData = await RecipeService().getRecipeDetail(widget.id);
@@ -47,6 +48,7 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
 
   Future<void> _saveToMealLog() async {
     if (recipeDetailData == null) return;
+    if (!mounted) return;
 
     setState(() => isSaving = true);
     try {

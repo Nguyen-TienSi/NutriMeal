@@ -29,6 +29,7 @@ class NutritionalInfoSectionState extends State<NutritionalInfoSection> {
   }
 
   Future<void> fetchData() async {
+    if (!mounted) return;
     try {
       setState(() => isLoading = true);
       final mealLogDetailData =
@@ -47,6 +48,7 @@ class NutritionalInfoSectionState extends State<NutritionalInfoSection> {
   }
 
   Future<void> _handleRemoveRecipe(RecipeSummaryData recipe) async {
+    if (!mounted) return;
     try {
       if (recipeSummaryDataList == null) return;
 

@@ -24,6 +24,7 @@ class _StatisticChartScreenState extends State<StatisticChartScreen> {
   }
 
   Future<void> fetchData() async {
+    if (!mounted) return;
     try {
       setState(() => isLoading = true);
       final healthTrackingDetailDataList =

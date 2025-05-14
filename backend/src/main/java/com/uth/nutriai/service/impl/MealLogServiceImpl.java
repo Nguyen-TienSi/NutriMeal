@@ -20,11 +20,13 @@ import com.uth.nutriai.model.domain.User;
 import com.uth.nutriai.model.enumeration.TimeOfDay;
 import com.uth.nutriai.service.IJsonPatchService;
 import com.uth.nutriai.service.IMealLogService;
+import com.uth.nutriai.service.INotificationService;
 import com.uth.nutriai.utils.EtagUtils;
 import com.uth.nutriai.utils.SecurityUtils;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.core.OAuth2AuthenticatedPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -45,6 +47,7 @@ public class MealLogServiceImpl implements IMealLogService {
     private IRecipeMapper recipeMapper;
     private IJsonPatchService jsonPatchService;
     private ApplicationEventPublisher applicationEventPublisher;
+    private INotificationService notificationService;
 
     @Override
     public List<MealLogSummaryDto> findMealLogsByTrackingDate(Date trackingDate) {
@@ -164,5 +167,48 @@ public class MealLogServiceImpl implements IMealLogService {
         MealLog mealLog = mealLogDao.findById(id).orElseThrow(() -> new ResourceNotFoundException("MealLog not found with id: " + id));
         List<Recipe> recipeList = mealLog.getRecipes();
         return recipeMapper.mapToRecipeSummaryDtoList(recipeList);
+    }
+
+    @Scheduled(cron = "0 0 8,12,18 * * ?")
+    @Override
+    public void sendMealLogNotifications() {
+        Calendar calendar = Calendar.getInstance();
+        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+
+        // Determine which meal time we're checking for
+        TimeOfDay expectedMealTime;
+        if (hour == 8) {
+            expectedMealTime = TimeOfDay.MORNING;
+        } else if (hour == 12) {
+            expectedMealTime = TimeOfDay.NOON;
+        } else if (hour == 18) {
+            expectedMealTime = TimeOfDay.EVENING;
+        } else {
+            return; // Don't send notifications at other times
+        }
+
+        List<User> users = userDao.findAll();
+        Date today = new Date();
+
+        String message = switch (expectedMealTime) {
+            case MORNING -> "Đã đến giờ ăn sáng! Hãy ghi chú bữa ăn của bạn nhé!";
+            case NOON -> "Đã đến giờ ăn trưa! Đừng quên ghi chú bữa ăn của bạn!";
+            case EVENING -> "Đã đến giờ ăn tối! Hãy ghi chú bữa ăn của bạn nhé!";
+            default -> null;
+        };
+
+        List<User> usersToNotify = users.stream()
+                .filter(user -> {
+                    List<MealLog> todayMealLogs = mealLogDao.findByTrackingDateAndUser(today, user);
+                    return todayMealLogs.stream()
+                            .noneMatch(mealLog -> mealLog.getTimeOfDay() == expectedMealTime
+                                    && mealLog.getRecipes() != null
+                                    && !mealLog.getRecipes().isEmpty());
+                })
+                .toList();
+
+        if (!usersToNotify.isEmpty()) {
+            notificationService.sendNotification("Thông báo từ Meal Tracker", message, usersToNotify);
+        }
     }
 }
