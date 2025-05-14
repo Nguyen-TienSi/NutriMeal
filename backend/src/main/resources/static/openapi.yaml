@@ -21,3 +21,1029 @@ paths:
                   message:
                     type: string
                     example: Hello, world!
+
+  /health-tracking/{date}:
+    get:
+      summary: Get health tracking data by date
+      description: Retrieves health tracking information for a specific date
+      parameters:
+        - name: date
+          in: path
+          required: true
+          description: The date to retrieve health tracking data for (format yyyy-MM-dd)
+          schema:
+            type: string
+            format: date
+          example: "2024-03-20"
+        - name: If-None-Match
+          in: header
+          required: false
+          description: ETag for cache validation
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Health tracking data found
+          headers:
+            ETag:
+              schema:
+                type: string
+              description: Entity tag for cache validation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/HealthTrackingDetailDto'
+        '204':
+          description: No health tracking data found for the specified date
+        '304':
+          description: Not modified (ETag matches)
+
+  /recipes:
+    get:
+      summary: Get all recipes
+      description: Retrieves a list of all available recipes
+      responses:
+        '200':
+          description: List of recipes retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/RecipeSummaryDto'
+        '204':
+          description: No recipes found
+    
+    post:
+      summary: Create a new recipe
+      description: Creates a new recipe with the provided details
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RecipeCreateDto'
+      responses:
+        '201':
+          description: Recipe created successfully
+          headers:
+            ETag:
+              schema:
+                type: string
+            Location:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/RecipeDetailDto'
+    
+    put:
+      summary: Update a recipe
+      description: Updates an existing recipe
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RecipeUpdateDto'
+      parameters:
+        - name: If-Match
+          in: header
+          required: true
+          description: ETag for optimistic locking
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Recipe updated successfully
+          headers:
+            ETag:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/RecipeDetailDto'
+        '412':
+          description: Precondition failed - ETag mismatch
+        '404':
+          description: Recipe not found
+    
+    delete:
+      summary: Delete a recipe
+      description: Deletes an existing recipe
+      parameters:
+        - name: id
+          in: query
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: If-Match
+          in: header
+          required: true
+          description: ETag for optimistic locking
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Recipe deleted successfully
+        '412':
+          description: Precondition failed - ETag mismatch
+        '404':
+          description: Recipe not found
+
+  /recipes/{id}:
+    get:
+      summary: Get recipe by ID
+      description: Retrieves detailed information about a specific recipe
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: If-None-Match
+          in: header
+          required: false
+          description: ETag for cache validation
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Recipe found
+          headers:
+            ETag:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/RecipeDetailDto'
+        '304':
+          description: Not modified (ETag matches)
+        '404':
+          description: Recipe not found
+
+  /recipes/search/{keyword}/{value}:
+    get:
+      summary: Search recipes by keyword
+      description: Searches for recipes based on a specific field and value
+      parameters:
+        - name: keyword
+          in: path
+          required: true
+          description: Field name to search by
+          schema:
+            type: string
+        - name: value
+          in: path
+          required: true
+          description: Value to search for
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Matching recipes found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/RecipeSummaryDto'
+        '204':
+          description: No matching recipes found
+        '400':
+          description: Invalid search parameters
+
+  /recipes/meal-time/{mealTime}:
+    get:
+      summary: Get recipes by meal time
+      description: Retrieves recipes suitable for a specific meal time
+      parameters:
+        - name: mealTime
+          in: path
+          required: true
+          schema:
+            type: string
+            enum: [morning, noon, afternoon, evening, night]
+        - name: pageNumber
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 0
+        - name: pageSize
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 5
+      responses:
+        '200':
+          description: Recipes found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/RecipeSummaryDto'
+        '204':
+          description: No recipes found
+
+  /meal-logs/date/{date}:
+    get:
+      summary: Get meal logs by date
+      description: Retrieves a list of meal logs for a specific date
+      parameters:
+        - name: date
+          in: path
+          required: true
+          description: The date to retrieve meal logs for (format yyyy-MM-dd)
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: Meal logs found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/MealLogSummaryDto'
+        '204':
+          description: No meal logs found for the specified date
+
+  /meal-logs/{id}:
+    get:
+      summary: Get meal log by ID
+      description: Retrieves detailed information about a specific meal log
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: If-None-Match
+          in: header
+          required: false
+          description: ETag for cache validation
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Meal log found
+          headers:
+            ETag:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/MealLogDetailDto'
+        '304':
+          description: Not modified (ETag matches)
+        '404':
+          description: Meal log not found
+
+    patch:
+      summary: Update meal log
+      description: Updates a meal log using JSON Patch operations
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: If-Match
+          in: header
+          required: true
+          description: ETag for optimistic locking
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json-patch+json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/JsonPatchOperation'
+      responses:
+        '200':
+          description: Meal log updated successfully
+          headers:
+            ETag:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/MealLogDetailDto'
+        '412':
+          description: Precondition failed - ETag mismatch
+        '404':
+          description: Meal log not found
+
+  /meal-logs/{id}/recipes:
+    get:
+      summary: Get recipes by meal log ID
+      description: Retrieves a list of recipes associated with a specific meal log
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Recipes found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/RecipeSummaryDto'
+        '204':
+          description: No recipes found
+        '404':
+          description: Meal log not found
+
+  /statistics/favorite-recipes:
+    get:
+      summary: Get user's favorite recipes
+      description: Retrieves a list of recipes most frequently used by the current user
+      responses:
+        '200':
+          description: List of favorite recipes found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/RecipeSummaryDto'
+        '204':
+          description: No favorite recipes found
+
+  /statistics/current-month/health-tracking:
+    get:
+      summary: Get current month's health tracking data
+      description: Retrieves health tracking data for the current month
+      responses:
+        '200':
+          description: Health tracking data found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/HealthTrackingDetailDto'
+        '204':
+          description: No health tracking data found
+
+  /statistics/streaks:
+    get:
+      summary: Get user's tracking streaks
+      description: Retrieves the current and longest tracking streaks for the user
+      responses:
+        '200':
+          description: Streak information found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/StreakDetailDto'
+        '204':
+          description: No streak information found
+
+  /users:
+    get:
+      summary: Get all users
+      description: Retrieves a list of all users
+      responses:
+        '200':
+          description: List of users found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/UserDetailDto'
+        '204':
+          description: No users found
+
+    post:
+      summary: Create a new user
+      description: Creates a new user with the provided details
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserCreateDto'
+      responses:
+        '201':
+          description: User created successfully
+          headers:
+            ETag:
+              schema:
+                type: string
+            Location:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/UserDetailDto'
+
+    put:
+      summary: Update a user
+      description: Updates an existing user
+      responses:
+        '501':
+          description: Not implemented
+
+    delete:
+      summary: Delete a user
+      description: Deletes an existing user
+      parameters:
+        - name: id
+          in: query
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: User deleted successfully
+        '404':
+          description: User not found
+
+    patch:
+      summary: Patch user
+      description: Updates a user using JSON Patch operations
+      requestBody:
+        required: true
+        content:
+          application/json-patch+json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/JsonPatchOperation'
+      responses:
+        '200':
+          description: User updated successfully
+          headers:
+            ETag:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/UserDetailDto'
+        '404':
+          description: User not found
+
+  /users/search:
+    get:
+      summary: Find user by user ID
+      description: Retrieves user information based on the authenticated user's ID
+      parameters:
+        - name: If-None-Match
+          in: header
+          required: false
+          description: ETag for cache validation
+          schema:
+            type: string
+      responses:
+        '200':
+          description: User found
+          headers:
+            ETag:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/UserDetailDto'
+        '304':
+          description: Not modified (ETag matches)
+        '404':
+          description: User not found
+
+components:
+  schemas:
+    HealthTrackingDetailDto:
+      type: object
+      description: Health tracking details for a specific date
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier of the health tracking record
+        meta:
+          $ref: '#/components/schemas/AuditMetadataDto'
+        userId:
+          type: string
+          format: uuid
+          description: ID of the user this tracking belongs to
+        trackingDate:
+          type: string
+          format: date
+          description: Date of the health tracking record
+        totalCalories:
+          type: number
+          format: double
+          description: Total calories goal for the day
+          example: 2000.0
+        consumedCalories:
+          type: number
+          format: double
+          description: Actually consumed calories for the day
+          example: 1500.0
+        consumedNutrients:
+          type: array
+          description: List of consumed nutrients for the day
+          items:
+            $ref: '#/components/schemas/NutrientDto'
+        totalNutrients:
+          type: array
+          description: List of target nutrient goals for the day
+          items:
+            $ref: '#/components/schemas/NutrientDto'
+    
+    NutrientDto:
+      type: object
+      description: Nutrient information
+      properties:
+        name:
+          type: string
+          description: Name of the nutrient
+        unit:
+          type: string
+          description: Unit of measurement for the nutrient
+        value:
+          type: number
+          format: double
+          description: Amount of the nutrient
+      required:
+        - name
+        - unit
+        - value
+        
+    AuditMetadataDto:
+      type: object
+      description: Audit metadata information
+      properties:
+        createdBy:
+          type: string
+          description: ID or username of the user who created the entity
+        lastModifiedBy:
+          type: string
+          description: ID or username of the user who last modified the entity
+        createdAt:
+          type: string
+          format: date-time
+          description: Timestamp when the entity was created
+        lastModifiedAt:
+          type: string
+          format: date-time
+          description: Timestamp when the entity was last modified
+        version:
+          type: integer
+          format: int64
+          description: Version number of the entity for optimistic locking
+        isDeleted:
+          type: boolean
+          description: Indicates if the entity has been soft deleted
+      required:
+        - createdBy
+        - lastModifiedBy
+        - createdAt
+        - lastModifiedAt
+        - version
+        - isDeleted
+    RecipeCreateDto:
+      type: object
+      required:
+        - recipeName
+        - description
+        - instructions
+        - imageUrl
+        - cookingTime
+        - serving
+        - servingUnit
+        - ingredients
+        - foodTags
+        - nutrients
+        - timesOfDay
+      properties:
+        recipeName:
+          type: string
+        description:
+          type: string
+        instructions:
+          type: string
+        imageUrl:
+          type: string
+        cookingTime:
+          type: integer
+          format: int64
+          minimum: 1
+        serving:
+          type: integer
+          minimum: 1
+        servingUnit:
+          type: string
+        ingredients:
+          type: array
+          items:
+            $ref: '#/components/schemas/IngredientDto'
+          minItems: 1
+        foodTags:
+          type: array
+          items:
+            $ref: '#/components/schemas/FoodTagDto'
+        nutrients:
+          type: array
+          items:
+            $ref: '#/components/schemas/NutrientDto'
+        timesOfDay:
+          type: array
+          items:
+            $ref: '#/components/schemas/TimeOfDayDto'
+
+    RecipeUpdateDto:
+      allOf:
+        - $ref: '#/components/schemas/RecipeCreateDto'
+        - type: object
+          required:
+            - id
+          properties:
+            id:
+              type: string
+              format: uuid
+
+    RecipeDetailDto:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        meta:
+          $ref: '#/components/schemas/AuditMetadataDto'
+        recipeName:
+          type: string
+        description:
+          type: string
+        instructions:
+          type: string
+        imageUrl:
+          type: string
+        cookingTime:
+          type: integer
+          format: int64
+        serving:
+          type: number
+          format: float
+        servingUnit:
+          type: string
+        ingredients:
+          type: array
+          items:
+            $ref: '#/components/schemas/IngredientDto'
+        foodTags:
+          type: array
+          items:
+            $ref: '#/components/schemas/FoodTagDto'
+        nutrients:
+          type: array
+          items:
+            $ref: '#/components/schemas/NutrientDto'
+        timesOfDay:
+          type: array
+          items:
+            $ref: '#/components/schemas/TimeOfDayDto'
+
+    RecipeSummaryDto:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        recipeName:
+          type: string
+        imageUrl:
+          type: string
+        cookingTime:
+          type: integer
+          format: int64
+        serving:
+          type: number
+          format: float
+        servingUnit:
+          type: string
+        calories:
+          type: string
+        timesOfDay:
+          type: array
+          items:
+            $ref: '#/components/schemas/TimeOfDayDto'
+
+    TimeOfDayDto:
+      type: string
+      enum: [morning, noon, afternoon, evening, night]
+
+    FoodTagDto:
+      type: object
+      description: Food tag information
+      properties:
+        name:
+          type: string
+          description: Name of the food tag
+      required:
+        - name
+
+    IngredientDto:
+      type: object
+      description: Ingredient information
+      properties:
+        name:
+          type: string
+          description: Name of the ingredient
+        unit:
+          type: string
+          description: Unit of measurement for the ingredient
+        quantity:
+          type: number
+          format: double
+          description: Amount of the ingredient
+      required:
+        - name
+        - unit
+        - quantity
+    MealLogSummaryDto:
+      type: object
+      description: Summary information about a meal log
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier of the meal log
+        timeOfDay:
+          description: Time of day for the meal
+        trackingDate:
+          type: string
+          format: date
+          description: Date of the meal log
+        totalCalories:
+          type: number
+          format: double
+          description: Target calories for this meal
+        consumedCalories:
+          type: number
+          format: double
+          description: Actually consumed calories for this meal
+
+    MealLogDetailDto:
+      type: object
+      description: Detailed information about a meal log
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier of the meal log
+        meta:
+          $ref: '#/components/schemas/AuditMetadataDto'
+        userId:
+          type: string
+          format: uuid
+          description: ID of the user this meal log belongs to
+        recipeIds:
+          type: array
+          description: List of recipe IDs included in this meal
+          items:
+            type: string
+            format: uuid
+        timeOfDay:
+          $ref: '#/components/schemas/TimeOfDayDto'
+        trackingDate:
+          type: string
+          format: date
+          description: Date of the meal log
+        totalCalories:
+          type: number
+          format: double
+          description: Target calories for this meal
+        consumedCalories:
+          type: number
+          format: double
+          description: Actually consumed calories for this meal
+        consumedNutrients:
+          type: array
+          description: List of consumed nutrients
+          items:
+            $ref: '#/components/schemas/NutrientDto'
+        totalNutrients:
+          type: array
+          description: List of target nutrients
+          items:
+            $ref: '#/components/schemas/NutrientDto'
+
+    JsonPatchOperation:
+      type: object
+      required:
+        - op
+        - path
+      properties:
+        op:
+          type: string
+          enum: [add, remove, replace, move, copy, test]
+          description: The operation to perform
+        path:
+          type: string
+          description: A JSON Pointer path
+        value:
+          description: The value to use for the operation
+        from:
+          type: string
+          description: A JSON Pointer path for move/copy operations
+    StreakDetailDto:
+      type: object
+      description: Information about user's tracking streaks
+      properties:
+        currentStreak:
+          type: integer
+          description: Number of consecutive days in the current tracking streak
+          minimum: 0
+        longestStreak:
+          type: integer
+          description: Number of consecutive days in the longest tracking streak achieved
+          minimum: 0
+      required:
+        - currentStreak
+        - longestStreak
+    UserDetailDto:
+      type: object
+      description: Detailed information about a user
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier of the user
+        meta:
+          $ref: '#/components/schemas/AuditMetadataDto'
+        userId:
+          type: string
+          description: External user identifier (e.g., from auth provider)
+        name:
+          type: string
+          description: User's full name
+        email:
+          type: string
+          format: email
+          description: User's email address
+        pictureUrl:
+          type: string
+          format: uri
+          description: URL to user's profile picture
+        authProvider:
+          type: string
+          description: Authentication provider (e.g., Google, Facebook)
+        gender:
+          type: string
+          description: User's gender
+        dateOfBirth:
+          type: string
+          format: date
+          description: User's date of birth
+        activityLevel:
+          $ref: '#/components/schemas/ActivityLevelDto'
+        healthGoal:
+          $ref: '#/components/schemas/HealthGoalDto'
+        currentWeight:
+          type: integer
+          description: User's current weight in kilograms
+        targetWeight:
+          type: integer
+          description: User's target weight in kilograms
+        currentHeight:
+          type: integer
+          description: User's current height in centimeters
+
+    UserCreateDto:
+      type: object
+      description: Data for creating a new user
+      required:
+        - userId
+        - name
+        - email
+        - pictureUrl
+        - authProvider
+        - gender
+        - dateOfBirth
+        - activityLevel
+        - healthGoal
+        - currentWeight
+        - targetWeight
+        - currentHeight
+      properties:
+        userId:
+          type: string
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+        pictureUrl:
+          type: string
+          format: uri
+        authProvider:
+          type: string
+        gender:
+          type: string
+        dateOfBirth:
+          type: string
+          format: date
+        activityLevel:
+          $ref: '#/components/schemas/ActivityLevelDto'
+        healthGoal:
+          $ref: '#/components/schemas/HealthGoalDto'
+        currentWeight:
+          type: integer
+          minimum: 1
+        targetWeight:
+          type: integer
+          minimum: 1
+        currentHeight:
+          type: integer
+          minimum: 1
+
+    ActivityLevelDto:
+      type: string
+      enum: [inactive, normal, active]
+      description: User's physical activity level and lifestyle
+      
+    HealthGoalDto:
+      type: string
+      enum: [lose_weight, maintain_weight, gain_weight]
+      description: User's health and fitness goal
